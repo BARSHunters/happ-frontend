@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">happ-frontend</string>
+    <string name="auth.title.register">Регистрация</string>
+    <string name="auth.title.login">Вход</string>
+    <string name="auth.field.height">Текущий рост (см)</string>
+    <string name="auth.field.weight">Текущая масса (кг)</string>
+    <string name="auth.hint.forgot_password">Забыли пароль?</string>
+    <string name="auth.hint.dont_have_account">"Нет аккаунта?   "</string>
+    <string name="auth.hint.dont_have_account.register">Зарегистрируйтесь</string>
+    <string name="auth.field.username">Никнейм</string>
+    <string name="auth.field.password">Пароль</string>
+    <string name="auth.field.name">Имя</string>
+    <string name="auth.field.age">Возраст</string>
+    <string name="auth.field.gender">Пол</string>
+    <string name="auth.button.login">Войти</string>
+    <string name="biom.gender">Пол</string>
+    <string name="biom.gender.male">Мужской</string>
+    <string name="biom.gender.female">Женский</string>
+    <string name="biom.gender.helicopter">Атакующий вертолёт</string>
+    <string name="unit.length.km">км</string>
+    <string name="unit.length.m">м</string>
+    <string name="unit.length.cm">см</string>
+    <string name="unit.mass.kg">кг</string>
+    <string name="unit.mass.g">г</string>
+    <string name="auth.button.register">Зарегистрироваться</string>
+</resources>

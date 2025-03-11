@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">happ-frontend</string>
+
+    <!-- Register/Login screens -->
+    <string name="auth.title.register">Register</string>
+    <string name="auth.title.login">Login</string>
+    <string name="auth.field.username">Username</string>
+    <string name="auth.field.password">Password</string>
+    <string name="auth.field.name">Name</string>
+    <string name="auth.field.age">Age</string>
+    <string name="auth.field.gender">Gender</string>
+    <string name="auth.field.height">Current height (cm)</string>
+    <string name="auth.field.weight">Current weight (kg)</string>
+    <string name="auth.hint.forgot_password">Forgot password?</string>
+    <string name="auth.hint.dont_have_account">"Don't have an account? "</string>
+    <string name="auth.hint.dont_have_account.register">Sign up</string>
+    <string name="auth.button.login">Login</string>
+    <!-- etc. -->
+
+    <!-- Personal biometric data -->
+    <string name="biom.gender">Gender</string>
+    <string name="biom.gender.male">Male</string>
+    <string name="biom.gender.female">Female</string>
+    <string name="biom.gender.helicopter">Attack helicopter</string>
+    <!-- etc. -->
+    
+    <!-- Unit data -->
+    <string name="unit.length.km">km</string>
+    <string name="unit.length.m">m</string>
+    <string name="unit.length.cm">cm</string>
+    <string name="unit.mass.kg">kg</string>
+    <string name="unit.mass.g">g</string>
+    <string name="auth.button.register">Register</string>
+    <!-- etc. -->
 </resources>
