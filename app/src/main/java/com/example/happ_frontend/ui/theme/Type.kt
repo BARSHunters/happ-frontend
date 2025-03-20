@@ -1,19 +1,83 @@
 package com.example.happ_frontend.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.happ_frontend.R
+
+val interFamily = FontFamily(
+    Font(R.font.inter_black, weight = FontWeight.Black),
+    Font(R.font.inter_bold, weight = FontWeight.Bold),
+    Font(R.font.inter_medium, weight = FontWeight.Medium),
+    Font(R.font.inter_regular, weight = FontWeight.Normal)
+)
+
+val quicksandFamily = FontFamily(
+    Font(R.font.quicksand_bold, weight = FontWeight.Bold),
+    Font(R.font.quicksand_semibold, weight = FontWeight.SemiBold),
+    Font(R.font.quicksand_medium, weight = FontWeight.Medium),
+    Font(R.font.quicksand_regular, weight = FontWeight.Normal),
+    Font(R.font.quicksand_light, weight = FontWeight.Light)
+)
 
 // Set of Material typography styles to start with
 val Typography = Typography(
+    titleLarge = TextStyle(
+        fontFamily = interFamily,
+        fontWeight = FontWeight.Black,
+        fontSize = 32.sp,
+        lineHeight = 40.sp,
+        letterSpacing = 0.5.sp
+    ),
+    titleMedium = TextStyle(
+        fontFamily = interFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        lineHeight = 36.sp
+    ),
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = interFamily,
+        // fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = interFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.5.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = interFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.5.sp
+    ),
+    headlineLarge = TextStyle(
+        fontFamily = interFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 24.sp
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = quicksandFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = quicksandFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 18.sp
     )
     /* Other default text styles to override
     titleLarge = TextStyle(
