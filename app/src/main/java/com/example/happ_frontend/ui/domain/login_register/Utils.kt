@@ -141,13 +141,16 @@ fun String.convertNamingConvention(from: NamingConvention, to: NamingConvention)
     return when (to) {
         NamingConvention.SNAKE_CASE ->
             words.joinToString("_") { it.lowercase() }
+
         NamingConvention.SCREAMING_SNAKE_CASE ->
             words.joinToString("_") { it.uppercase() }
+
         NamingConvention.CAMEL_CASE ->
             words.mapIndexed { index, word ->
                 if (index == 0) word.lowercase()
                 else word.lowercase().capitalize()
             }.joinToString("")
+
         NamingConvention.PASCAL_CASE ->
             words.joinToString("") { it.lowercase().capitalize() }
     }

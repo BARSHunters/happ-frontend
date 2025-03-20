@@ -15,12 +15,12 @@ enum class WeightDesire {
      * Indicates the user wants to lose weight.
      */
     LOSS,
-    
+
     /**
      * Indicates the user wants to maintain their current weight.
      */
     REMAIN,
-    
+
     /**
      * Indicates the user wants to gain weight.
      */

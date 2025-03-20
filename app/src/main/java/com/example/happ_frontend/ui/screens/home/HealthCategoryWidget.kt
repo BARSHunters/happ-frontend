@@ -36,6 +36,7 @@ import com.example.happ_frontend.R
  * @param iconVector An optional icon vector to be displayed in the widget.
  * @param clickable A boolean value indicating whether the "See More" button is clickable.
  * @param onClickSeeMore An optional lambda function that is called when the "See More" button is clicked.
+ * @author Vad1mChK
  */
 @Composable
 fun HealthCategoryWidget(

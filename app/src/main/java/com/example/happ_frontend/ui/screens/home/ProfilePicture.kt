@@ -47,8 +47,8 @@ fun ProfilePicture(
     isRounded: Boolean = false
 ) {
     val shape = if (isCircle) CircleShape
-        else if (isRounded) RoundedCornerShape(cornerRadius)
-        else RectangleShape
+    else if (isRounded) RoundedCornerShape(cornerRadius)
+    else RectangleShape
     Image(
         painter = painterResource(id = imgRes),
         contentDescription = username,
