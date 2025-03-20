@@ -35,6 +35,17 @@
     <string name="auth.valid_error.number.notempty">Number must not be empty</string>
     <string name="auth.valid_error.number.format">Invalid number format</string>
     <!-- etc. -->
+    
+    <!-- Home screen, weight history, etc: health categories -->
+    <string name="health_category.title">Health Categories</string>
+    <string name="health_category.weight.title">Body Measurements &amp; Weight</string>
+    <string name="health_category.weight.description">Track your progress\nand stay motivated!</string>
+    <string name="health_category.activity.title">Activity &amp; Workouts</string>
+    <string name="health_category.activity.description">Move more,\nfeel better!</string>
+    <string name="health_category.nutrition.title">Nutrition &amp; Hydration</string>
+    <string name="health_category.nutrition.description">Stay hydrated,\neat well,\nfeel amazing!</string>
+    <string name="health_category.button.see_more">See More</string>
+    <!-- etc. -->
 
     <!-- Personal biometric data -->
     <string name="biom.gender">Gender</string>
@@ -63,4 +74,5 @@
 
     <!-- User profile -->
     <string name="user.profile.hi">Hi, </string>
+    <!-- etc. -->
 </resources>

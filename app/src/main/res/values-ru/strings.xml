@@ -21,6 +21,8 @@
     <string name="auth.button.login">Войти</string>
     <string name="auth.button.register_continue">Продолжить</string>
     <string name="auth.valid_error.number.format">Неверный формат числа</string>
+    <string name="health_category.nutrition.description">Пей достаточно,\nпитайся правильно,\nчувствуй себя прекрасно!</string>
+    <string name="health_category.button.see_more">Посмотреть больше</string>
     <string name="biom.gender">Пол</string>
     <string name="biom.gender.male">Мужской</string>
     <string name="biom.gender.female">Женский</string>
@@ -50,4 +52,10 @@
     <string name="auth.valid_error.number.max">Число должно быть не больше %1$s</string>
     <string name="auth.valid_error.number.notempty">Число должно быть не пустым</string>
     <string name="user.profile.hi">Привет,</string>
+    <string name="health_category.title">Категории здоровья</string>
+    <string name="health_category.activity.description">Двигайся больше,\nчувствуй себя лучше!</string>
+    <string name="health_category.nutrition.title">Питание и питьё</string>
+    <string name="health_category.weight.title">Измерения тела и вес</string>
+    <string name="health_category.weight.description">Отслеживай прогресс,\nсохраняй мотивацию!</string>
+    <string name="health_category.activity.title">Активности и тренировки</string>
 </resources>
