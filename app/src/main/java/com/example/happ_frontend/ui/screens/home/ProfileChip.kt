@@ -21,6 +21,7 @@ import com.example.happ_frontend.R
  * @param name The display name of the user, shown in the profile chip.
  * @param circleProfilePicture Whether the profile picture should be displayed in a circular shape.
  * @param roundedProfilePicture Whether the profile picture should be displayed with rounded corners.
+ * @author Vad1mChK
  */
 @Composable
 fun ProfileChip(

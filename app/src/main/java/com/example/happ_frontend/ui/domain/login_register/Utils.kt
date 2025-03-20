@@ -9,6 +9,12 @@ import kotlinx.datetime.toLocalDateTime
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+/**
+ * Converts a [Float] number to string using the specified precision.
+ * @param precision the number of fractional digits
+ * @return the string representation of the number
+ * @author Vad1mChK
+ */
 fun Float.format(precision: Int): String =
     try {
         BigDecimal(this.toDouble())
@@ -25,6 +31,7 @@ fun Float.format(precision: Int): String =
  * Provides the same functionality as java.time.LocalDate.now(), in case the latter is unavailable.
  *
  * @return The current date as a [LocalDate] object.
+ * @author Vad1mChK
  */
 fun LocalDate.Companion.now(): LocalDate {
     val now = Clock.System.now()
@@ -50,6 +57,7 @@ fun LocalDate.Companion.now(): LocalDate {
  *
  * @suppress("DiscouragedApi") This function uses discouraged API `Resources.getIdentifier`
  *         (may be fixed in the future).
+ * @author Vad1mChK
  */
 @SuppressLint("DiscouragedApi")
 inline fun <reified E : Enum<E>> getNameMap(
@@ -76,12 +84,14 @@ inline fun <reified E : Enum<E>> getNameMap(
  *
  * This enum class defines various common naming conventions,
  * allowing for easy reference and conversion between different styles.
+ * @author Vad1mChK
  */
 enum class NamingConvention {
     /**
      * Represents the snake_case naming convention.
      * Words are separated by underscores and all characters are lowercase.
      * Example: "hello_world"
+     * @author Vad1mChK
      */
     SNAKE_CASE,
 
@@ -89,6 +99,7 @@ enum class NamingConvention {
      * Represents the camelCase naming convention.
      * Words are joined without separators, with the first word in lowercase and subsequent words capitalized.
      * Example: "helloWorld"
+     * @author Vad1mChK
      */
     CAMEL_CASE,
 
@@ -96,6 +107,7 @@ enum class NamingConvention {
      * Represents the PascalCase naming convention.
      * Words are joined without separators, with each word capitalized.
      * Example: "HelloWorld"
+     * @author Vad1mChK
      */
     PASCAL_CASE,
 
@@ -103,6 +115,7 @@ enum class NamingConvention {
      * Represents the SCREAMING_SNAKE_CASE naming convention.
      * Words are separated by underscores and all characters are uppercase.
      * Example: "HELLO_WORLD"
+     * @author Vad1mChK
      */
     SCREAMING_SNAKE_CASE
 }
@@ -116,6 +129,7 @@ enum class NamingConvention {
  * @param from The [NamingConvention] of the input string.
  * @param to The target [NamingConvention] to convert the string to.
  * @return A new string converted to the target naming convention.
+ * @author Vad1mChK
  */
 fun String.convertNamingConvention(from: NamingConvention, to: NamingConvention): String {
     val words = when (from) {
@@ -143,6 +157,7 @@ fun String.convertNamingConvention(from: NamingConvention, to: NamingConvention)
  * Capitalizes the first letter of the given string using the [uppercase] method and returns
  * the transformed string.
  * @returns the capitalized string.
+ * @author Vad1mChK
  */
 fun String.capitalize(): String {
     return if (this.isNotEmpty()) this[0].uppercase() + this.substring(1) else this

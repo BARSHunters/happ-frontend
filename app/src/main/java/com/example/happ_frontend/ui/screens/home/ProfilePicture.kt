@@ -33,6 +33,7 @@ private const val MARK_ISU_NUMBER = 368164
  * @param imgRes The drawable resource ID of the image to be displayed. Defaults to an image chosen based on the username.
  * @param isCircle If true, the profile picture is displayed as a circle. Defaults to false.
  * @param isRounded If true, the profile picture is displayed as a rounded rectangle. Defaults to false.
+ * @author Vad1mChK
  */
 @Composable
 fun ProfilePicture(
@@ -67,6 +68,7 @@ fun ProfilePicture(
  *
  * @param username The username for which the image is to be selected.
  * @return The drawable resource ID of the selected image.
+ * @author Vad1mChK
  */
 @DrawableRes
 private fun chooseImageForUsername(username: String): Int {
