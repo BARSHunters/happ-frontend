@@ -22,7 +22,7 @@
     <string name="auth.button.register_continue">Продолжить</string>
     <string name="auth.valid_error.number.format">Неверный формат числа</string>
     <string name="health_category.nutrition.description">Пей достаточно,\nпитайся правильно,\nчувствуй себя прекрасно!</string>
-    <string name="health_category.button.see_more">Посмотреть больше</string>
+    <string name="health_category.button.see_more">Смотри больше</string>
     <string name="biom.gender">Пол</string>
     <string name="biom.gender.male">Мужской</string>
     <string name="biom.gender.female">Женский</string>

@@ -1,0 +1,106 @@
+package com.example.happ_frontend.ui.screens.home
+
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Accessibility
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.example.happ_frontend.R
+
+/**
+ * Composable function that represents the main screen of the application.
+ * It displays the main layout and content for the home screen.
+ * @author Vad1mChK
+ */
+@Composable
+fun HomeScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 64.dp, horizontal = 32.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                HomeIconButton(
+                    size = 40.dp,
+                    cornerRadius = 12.dp,
+                    imageVector = Icons.Outlined.Notifications
+                )
+                HomeIconButton(
+                    size = 40.dp,
+                    cornerRadius = 12.dp,
+                    imageVector = Icons.Outlined.Settings
+                )
+                HomeIconButton(
+                    size = 40.dp,
+                    cornerRadius = 12.dp,
+                    imageVector = Icons.Outlined.Search
+                )
+            }
+            ProfileChip("kitterinka", "Blaze the Cat")
+        }
+
+        Text(
+            stringResource(R.string.health_category_title),
+            fontWeight = FontWeight.Black,
+        )
+
+        HorizontalDivider()
+
+        HealthCategoryWidget(
+            stringResource(R.string.health_category_weight_title),
+            stringResource(R.string.health_category_weight_description),
+            Icons.Default.Accessibility,
+            clickable = true,
+            onClickSeeMore = {
+                Log.d("HomeScreen, HealthCategoryWidget (weight)", "onClickSeeMore")
+            }
+        )
+
+        HealthCategoryWidget(
+            stringResource(R.string.health_category_activity_title),
+            stringResource(R.string.health_category_activity_description),
+            Icons.Default.LocalFireDepartment,
+            clickable = true,
+            onClickSeeMore = {
+                Log.d("HomeScreen, HealthCategoryWidget (activity)", "onClickSeeMore")
+            }
+        )
+
+        HealthCategoryWidget(
+            stringResource(R.string.health_category_nutrition_title),
+            stringResource(R.string.health_category_nutrition_description),
+            Icons.Default.SwapHoriz,
+            clickable = true,
+            onClickSeeMore = {
+                Log.d("HomeScreen, HealthCategoryWidget (nutrition)", "onClickSeeMore")
+            }
+        )
+    }
+}
