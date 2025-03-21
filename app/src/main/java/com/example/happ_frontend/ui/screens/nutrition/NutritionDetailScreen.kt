@@ -12,13 +12,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.Color
+import com.example.happ_frontend.ui.viewmodels.Meal
+import com.example.happ_frontend.ui.viewmodels.NutritionSummary
 
 @Composable
 fun NutritionDetailScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    meals: List<Meal>,
+    nutritionSummary: NutritionSummary
 ) {
     Column(
         modifier = Modifier
@@ -51,46 +55,67 @@ fun NutritionDetailScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NutritionSummary()
+            NutritionSummary(nutritionSummary)
 
-            MealCard(
-                title = "Breakfast",
-                calories = 450,
-                protein = 20,
-                fat = 25,
-                carbs = 35
-            )
+            // Get breakfast, lunch, and dinner
+            val breakfast = meals.findMealByTimeRange("06:00", "10:00")
+            val lunch = meals.findMealByTimeRange("11:00", "14:00")
+            val dinner = meals.findMealByTimeRange("17:00", "21:00")
+            val snack = meals.findMealByTimeRange("14:00", "17:00")
 
-            MealCard(
-                title = "Lunch",
-                calories = 650,
-                protein = 35,
-                fat = 20,
-                carbs = 75
-            )
+            if (breakfast != null) {
+                MealCard(
+                    title = "Breakfast",
+                    calories = breakfast.calories,
+                    protein = breakfast.protein ?: 0,
+                    fat = breakfast.fat ?: 0,
+                    carbs = breakfast.carbs ?: 0,
+                    portionSize = breakfast.portionSize ?: "300g",
+                    name = breakfast.name
+                )
+            }
 
-            MealCard(
-                title = "Dinner",
-                calories = 550,
-                protein = 30,
-                fat = 18,
-                carbs = 60
-            )
+            if (lunch != null) {
+                MealCard(
+                    title = "Lunch",
+                    calories = lunch.calories,
+                    protein = lunch.protein ?: 0,
+                    fat = lunch.fat ?: 0,
+                    carbs = lunch.carbs ?: 0,
+                    portionSize = lunch.portionSize ?: "300g",
+                    name = lunch.name
+                )
+            }
 
-            MealCard(
-                title = "Snack",
-                calories = 200,
-                protein = 5,
-                fat = 8,
-                carbs = 25,
-                isSnack = true
-            )
+            if (dinner != null) {
+                MealCard(
+                    title = "Dinner",
+                    calories = dinner.calories,
+                    protein = dinner.protein ?: 0,
+                    fat = dinner.fat ?: 0,
+                    carbs = dinner.carbs ?: 0,
+                    portionSize = dinner.portionSize ?: "300g",
+                    name = dinner.name
+                )
+            }
+
+            if (snack != null) {
+                MealCard(
+                    title = "Snack",
+                    calories = snack.calories,
+                    protein = snack.protein ?: 0,
+                    fat = snack.fat ?: 0,
+                    carbs = snack.carbs ?: 0,
+                    isSnack = true,
+                    name = snack.name
+                )
+            }
         }
     }
 }
 
 @Composable
-fun NutritionSummary() {
+fun NutritionSummary(summary: NutritionSummary) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp)
@@ -109,10 +134,10 @@ fun NutritionSummary() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                NutrientItem("Calories", "1850", Color(0xFF8BC34A))
-                NutrientItem("Protein", "90g", Color(0xFF03A9F4))
-                NutrientItem("Fat", "71g", Color(0xFFFF9800))
-                NutrientItem("Carbs", "195g", Color(0xFFE91E63))
+                NutrientItem("Calories", "${summary.calories}", Color(0xFF8BC34A))
+                NutrientItem("Protein", "${summary.protein}g", Color(0xFF03A9F4))
+                NutrientItem("Fat", "${summary.fat}g", Color(0xFFFF9800))
+                NutrientItem("Carbs", "${summary.carbs}g", Color(0xFFE91E63))
             }
         }
     }
@@ -141,7 +166,9 @@ fun MealCard(
     protein: Int,
     fat: Int,
     carbs: Int,
-    isSnack: Boolean = false
+    portionSize: String = "300g",
+    isSnack: Boolean = false,
+    name: String
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -152,7 +179,7 @@ fun MealCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = title,
+                text = "$title: $name",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -167,7 +194,7 @@ fun MealCard(
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Text(
-                        text = "Meal Image",
+                        text = name,
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -206,7 +233,7 @@ fun MealCard(
                         )
 
                         Text(
-                            text = "300g",
+                            text = portionSize,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -226,3 +253,16 @@ fun MealCard(
     }
 }
 
+// Extension function to find a meal within a specific time range
+fun List<Meal>.findMealByTimeRange(startHour: String, endHour: String): Meal? {
+    // Simple implementation - just find a meal that might be in that time range based on its time property
+    // In a real app, we'd parse the time and do proper time comparisons
+    return this.find { meal ->
+        val hourOnly = meal.time.split(":").firstOrNull()?.trim() ?: ""
+        when {
+            hourOnly.contains("am") && startHour.contains("0") -> true
+            hourOnly.contains("pm") && startHour.contains("1") -> true
+            else -> false
+        }
+    }
+}

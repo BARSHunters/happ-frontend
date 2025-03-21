@@ -26,7 +26,9 @@ import java.time.format.TextStyle
 import java.util.*
 
 @Composable
-fun MealHistoryCalendar() {
+fun MealHistoryCalendar(
+    onDateSelected: (LocalDate) -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -38,7 +40,8 @@ fun MealHistoryCalendar() {
         )
 
         var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-        val dates = generateDateRange(LocalDate.now().minusDays(4), LocalDate.now().plusDays(2))
+        var currentWeekStart by remember { mutableStateOf(LocalDate.now().minusDays(3)) }
+        val dates = generateDateRange(currentWeekStart, currentWeekStart.plusDays(6))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -49,7 +52,9 @@ fun MealHistoryCalendar() {
                 contentDescription = "Previous",
                 modifier = Modifier
                     .size(40.dp)
-                    .clickable { /* Handle previous date range */ }
+                    .clickable {
+                        currentWeekStart = currentWeekStart.minusDays(7)
+                    }
             )
 
             LazyRow(
@@ -60,7 +65,10 @@ fun MealHistoryCalendar() {
                     DateItem(
                         date = date,
                         isSelected = date == selectedDate,
-                        onDateSelected = { selectedDate = it }
+                        onDateSelected = {
+                            selectedDate = it
+                            onDateSelected(it)
+                        }
                     )
                 }
             }
@@ -70,7 +78,9 @@ fun MealHistoryCalendar() {
                 contentDescription = "Next",
                 modifier = Modifier
                     .size(40.dp)
-                    .clickable { /* Handle next date range */ }
+                    .clickable {
+                        currentWeekStart = currentWeekStart.plusDays(7)
+                    }
             )
         }
     }
@@ -134,4 +144,3 @@ private fun generateDateRange(start: LocalDate, end: LocalDate): List<LocalDate>
     }
     return dateList
 }
-

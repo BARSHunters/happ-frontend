@@ -9,11 +9,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.happ_frontend.ui.viewmodels.MealDay
+import com.example.happ_frontend.ui.viewmodels.Meal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun MealHistoryDetails() {
+fun MealHistoryDetails(
+    mealDay: MealDay?,
+    today: LocalDate = LocalDate.now()
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -25,34 +30,29 @@ fun MealHistoryDetails() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        val today = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("dd MMM - EEEE")
+        if (mealDay != null) {
+            val formatter = DateTimeFormatter.ofPattern("dd MMM - EEEE")
+            val isToday = mealDay.date.equals(today)
 
-        Text(
-            text = "${today.format(formatter)} - Today",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
+            Text(
+                text = "${mealDay.date.format(formatter)}${if (isToday) " - Today" else ""}",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
 
-        MealItem(
-            time = "10:00 am",
-            mealName = "Cheeseburger",
-            calories = 450
-        )
-
-        val yesterday = today.minusDays(1)
-        Text(
-            text = "${yesterday.format(formatter)}",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-
-        MealItem(
-            time = "08:00 am",
-            mealName = "Shawarma",
-            calories = 536
-        )
+            mealDay.meals.forEach { meal ->
+                MealItem(
+                    time = meal.time,
+                    mealName = meal.name,
+                    calories = meal.calories
+                )
+            }
+        } else {
+            Text(
+                text = "No meal data available for this date",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
     }
 }
 
