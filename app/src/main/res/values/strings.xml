@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">happ-frontend</string>
+
+    <string name="nutrition_hydration_title">Nutrition &amp; Hydration</string>
+    <string name="nutrition_hydration_subtitle">Stay hydrated,\neat well,\nfeel amazing!</string>
+    <string name="meal_history">Meal History</string>
+    <string name="create_menu">Create Menu</string>
+
 </resources>
