@@ -62,12 +62,14 @@ fun NutritionScreen(
                 )
             }
 
+            // Banner with nutrition information
             NutritionHeader(onDetailClick = {
                 if (uiState.currentMealDay?.meals?.isNotEmpty() == true) {
                     showDetailScreen = true
                 }
             })
 
+            // Calendar to select dates
             MealHistoryCalendar(
                 selectedDate = uiState.selectedDate,
                 onDateSelected = { date ->
@@ -75,20 +77,26 @@ fun NutritionScreen(
                 }
             )
 
+            // Meal details for the selected date
             MealHistoryDetails(mealDay = uiState.currentMealDay)
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // Button to create a new menu
             CreateMenuButton(onClick = {
                 viewModel.createNewMenuForToday()
+                showDetailScreen = true // Show detail screen after creating a new menu
             })
 
+            // Loading indicator
             if (uiState.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(
+                        color = Color(0xFFA590B6) // Purple color to match the design
+                    )
                 }
             }
         }

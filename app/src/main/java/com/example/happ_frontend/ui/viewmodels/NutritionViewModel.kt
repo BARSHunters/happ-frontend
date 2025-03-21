@@ -5,10 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class NutritionViewModel : ViewModel() {
 
@@ -32,72 +30,100 @@ class NutritionViewModel : ViewModel() {
                 // Today's menu
                 listOf(
                     Meal(
-                        time = "10:00 am",
-                        name = "Cheeseburger",
+                        time = "08:00 am",
+                        name = "Avocado Toast with Eggs",
                         calories = 450,
                         protein = 22,
                         fat = 25,
-                        carbs = 35
+                        carbs = 35,
+                        portionSize = "250g",
+                        imageUrl = "https://example.com/avocado_toast.jpg", // Mock image URL
+                        recipeUrl = "https://example.com/recipes/avocado_toast",
+                        mealType = MealType.BREAKFAST
                     ),
                     Meal(
-                        time = "12:00 pm",
-                        name = "Shawarma",
+                        time = "12:30 pm",
+                        name = "Grilled Chicken Shawarma with Vegetables",
                         calories = 536,
-                        protein = 28,
+                        protein = 38,
                         fat = 22,
-                        carbs = 50
+                        carbs = 40,
+                        portionSize = "350g",
+                        imageUrl = "https://example.com/shawarma.jpg",
+                        recipeUrl = "https://example.com/recipes/chicken_shawarma",
+                        mealType = MealType.LUNCH
                     ),
                     Meal(
                         time = "07:00 pm",
-                        name = "Pizza",
-                        calories = 680,
-                        protein = 24,
-                        fat = 30,
-                        carbs = 76
+                        name = "Salmon with Roasted Vegetables",
+                        calories = 520,
+                        protein = 34,
+                        fat = 28,
+                        carbs = 26,
+                        portionSize = "300g",
+                        imageUrl = "https://example.com/salmon.jpg",
+                        recipeUrl = "https://example.com/recipes/salmon_roasted_vegetables",
+                        mealType = MealType.DINNER
                     ),
                     Meal(
                         time = "04:00 pm",
-                        name = "Snack",
+                        name = "Greek Yogurt with Berries",
                         calories = 200,
-                        protein = 5,
+                        protein = 15,
                         fat = 8,
-                        carbs = 25
+                        carbs = 20,
+                        portionSize = "150g",
+                        mealType = MealType.SNACK
                     )
                 )
             } else if (date.isBefore(LocalDate.now())) {
                 // Past menu
                 listOf(
                     Meal(
-                        time = "08:00 am",
-                        name = "Oatmeal",
+                        time = "07:30 am",
+                        name = "Oatmeal with Fruit and Nuts",
                         calories = 320,
                         protein = 12,
-                        fat = 6,
-                        carbs = 58
+                        fat = 10,
+                        carbs = 48,
+                        portionSize = "280g",
+                        imageUrl = "https://example.com/oatmeal.jpg",
+                        recipeUrl = "https://example.com/recipes/oatmeal_fruit_nuts",
+                        mealType = MealType.BREAKFAST
                     ),
                     Meal(
-                        time = "12:00 pm",
-                        name = "Sandwich",
+                        time = "01:00 pm",
+                        name = "Quinoa Bowl with Grilled Vegetables",
                         calories = 450,
                         protein = 20,
                         fat = 15,
-                        carbs = 45
+                        carbs = 60,
+                        portionSize = "320g",
+                        imageUrl = "https://example.com/quinoa_bowl.jpg",
+                        recipeUrl = "https://example.com/recipes/quinoa_bowl",
+                        mealType = MealType.LUNCH
                     ),
                     Meal(
-                        time = "07:00 pm",
-                        name = "Salad",
+                        time = "06:30 pm",
+                        name = "Baked Cod with Sweet Potato",
                         calories = 380,
-                        protein = 15,
+                        protein = 30,
                         fat = 12,
-                        carbs = 30
+                        carbs = 30,
+                        portionSize = "300g",
+                        imageUrl = "https://example.com/baked_cod.jpg",
+                        recipeUrl = "https://example.com/recipes/baked_cod",
+                        mealType = MealType.DINNER
                     ),
                     Meal(
-                        time = "04:00 pm",
-                        name = "Fruit",
+                        time = "03:30 pm",
+                        name = "Mixed Fruit Salad",
                         calories = 120,
                         protein = 2,
                         fat = 0,
-                        carbs = 30
+                        carbs = 30,
+                        portionSize = "150g",
+                        mealType = MealType.SNACK
                     )
                 )
             } else {
@@ -131,35 +157,49 @@ class NutritionViewModel : ViewModel() {
             val meals = listOf(
                 Meal(
                     time = "08:00 am",
-                    name = "Pasta",
-                    calories = 420,
-                    protein = 18,
-                    fat = 10,
-                    carbs = 65
+                    name = "Spinach and Mushroom Omelet",
+                    calories = 380,
+                    protein = 25,
+                    fat = 22,
+                    carbs = 15,
+                    portionSize = "220g",
+                    imageUrl = "https://example.com/omelet.jpg",
+                    recipeUrl = "https://example.com/recipes/spinach_mushroom_omelet",
+                    mealType = MealType.BREAKFAST
                 ),
                 Meal(
-                    time = "12:00 pm",
-                    name = "Sushi",
-                    calories = 380,
-                    protein = 20,
-                    fat = 8,
-                    carbs = 45
+                    time = "12:30 pm",
+                    name = "Sushi Bento Box",
+                    calories = 520,
+                    protein = 28,
+                    fat = 14,
+                    carbs = 65,
+                    portionSize = "350g",
+                    imageUrl = "https://example.com/sushi.jpg",
+                    recipeUrl = "https://example.com/recipes/sushi_bento",
+                    mealType = MealType.LUNCH
                 ),
                 Meal(
                     time = "07:00 pm",
-                    name = "Rice with Vegetables",
+                    name = "Vegetable Stir Fry with Tofu",
                     calories = 420,
-                    protein = 12,
-                    fat = 6,
-                    carbs = 80
+                    protein = 22,
+                    fat = 18,
+                    carbs = 40,
+                    portionSize = "320g",
+                    imageUrl = "https://example.com/stir_fry.jpg",
+                    recipeUrl = "https://example.com/recipes/tofu_stir_fry",
+                    mealType = MealType.DINNER
                 ),
                 Meal(
                     time = "04:00 pm",
-                    name = "Greek Yogurt",
-                    calories = 150,
-                    protein = 15,
-                    fat = 5,
-                    carbs = 8
+                    name = "Hummus with Carrot Sticks",
+                    calories = 180,
+                    protein = 8,
+                    fat = 10,
+                    carbs = 16,
+                    portionSize = "120g",
+                    mealType = MealType.SNACK
                 )
             )
 
@@ -208,6 +248,13 @@ data class MealDay(
     val meals: List<Meal>
 )
 
+enum class MealType {
+    BREAKFAST,
+    LUNCH,
+    DINNER,
+    SNACK
+}
+
 data class Meal(
     val time: String,
     val name: String,
@@ -217,7 +264,8 @@ data class Meal(
     val carbs: Int? = null,
     val portionSize: String? = "300g",
     val imageUrl: String? = null,
-    val recipeUrl: String? = null
+    val recipeUrl: String? = null,
+    val mealType: MealType = MealType.SNACK
 )
 
 data class NutritionSummary(

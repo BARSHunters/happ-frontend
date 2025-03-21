@@ -13,9 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.happ_frontend.ui.viewmodels.Meal
+import com.example.happ_frontend.ui.viewmodels.MealType
 import com.example.happ_frontend.ui.viewmodels.NutritionSummary
 
 @Composable
@@ -37,14 +39,16 @@ fun NutritionDetailScreen(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = Color(0xFF9D89C5) // Purple color to match the design
                 )
             }
 
             Text(
                 text = "Today's Menu",
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF7B639C) // Purple color to match the design
             )
         }
 
@@ -57,57 +61,38 @@ fun NutritionDetailScreen(
         ) {
             NutritionSummary(nutritionSummary)
 
-            // Get breakfast, lunch, and dinner
-            val breakfast = meals.findMealByTimeRange("06:00", "10:00")
-            val lunch = meals.findMealByTimeRange("11:00", "14:00")
-            val dinner = meals.findMealByTimeRange("17:00", "21:00")
-            val snack = meals.findMealByTimeRange("14:00", "17:00")
+            // Get meal by type
+            val breakfast = meals.find { it.mealType == MealType.BREAKFAST }
+            val lunch = meals.find { it.mealType == MealType.LUNCH }
+            val dinner = meals.find { it.mealType == MealType.DINNER }
+            val snack = meals.find { it.mealType == MealType.SNACK }
 
             if (breakfast != null) {
                 MealCard(
                     title = "Breakfast",
-                    calories = breakfast.calories,
-                    protein = breakfast.protein ?: 0,
-                    fat = breakfast.fat ?: 0,
-                    carbs = breakfast.carbs ?: 0,
-                    portionSize = breakfast.portionSize ?: "300g",
-                    name = breakfast.name
+                    meal = breakfast
                 )
             }
 
             if (lunch != null) {
                 MealCard(
                     title = "Lunch",
-                    calories = lunch.calories,
-                    protein = lunch.protein ?: 0,
-                    fat = lunch.fat ?: 0,
-                    carbs = lunch.carbs ?: 0,
-                    portionSize = lunch.portionSize ?: "300g",
-                    name = lunch.name
+                    meal = lunch
                 )
             }
 
             if (dinner != null) {
                 MealCard(
                     title = "Dinner",
-                    calories = dinner.calories,
-                    protein = dinner.protein ?: 0,
-                    fat = dinner.fat ?: 0,
-                    carbs = dinner.carbs ?: 0,
-                    portionSize = dinner.portionSize ?: "300g",
-                    name = dinner.name
+                    meal = dinner
                 )
             }
 
             if (snack != null) {
                 MealCard(
                     title = "Snack",
-                    calories = snack.calories,
-                    protein = snack.protein ?: 0,
-                    fat = snack.fat ?: 0,
-                    carbs = snack.carbs ?: 0,
-                    isSnack = true,
-                    name = snack.name
+                    meal = snack,
+                    isSnack = true
                 )
             }
         }
@@ -118,7 +103,10 @@ fun NutritionDetailScreen(
 fun NutritionSummary(summary: NutritionSummary) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFF6F3FD) // Light purple background to match the design
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -127,7 +115,8 @@ fun NutritionSummary(summary: NutritionSummary) {
             Text(
                 text = "Daily Summary",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF7B639C) // Purple color to match the design
             )
 
             Row(
@@ -162,41 +151,44 @@ fun NutrientItem(label: String, value: String, color: Color) {
 @Composable
 fun MealCard(
     title: String,
-    calories: Int,
-    protein: Int,
-    fat: Int,
-    carbs: Int,
-    portionSize: String = "300g",
-    isSnack: Boolean = false,
-    name: String
+    meal: Meal,
+    isSnack: Boolean = false
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "$title: $name",
+                text = "$title: ${meal.name}",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF7B639C) // Purple color to match the design
             )
 
-            // Placeholder for image (except for snack)
+            // Image placeholder (except for snack)
             if (!isSnack) {
+                // In a real app, we would use Coil or Glide to load the actual image
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(160.dp)
                         .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .background(Color(0xFFF3F0F9)) // Light purple background
                 ) {
                     Text(
-                        text = name,
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = meal.name,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp),
+                        color = Color(0xFF9D89C5), // Purple text color
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
@@ -210,17 +202,20 @@ fun MealCard(
                     Text(
                         text = "Nutrition",
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF4A4A4A)
                     )
 
                     Text(
-                        text = "Calories: $calories kcal",
-                        style = MaterialTheme.typography.bodySmall
+                        text = "Calories: ${meal.calories} kcal",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF4A4A4A)
                     )
 
                     Text(
-                        text = "Protein: ${protein}g • Fat: ${fat}g • Carbs: ${carbs}g",
-                        style = MaterialTheme.typography.bodySmall
+                        text = "Protein: ${meal.protein}g • Fat: ${meal.fat}g • Carbs: ${meal.carbs}g",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF4A4A4A)
                     )
                 }
 
@@ -229,40 +224,31 @@ fun MealCard(
                         Text(
                             text = "Portion Size",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF4A4A4A)
                         )
 
                         Text(
-                            text = portionSize,
-                            style = MaterialTheme.typography.bodySmall
+                            text = meal.portionSize ?: "300g",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF4A4A4A)
                         )
                     }
                 }
             }
 
             // Recipe link (except for snack)
-            if (!isSnack) {
+            if (!isSnack && meal.recipeUrl != null) {
                 TextButton(
                     onClick = { /* Open recipe */ },
-                    modifier = Modifier.align(Alignment.End)
+                    modifier = Modifier.align(Alignment.End),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = Color(0xFF9D89C5) // Purple color for the button
+                    )
                 ) {
                     Text("View Recipe")
                 }
             }
-        }
-    }
-}
-
-// Extension function to find a meal within a specific time range
-fun List<Meal>.findMealByTimeRange(startHour: String, endHour: String): Meal? {
-    // Simple implementation - just find a meal that might be in that time range based on its time property
-    // In a real app, we'd parse the time and do proper time comparisons
-    return this.find { meal ->
-        val hourOnly = meal.time.split(":").firstOrNull()?.trim() ?: ""
-        when {
-            hourOnly.contains("am") && startHour.contains("0") -> true
-            hourOnly.contains("pm") && startHour.contains("1") -> true
-            else -> false
         }
     }
 }
