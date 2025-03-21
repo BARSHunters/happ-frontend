@@ -1,6 +1,7 @@
 package com.example.happ_frontend.ui.screens.nutrition
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,54 +13,47 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.happ_frontend.R
 
 @Composable
-fun NutritionHeader() {
+fun NutritionHeader(onDetailClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.tertiaryContainer
-                    ),
-                    start = Offset.Zero,
-                    end = Offset.Infinite
-                )
-            )
+            .background(Color(0xFFF6E9F8)) // Light purple from screenshot
+            .clickable { onDetailClick() }
             .padding(24.dp)
     ) {
         Column(modifier = Modifier.align(Alignment.CenterStart)) {
             Text(
-                text = stringResource(R.string.nutrition_hydration_title),
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold
+                text = "Nutrition & Hydration",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF4A4A4A)
             )
 
             Text(
-                text = stringResource(R.string.nutrition_hydration_subtitle),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.SemiBold,
+                text = "Stay hydrated,\neat well,\nfeel amazing!",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF4A4A4A),
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
 
-        Icon(
-            imageVector = Icons.Filled.ArrowForward,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        Row(
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .size(24.dp)
-        )
+                .align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.ArrowForward,
+                contentDescription = null,
+                tint = Color(0xFF5A43A5), // Purple arrows from screenshot
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
-
