@@ -7,14 +7,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.happ_frontend.ui.viewmodels.NutritionViewModel
 
 @Composable
 fun NutritionScreen(
-    viewModel: NutritionViewModel = viewModel()
+    viewModel: NutritionViewModel = viewModel(),
+    onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDetailScreen by remember { mutableStateOf(false) }
@@ -32,15 +35,30 @@ fun NutritionScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 8.dp)
+            // Header with back button and centered title
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             ) {
+                IconButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color(0xFFA590B6) // Purple color to match the design
+                    )
+                }
+
                 Text(
                     text = "Nutrition",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
+                    textAlign = TextAlign.Center,
+                    color = Color(0xFF7B639C), // Purple color to match the design
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
 
@@ -50,15 +68,20 @@ fun NutritionScreen(
                 }
             })
 
-            MealHistoryCalendar(onDateSelected = { date ->
-                viewModel.loadNutritionMenuForDate(date)
-            })
+            MealHistoryCalendar(
+                selectedDate = uiState.selectedDate,
+                onDateSelected = { date ->
+                    viewModel.loadNutritionMenuForDate(date)
+                }
+            )
 
             MealHistoryDetails(mealDay = uiState.currentMealDay)
 
             Spacer(modifier = Modifier.weight(1f))
 
-            CreateMenuButton(onClick = { viewModel.createNewMenu() })
+            CreateMenuButton(onClick = {
+                viewModel.createNewMenuForToday()
+            })
 
             if (uiState.isLoading) {
                 Box(
