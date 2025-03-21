@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.happ_frontend.ui.viewmodels.MealDay
 import com.example.happ_frontend.ui.viewmodels.Meal
@@ -67,8 +68,13 @@ fun MealItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "$time - $mealName",
-            style = MaterialTheme.typography.bodyMedium
+            text = "$time - ${mealName.trim()}",
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .weight(1f) // Занимает доступное пространство
+                .padding(end = 8.dp) // Отступ перед калориями
         )
 
         Text(
