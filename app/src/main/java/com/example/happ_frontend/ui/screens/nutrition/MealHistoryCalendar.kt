@@ -17,16 +17,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
+import java.time.temporal.TemporalAdjusters
 import java.util.*
 
 @Composable
 fun MealHistoryCalendar(
+    selectedDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit
 ) {
     Column(
@@ -39,9 +43,15 @@ fun MealHistoryCalendar(
             fontWeight = FontWeight.Bold
         )
 
-        var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-        var currentWeekStart by remember { mutableStateOf(LocalDate.now().minusDays(3)) }
-        val dates = generateDateRange(currentWeekStart, currentWeekStart.plusDays(6))
+        // Find the Monday of the week for the selected date
+        val mondayOfWeek = remember(selectedDate) {
+            selectedDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        }
+
+        // Generate weekdays (Monday to Sunday)
+        val weekdays = remember(mondayOfWeek) {
+            (0..6).map { mondayOfWeek.plusDays(it.toLong()) }
+        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -49,11 +59,13 @@ fun MealHistoryCalendar(
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Previous",
+                contentDescription = "Previous Week",
                 modifier = Modifier
                     .size(40.dp)
                     .clickable {
-                        currentWeekStart = currentWeekStart.minusDays(7)
+                        // Go to previous week's Monday
+                        val prevMonday = mondayOfWeek.minusWeeks(1)
+                        onDateSelected(prevMonday)
                     }
             )
 
@@ -61,25 +73,24 @@ fun MealHistoryCalendar(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                items(dates) { date ->
+                items(weekdays) { date ->
                     DateItem(
                         date = date,
-                        isSelected = date == selectedDate,
-                        onDateSelected = {
-                            selectedDate = it
-                            onDateSelected(it)
-                        }
+                        isSelected = date.isEqual(selectedDate),
+                        onDateSelected = onDateSelected
                     )
                 }
             }
 
             Icon(
                 imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = "Next",
+                contentDescription = "Next Week",
                 modifier = Modifier
                     .size(40.dp)
                     .clickable {
-                        currentWeekStart = currentWeekStart.plusDays(7)
+                        // Go to next week's Monday
+                        val nextMonday = mondayOfWeek.plusWeeks(1)
+                        onDateSelected(nextMonday)
                     }
             )
         }
@@ -93,18 +104,22 @@ fun DateItem(
     onDateSelected: (LocalDate) -> Unit
 ) {
     val backgroundColor = if (isSelected)
-        MaterialTheme.colorScheme.primary
+        Color(0xFF9D89C5) // Updated to match the screenshot's purple
     else
         MaterialTheme.colorScheme.surface
 
     val textColor = if (isSelected)
-        MaterialTheme.colorScheme.onPrimary
+        Color.White
     else
         MaterialTheme.colorScheme.onSurface
+
+    val today = LocalDate.now()
+    val isToday = date.equals(today)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            // Updated shape to match the screenshot (more rectangular with rounded corners)
             .clip(RoundedCornerShape(16.dp))
             .background(backgroundColor)
             .border(
@@ -112,7 +127,7 @@ fun DateItem(
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
                 shape = RoundedCornerShape(16.dp)
             )
-            .width(60.dp)
+            .width(44.dp) // Adjusted to match screenshot
             .height(70.dp)
             .clickable { onDateSelected(date) }
             .padding(4.dp),
@@ -133,14 +148,4 @@ fun DateItem(
             textAlign = TextAlign.Center
         )
     }
-}
-
-private fun generateDateRange(start: LocalDate, end: LocalDate): List<LocalDate> {
-    val dateList = mutableListOf<LocalDate>()
-    var current = start
-    while (!current.isAfter(end)) {
-        dateList.add(current)
-        current = current.plusDays(1)
-    }
-    return dateList
 }

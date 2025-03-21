@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -31,7 +32,7 @@ class NutritionViewModel : ViewModel() {
                 // Today's menu
                 listOf(
                     Meal(
-                        time = "08:00 am",
+                        time = "10:00 am",
                         name = "Cheeseburger",
                         calories = 450,
                         protein = 22,
@@ -115,13 +116,16 @@ class NutritionViewModel : ViewModel() {
         }
     }
 
-    fun createNewMenu() {
+    fun createNewMenuForToday() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
+            // Switch to today's date
+            val today = LocalDate.now()
+
             // TODO: Call API to create a new menu
             // Example API call - implement actual API client later
-            // val response = api.getNutritionMenu()
+            // val response = api.createNutritionMenu(today.format(DateTimeFormatter.ISO_DATE))
 
             // Mock data for a newly created menu
             val meals = listOf(
@@ -159,10 +163,11 @@ class NutritionViewModel : ViewModel() {
                 )
             )
 
-            val mealDay = MealDay(date = LocalDate.now(), meals = meals)
+            val mealDay = MealDay(date = today, meals = meals)
 
-            // After API call, update UI state
+            // After API call, update UI state to today with the new menu
             _uiState.value = _uiState.value.copy(
+                selectedDate = today,
                 currentMealDay = mealDay,
                 isLoading = false
             )
