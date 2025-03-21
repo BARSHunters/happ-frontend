@@ -42,12 +42,17 @@
             android:theme="@style/Theme.Happfrontend">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.activities.NutritionActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.domain.ActivityActivity"
             android:exported="false" />
 
     </application>
+
 </manifest>
