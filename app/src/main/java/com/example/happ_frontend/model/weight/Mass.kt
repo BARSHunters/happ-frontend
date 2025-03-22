@@ -1,4 +1,4 @@
-package com.example.happ_frontend.ui.domain.weight
+package com.example.happ_frontend.model.weight
 
 /**
  * A value class representing a mass in kilograms.

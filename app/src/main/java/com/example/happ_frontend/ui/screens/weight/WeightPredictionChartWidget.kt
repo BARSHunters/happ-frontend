@@ -19,8 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.login_register.format
-import com.example.happ_frontend.ui.domain.weight.CalendarEvent
-import com.example.happ_frontend.ui.domain.weight.Mass
+import com.example.happ_frontend.model.weight.CalendarEvent
+import com.example.happ_frontend.model.weight.Mass
 import com.example.happ_frontend.ui.domain.weight.fromEpochMilliseconds
 import com.example.happ_frontend.ui.domain.weight.toEpochMilliseconds
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost

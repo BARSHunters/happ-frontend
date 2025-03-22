@@ -6,8 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.happ_frontend.ui.domain.login_register.now
-import com.example.happ_frontend.ui.domain.weight.CalendarEvent
-import kotlinx.datetime.DateTimePeriod
+import com.example.happ_frontend.model.weight.CalendarEvent
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus

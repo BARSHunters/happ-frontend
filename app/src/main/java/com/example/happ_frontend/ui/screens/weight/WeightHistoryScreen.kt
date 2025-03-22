@@ -2,7 +2,6 @@ package com.example.happ_frontend.ui.screens.weight
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,12 +25,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.login_register.format
 import com.example.happ_frontend.ui.domain.login_register.now
-import com.example.happ_frontend.ui.domain.weight.WeightCalendarEvent
+import com.example.happ_frontend.model.weight.WeightCalendarEvent
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
-import com.example.happ_frontend.ui.domain.weight.kg
+import com.example.happ_frontend.model.weight.kg
 import com.example.happ_frontend.ui.domain.weight.minus
 import com.example.happ_frontend.ui.domain.weight.plus
-import com.example.happ_frontend.ui.domain.weight.times
 import com.example.happ_frontend.ui.screens.home.HealthCategoryWidget
 import kotlinx.datetime.DateTimePeriod
 import kotlinx.datetime.LocalDate

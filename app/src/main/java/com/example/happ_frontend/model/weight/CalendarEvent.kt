@@ -1,4 +1,4 @@
-package com.example.happ_frontend.ui.domain.weight
+package com.example.happ_frontend.model.weight
 
 import kotlinx.datetime.LocalDateTime
 

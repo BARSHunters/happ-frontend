@@ -2,6 +2,7 @@ package com.example.happ_frontend.ui.domain.weight
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import com.example.happ_frontend.model.weight.WeightCalendarEvent
 import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidationResult
 import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidator
 import kotlinx.coroutines.flow.MutableStateFlow
