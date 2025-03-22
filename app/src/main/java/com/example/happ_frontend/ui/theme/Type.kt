@@ -23,6 +23,14 @@ val quicksandFamily = FontFamily(
     Font(R.font.quicksand_light, weight = FontWeight.Light)
 )
 
+val leagueSpartanFamily = FontFamily(
+    Font(R.font.lspartan_black, weight = FontWeight.Black),
+    Font(R.font.lspartan_bold, weight = FontWeight.Bold),
+    Font(R.font.lspartan_semibold, weight = FontWeight.SemiBold),
+    Font(R.font.lspartan_medium, weight = FontWeight.Medium),
+    Font(R.font.lspartan_regular, weight = FontWeight.Normal),
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     titleLarge = TextStyle(
@@ -37,6 +45,12 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
         lineHeight = 36.sp
+    ),
+    titleSmall = TextStyle(
+        fontFamily = interFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+        lineHeight = 28.sp
     ),
     bodyLarge = TextStyle(
         fontFamily = interFamily,
@@ -77,6 +91,24 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 18.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = leagueSpartanFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+    ),
+    labelMedium = TextStyle(
+        fontFamily = leagueSpartanFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
+    ),
+    labelSmall = TextStyle(
+        fontFamily = leagueSpartanFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 8.sp,
+        lineHeight = 16.sp,
     )
     /* Other default text styles to override
     titleLarge = TextStyle(

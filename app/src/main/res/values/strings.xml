@@ -39,11 +39,23 @@
     <!-- Home screen, weight history, etc: health categories -->
     <string name="health_category.title">Health Categories</string>
     <string name="health_category.weight.title">Body Measurements &amp; Weight</string>
+    <string name="health_category.weight.page_title">Weight History</string>
     <string name="health_category.weight.description">Track your progress\nand stay motivated!</string>
+    <string name="health_category.weight.prediction">Weight predictions</string>
+    <string name="health_category.weight.prediction.not_enough_data">Not enough data to predict weight</string>
+    <string name="health_category.weight.button.add_entry">Add Weight Entry</string>
+    <string name="health_category.weight.dialog.title">New weight entry</string>
+    <string name="health_category.weight.dialog.field.date">Entry date</string>
+    <string name="health.category.weight.dialog.field.time">Entry time</string>
+    <string name="health.category.weight.dialog.field.weight">Current weight (kg)</string>
     <string name="health_category.activity.title">Activity &amp; Workouts</string>
+    <string name="health_category.activity.page_title">Activity</string>
     <string name="health_category.activity.description">Move more,\nfeel better!</string>
     <string name="health_category.nutrition.title">Nutrition &amp; Hydration</string>
+    <string name="health_category.nutrition.page_title">Nutrition</string>
     <string name="health_category.nutrition.description">Stay hydrated,\neat well,\nfeel amazing!</string>
+    <string name="health_category.common.event_list.today">Today</string>
+    <string name="health_category.common.event_list.no_data">No data to display</string>
     <string name="health_category.button.see_more">See More</string>
     <!-- etc. -->
 
