@@ -4,6 +4,25 @@ import com.example.happ_frontend.model.login_register.Gender
 import com.example.happ_frontend.model.login_register.WeightDesire
 import kotlinx.datetime.LocalDate
 
+/**
+ * Data class representing form data for login and registration screens.
+ *
+ * @property username The username entered by the user.
+ * @property password The password entered by the user.
+ * @property confirmPassword The password confirmation entered by the user.
+ * @property passwordCensored Indicates whether the password should be censored.
+ * @property name The name entered by the user. Default is an empty string.
+ * @property birthDate The birth date entered by the user.
+ * @property gender The gender selected by the user.
+ * @property heightCm The height entered by the user in centimeters.
+ * @property weightKg The weight entered by the user in kilograms.
+ * @property weightDesire The weight desire selected by the user.
+ * @property errorMessage The error message to be displayed.
+ *
+ * @see Gender
+ * @see WeightDesire
+ * @author Vad1mChK
+ */
 data class LoginRegisterFormData(
     val username: String = "",
     val password: String = "",

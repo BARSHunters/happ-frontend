@@ -33,10 +33,19 @@ import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 
+/**
+ * A composable function that displays a list of calendar events in a scrollable view.
+ *
+ * @param events A list of [CalendarEvent] objects to be displayed.
+ * @param todayDate The current date. Default value is the current date obtained using [LocalDate.now].
+ * @param eventValueFormatter A function that formats the event value to a string.
+ *   Default value is a lambda that converts the event value to a string using [toString].
+ * @param groupByDate A flag indicating whether to group the events by date. Default value is false.
+ * @author Vad1mChK
+ */
 @Composable
 fun <T: Any> CalendarEventListView(
     events: List<CalendarEvent<T>>,
-    selectedDate: LocalDate,
     todayDate: LocalDate = LocalDate.now(),
     eventValueFormatter: @Composable (T) -> String = { eventValue -> eventValue.toString() },
     groupByDate: Boolean = false

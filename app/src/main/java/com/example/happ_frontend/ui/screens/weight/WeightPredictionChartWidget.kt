@@ -46,6 +46,25 @@ private const val EXTRAPOLATION_RATE = 10
 private const val OUTSTRETCH_RATE = 1.1
 private const val EXTRA_OUTSTRETCH = 0.1
 
+/**
+ *
+ * @param eventSeries The series of real weight events to be displayed on the chart.
+ * @param predictionEventSeries The series of predicted weight events to be displayed on the chart.
+ *
+ * The function builds a line chart using the Vico library to display the weight data.
+ * It first prepares the extended data for the chart, including extrapolation for missing data points.
+ * Then, it configures the line chart layers, axes, and model producer for the chart.
+ * Finally, it builds and hosts the chart in a Compose layout.
+ *
+ * The chart displays real weight events as solid lines and predicted weight events as dashed lines.
+ * It also includes vertical and horizontal rulers to help visualize the data points.
+ *
+ * The chart is responsive and adjusts its size based on the available space.
+ * It also includes axis labels and a title to provide context and clarity to the user.
+ *
+ * @author Vad1mChK
+*/
+
 @Composable
 fun WeightPredictionChartWidget(
     eventSeries: List<CalendarEvent<Mass>>,
@@ -321,6 +340,21 @@ private fun CustomLineChart(
     )
 }
 
+/**
+ * A helper function to calculate linear interpolation between two points.
+ *
+ * @param firstPoint The first point (X, Y) for interpolation.
+ * @param secondPoint The second point (X, Y) for interpolation.
+ * @param inputPoint The input point (X) for interpolation.
+ * @return The interpolated Y value based on the input point:
+ * - If `x == x1`, returns `y1`.
+ * - If `x == x2`, returns `y2`.
+ * - If `x1 == x21, returns the average of `y1` and `y2`.
+ * - Else, returns a value according to the slope formula:
+ *   `(y2 - y1) / (x2 - x1) * (x - x1) + y1`
+ * - If the value somehow ends up non-finite, falls back to 0.
+ * @author Vad1mChK
+ */
 private fun <X: Number, Y: Number> calculateLinearInterpolation(
         firstPoint: Pair<X, Y>,
         secondPoint: Pair<X, Y>,
@@ -350,5 +384,5 @@ private fun <X: Number, Y: Number> calculateLinearInterpolation(
             val slope = (y2 - y1) / (x2 - x1)
             if (slope.isFinite()) slope * (x - x1) + y1 else Float.NaN
         }
-    }.takeUnless { it.isNaN() } ?: 0f  // Fallback to 0 if NaN
+    }.takeIf { it.isFinite() } ?: 0f  // Fallback to 0 if NaN
 }

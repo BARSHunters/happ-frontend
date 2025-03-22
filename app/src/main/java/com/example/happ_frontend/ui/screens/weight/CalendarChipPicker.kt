@@ -30,6 +30,16 @@ import kotlinx.datetime.plus
 
 const val DAYS_IN_WEEK = 7
 
+/**
+ * A composable function that displays a row of [InputChip]s representing a calendar slice.
+ * Each chip represents a day of the week and displays the day number and its abbreviated weekday.
+ *
+ * @param selectedDate The currently selected date. Default is the current date.
+ * @param onDateSelected A callback function that is invoked when a date is selected.
+ * @param windowCount The number of days to display in the calendar. Default is [DAYS_IN_WEEK].
+ * @param windowPosition The position of the selected date in the calendar. Default is half of [windowCount].
+ * @author Vad1mChK
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CalendarChipPicker(

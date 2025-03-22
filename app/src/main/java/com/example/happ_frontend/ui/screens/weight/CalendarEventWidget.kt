@@ -14,6 +14,20 @@ import kotlinx.datetime.minus
 
 private const val CALENDAR_MAX_DAYS_DEPTH = 3
 
+/**
+ * A composable function that displays a calendar view with events and allows users to add new events.
+ *
+ * @param events A list of [CalendarEvent] objects to be displayed in the calendar.
+ * @param windowCount The count of windows in the calendar picker.
+ * @param todayDate The current date.
+ * @param selectedDate The date currently selected in the calendar.
+ * @param onDateSelected A callback function that is invoked when a date is selected in the calendar.
+ * @param groupEventsByDate A flag indicating whether events should be grouped by date.
+ * @param eventValueFormatter A composable function that formats the event values.
+ * @param onEventAddButtonClicked A callback function that is invoked when the add event button is clicked.
+ * @param labelTextForAddEventButton The text to be displayed on the add event button.
+ * @author Vad1mChK
+ */
 @Composable
 fun <T: Any> CalendarEventWidget(
     events: List<CalendarEvent<T>>,
@@ -39,7 +53,6 @@ fun <T: Any> CalendarEventWidget(
                 it.dateTime.date <= selectedDate &&
                 it.dateTime.date > selectedDate.minus(CALENDAR_MAX_DAYS_DEPTH, DateTimeUnit.DAY)
             },
-        selectedDate = selectedDate,
         todayDate = todayDate,
         groupByDate = groupEventsByDate,
         eventValueFormatter = eventValueFormatter

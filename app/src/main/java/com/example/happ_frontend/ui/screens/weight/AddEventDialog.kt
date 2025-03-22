@@ -27,6 +27,19 @@ import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.weight.WeightCalendarEvent
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
 
+/**
+ * A dialog for adding a new weight event to the calendar.
+ *
+ * @param onCancel A function to be invoked when the user cancels the dialog.
+ * @param onSubmit A function to be invoked when the user submits the new weight event.
+ * @param submitEnabledCondition A function that returns whether the submit button should be enabled.
+ * @param content The content of the dialog.
+ *
+ * The dialog displays two buttons: "OK" and "Cancel". When the "OK" button is clicked, the [onSubmit] function is invoked.
+ * When the "Cancel" button is clicked, the [onCancel] function is invoked. The "OK" button is enabled only when the
+ * [submitEnabledCondition] function returns true.
+ * @author Vad1mChK
+ */
 @Composable
 fun AddEventDialog(
     onCancel: () -> Unit = {},

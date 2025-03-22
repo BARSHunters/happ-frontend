@@ -4,9 +4,29 @@ import com.example.happ_frontend.R
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+/**
+ * A sealed interface for validating login and registration input fields.
+ *
+ * @param T The type of the value to be validated.
+ * @author Vad1mChK
+ */
 sealed interface LoginRegisterValidator<T> {
+    /**
+     * Validates the given value according to the specific validator's rules.
+     *
+     * @param value The value to be validated.
+     * @return A [LoginRegisterValidationResult] indicating the success or failure of the validation.
+     * @author Vad1mChK
+     */
     fun validate(value: T): LoginRegisterValidationResult
 
+    /**
+     * Validates if an integer is within a specified range.
+     *
+     * @property min The minimum allowed value (inclusive), or null if there's no lower bound.
+     * @property max The maximum allowed value (inclusive), or null if there's no upper bound.
+     * @author Vad1mChK
+     */
     class IntInRangeValidator(
         val min: Int? = null, val max: Int? = null
     ) : LoginRegisterValidator<Int> {
@@ -21,6 +41,13 @@ sealed interface LoginRegisterValidator<T> {
         }
     }
 
+    /**
+     * Validates if a float is within a specified range.
+     *
+     * @property min The minimum allowed value (inclusive), or null if there's no lower bound.
+     * @property max The maximum allowed value (inclusive), or null if there's no upper bound.
+     * @author Vad1mChK
+     */
     class FloatInRangeValidator(
         val min: Float? = null, val max: Float? = null
     ) : LoginRegisterValidator<Float> {
@@ -35,6 +62,10 @@ sealed interface LoginRegisterValidator<T> {
         }
     }
 
+    /**
+     * Validates a username string based on length and regex pattern.
+     * @author Vad1mChK
+     */
     class UsernameValidator : LoginRegisterValidator<String> {
         companion object {
             private const val USERNAME_REGEX_STRING = "^[a-zA-Z_][a-zA-Z0-9_]*\$"
@@ -59,6 +90,10 @@ sealed interface LoginRegisterValidator<T> {
         }
     }
 
+    /**
+     * Validates a password string based on minimum length.
+     * @author Vad1mChK
+     */
     class PasswordValidator : LoginRegisterValidator<String> {
         companion object {
             private const val PASSWORD_MIN_LENGTH = 8
@@ -75,6 +110,12 @@ sealed interface LoginRegisterValidator<T> {
         }
     }
 
+    /**
+     * Validates if a password matches a previously entered password.
+     *
+     * @property firstPassword The password to match against.
+     * @author Vad1mChK
+     */
     class PasswordMatchValidator(val firstPassword: String) : LoginRegisterValidator<String> {
         override fun validate(value: String): LoginRegisterValidationResult {
             if (value != firstPassword) {
@@ -86,6 +127,10 @@ sealed interface LoginRegisterValidator<T> {
         }
     }
 
+    /**
+     * Validates a name string based on non-emptiness and regex pattern.
+     * @author Vad1mChK
+     */
     class NameValidator : LoginRegisterValidator<String> {
         companion object {
             private const val NAME_REGEX_STRING =
@@ -109,7 +154,14 @@ sealed interface LoginRegisterValidator<T> {
         }
     }
 
-    // Add to LoginRegisterValidator class
+    /**
+     * Validates a number input string based on range and precision.
+     *
+     * @property min The minimum allowed value (inclusive), or null if there's no lower bound.
+     * @property max The maximum allowed value (inclusive), or null if there's no upper bound.
+     * @property precision The number of decimal places to consider.
+     * @author Vad1mChK
+     */
     class NumberInputValidator(
         private val min: Float? = null,
         private val max: Float? = null,

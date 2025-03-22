@@ -18,6 +18,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
+/**
+ * A composable function that displays a header with a back button and a centered title.
+ *
+ * @param title The title to be displayed in the center of the header.
+ * @param onGoBack A lambda function to invoke when the back button is clicked.
+ * @author Vad1mChK
+ */
 @Composable
 fun PageHeaderWithBackButton(
     title: String,

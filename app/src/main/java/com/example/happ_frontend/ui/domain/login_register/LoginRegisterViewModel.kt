@@ -10,6 +10,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
 
+/**
+ * A ViewModel for managing login and registration data.
+ * It uses Kotlin Flow to handle state changes and provides methods for validating and accepting user input.
+ * @author Vad1mChK
+ */
 class LoginRegisterViewModel : ViewModel() {
     private val data = MutableStateFlow(LoginRegisterFormData())
     val uiState: StateFlow<LoginRegisterFormData> = data.asStateFlow()
@@ -78,6 +83,12 @@ class LoginRegisterViewModel : ViewModel() {
             data.update { login -> login.copy(weightDesire = value) }
         }
 
+    /**
+     * Validates the login credentials.
+     *
+     * @return true if both username and password are valid, false otherwise.
+     * @author Vad1mChK
+     */
     fun validateLogin(): Boolean {
         return listOf(
             LoginRegisterValidator.UsernameValidator().validate(username),
@@ -85,6 +96,12 @@ class LoginRegisterViewModel : ViewModel() {
         ).all { it is LoginRegisterValidationResult.Success }
     }
 
+    /**
+     * Validates the first part of the registration form.
+     *
+     * @return true if both username, password, and confirm password are valid, false otherwise.
+     * @author Vad1mChK
+     */
     fun validateRegisterFirstPart(): Boolean {
         return listOf(
             LoginRegisterValidator.UsernameValidator().validate(username),
@@ -93,6 +110,11 @@ class LoginRegisterViewModel : ViewModel() {
         ).all { it is LoginRegisterValidationResult.Success }
     }
 
+    /**
+     * Validates the entire registration form.
+     *
+     * @return true if all fields in the registration form are valid, false otherwise.
+     */
     fun validateRegister(): Boolean {
         val firstPartResult = validateRegisterFirstPart()
         return firstPartResult && listOf(

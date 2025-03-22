@@ -22,6 +22,23 @@ import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
 import com.example.happ_frontend.ui.screens.login_register.AuthFormTextField
 import com.example.happ_frontend.ui.screens.login_register.AuthFormTimePicker
 
+/**
+ * A composable function that displays a dialog for adding a new weight entry.
+ *
+ * The dialog collects and validates user input for date, time, and weight. It uses the provided [onCancel] and [onSubmit]
+ * lambda functions to handle user interactions. The [viewModel] parameter is used to access the dialog's state and logic.
+ *
+ * The dialog is built using the provided [AddEventDialog] composable, which takes care of the common dialog layout.
+ *
+ * The dialog's content includes a title, date picker, time picker, and weight input field.
+ *
+ * The dialog's submit button is enabled only when the `submitEnabledCondition` lambda function returns true.
+ *
+ * @param onCancel A lambda function to be invoked when the user cancels the dialog.
+ * @param onSubmit A lambda function to be invoked when the user submits the dialog.
+ * @param viewModel The [WeightHistoryViewModel] instance to be used for managing the dialog's state and logic.
+ * @author Vad1mChK
+ */
 @Composable
 fun WeightAddEventDialog(
     onCancel: () -> Unit = {},

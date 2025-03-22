@@ -37,8 +37,17 @@ import kotlinx.datetime.DateTimePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.atTime
-import kotlin.math.pow
 
+/**
+ * Displays a page header with a back button, a health category widget, a calendar widget for
+ * selecting and viewing weight events, and a weight prediction chart.
+ *
+ * If the form for adding a new weight event is shown, it displays a [WeightAddEventDialog].
+ *
+ * @param onGoBack A function that is called when the back button is clicked.
+ * @param viewModel An instance of [WeightHistoryViewModel] that provides the data and logic for this screen.
+ * @author Vad1mChK
+ */
 @Composable
 fun WeightHistoryScreen(
     onGoBack: () -> Unit = {},

@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidationResult
 import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidator
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +11,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
+/**
+ * A ViewModel for managing the weight history feature. It holds the weight events, predicted weight events,
+ * and provides methods for adding, clearing, and validating weight events.
+ */
 class WeightHistoryViewModel : ViewModel() {
     private val _weightEvents = mutableStateListOf<WeightCalendarEvent>()
     val weightEvents get() = _weightEvents.toList()
@@ -67,6 +70,13 @@ class WeightHistoryViewModel : ViewModel() {
         _predictedWeightEvents.addAll(newEvents)
     }
 
+    /**
+     * Validates the input for adding a new weight event in the dialog.
+     *
+     * @return true if the input is valid, false otherwise.
+     *
+     * The validation checks if the entered weight is within the allowed range (between MIN_WEIGHT_KG and MAX_WEIGHT_KG).
+     */
     fun validateAddEventDialog(): Boolean {
         return listOf(
             LoginRegisterValidator.NumberInputValidator (
