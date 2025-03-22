@@ -10,57 +10,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.happ_frontend.ui.screens.home.HomeScreen
+import com.example.happ_frontend.ui.screens.weight.WeightHistoryScreen
 import com.example.happ_frontend.ui.theme.HappfrontendTheme
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             HappfrontendTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { _ ->
+                Scaffold(modifier = Modifier.fillMaxSize()) {  _ ->
                     Greeting("")
-                    // ----------------------------------------------------------------
-
-//                    Column(
-//                        modifier = Modifier.fillMaxSize(),
-//                        verticalArrangement = Arrangement.SpaceEvenly
-//                    ) {
-//                        Button(
-//                            modifier = Modifier.align(Alignment.CenterHorizontally),
-//                            onClick = {
-//                                val intent = Intent(
-//                                    this@MainActivity,
-//                                    LoginActivity::class.java
-//                                ).apply {
-//                                    this.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or
-//                                            Intent.FLAG_ACTIVITY_NEW_TASK
-//                                }
-//                                startActivity(intent)
-//                            }
-//                        ) {
-//                            Text("login")
-//                        }
-//
-//                        Button(
-//                            modifier = Modifier.align(Alignment.CenterHorizontally),
-//                            onClick = {
-//                                val intent = Intent(
-//                                    this@MainActivity,
-//                                    RegisterActivity::class.java
-//                                ).apply {
-//                                    this.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or
-//                                            Intent.FLAG_ACTIVITY_NEW_TASK
-//                                }
-//                                startActivity(intent)
-//                            }
-//                        ) {
-//                            Text("register")
-//                        }
-//                    }
-                    // ------------------------------------------------------------------
                 }
             }
         }
@@ -69,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-    HomeScreen()
+    WeightHistoryScreen()
 }
 
 @Preview(showBackground = true)
