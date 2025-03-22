@@ -27,7 +27,6 @@ class FireBaseNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        println("Receive one message")
         Log.d("Receive", "From: ${message.from}")
         message.notification?.let {
             Log.d("New message:", "Message Notification Body: ${it.body}")
