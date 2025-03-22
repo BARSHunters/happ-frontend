@@ -57,7 +57,6 @@ import kotlinx.coroutines.launch
  *
  * @author Vad1mChK
  */
-// TODO Use LoginViewModel to persist login form fields
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoginScreen(
@@ -206,8 +205,6 @@ fun LoginScreen(
                         },
                         style = Typography.bodyLarge
                     )
-
-                    // TODO add error message line
                 }
 
                 1 -> Column(

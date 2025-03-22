@@ -42,13 +42,11 @@ import kotlin.math.pow
 @Composable
 fun WeightHistoryScreen(
     onGoBack: () -> Unit = {},
-    onOpenAddWeight: () -> WeightCalendarEvent? = { null },
     viewModel: WeightHistoryViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     var date by remember { mutableStateOf(LocalDate.now()) }
-    var showDialog by remember { mutableStateOf(false) }
 
 //    var throwawayEvents = (0..8).map { index ->
 //        val dateTime = LocalDateTime.now()
