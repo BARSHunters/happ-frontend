@@ -3,8 +3,11 @@ package com.example.happ_frontend.ui.domain.login_register
 import android.annotation.SuppressLint
 import android.content.Context
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -28,17 +31,34 @@ fun Float.format(precision: Int): String =
 /**
  * Retrieves the current date as a [LocalDate] object.
  *
- * Provides the same functionality as java.time.LocalDate.now(), in case the latter is unavailable.
+ * Provides the same functionality as `java.time.LocalDate.now()`, in case the latter is unavailable.
  *
  * @return The current date as a [LocalDate] object.
  * @author Vad1mChK
  */
 fun LocalDate.Companion.now(): LocalDate {
+    return LocalDateTime.now().date
+}
+
+/**
+ * Retrieves the current datetime as a [LocalDateTime] object.
+ *
+ * Provides the same functionality as `java.time.LocalDateTime.now()`, in case the latter is unavailable.
+ *
+ * @return The current date as a [LocalDateTime] object.
+ * @author Vad1mChK
+ */
+fun LocalDateTime.Companion.now(): LocalDateTime {
     val now = Clock.System.now()
     val tz = TimeZone.currentSystemDefault()
-    val today = now.toLocalDateTime(tz).date
-    return today
+    return now.toLocalDateTime(tz)
 }
+
+// Extension functions for date conversion
+fun LocalDate.toEpochMilliseconds() = this.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+
+fun LocalDate.Companion.fromEpochMilliseconds(milliseconds: Long): LocalDate =
+    Instant.fromEpochMilliseconds(milliseconds).toLocalDateTime(TimeZone.UTC).date
 
 /**
  * Creates a map of enum values to their corresponding localized string resources.
