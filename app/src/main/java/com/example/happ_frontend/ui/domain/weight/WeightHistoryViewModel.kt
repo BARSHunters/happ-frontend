@@ -1,6 +1,10 @@
 package com.example.happ_frontend.ui.domain.weight
 
+import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.happ_frontend.model.weight.WeightCalendarEvent
 import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidationResult
@@ -11,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlin.reflect.KProperty
 
 /**
  * A ViewModel for managing the weight history feature. It holds the weight events, predicted weight events,
@@ -24,13 +29,12 @@ class WeightHistoryViewModel : ViewModel() {
     val predictedWeightEvents get() = _predictedWeightEvents.toList()
 
     private val data = MutableStateFlow(WeightHistoryFormData())
+
     val uiState: StateFlow<WeightHistoryFormData> = data.asStateFlow()
 
-    var formShown: Boolean
-        get() = uiState.value.formShown
-        set(value) {
-            data.update { form -> form.copy(formShown = value) }
-        }
+    var formShown by mutableStateOf(false)
+
+    var visualizeShown by mutableStateOf(false)
 
     var entryDate: LocalDate
         get() = uiState.value.entryDate
@@ -88,5 +92,40 @@ class WeightHistoryViewModel : ViewModel() {
         ).all {
             it == LoginRegisterValidationResult.Success
         }
+    }
+
+    /**
+     * Resets the form data to its default state, with the option to keep specific fields unchanged.
+     *
+     * Updates the form data by resetting all fields to their default values,
+     * except for those specified in the [keepFields] parameter. It also logs the reset process,
+     * including which fields are kept, and the state before and after the reset.
+     *
+     * @param keepFields A set of KProperty objects representing the fields to keep unchanged.
+     *                   Default is an empty set, which means all fields will be reset.
+     */
+    fun resetFormData(keepFields: Set<KProperty<*>> = emptySet()) {
+        val currentData = uiState.value
+        val newData = WeightHistoryFormData()
+    
+        data.update { form ->
+            form.copy(
+                entryDate = if (WeightHistoryFormData::entryDate in keepFields)
+                    currentData.entryDate else newData.entryDate,
+                entryTime = if (WeightHistoryFormData::entryTime in keepFields)
+                    currentData.entryTime else newData.entryTime,
+                entryWeightKgString = if (WeightHistoryFormData::entryWeightKgString in keepFields)
+                    currentData.entryWeightKgString else newData.entryWeightKgString
+            )
+        }
+    
+        Log.d("WeightHistoryViewModel#resetFormData",
+            "Resetting form data (keeping fields: ${
+                keepFields.joinToString { it.name }
+            })")
+        Log.d("WeightHistoryViewModel#resetFormData",
+            "Before reset: $currentData")
+        Log.d("WeightHistoryViewModel#resetFormData",
+            "After reset: ${uiState.value}")
     }
 }
