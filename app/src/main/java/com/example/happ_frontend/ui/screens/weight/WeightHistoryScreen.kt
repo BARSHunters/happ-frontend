@@ -28,6 +28,7 @@ import com.example.happ_frontend.ui.domain.login_register.now
 import com.example.happ_frontend.model.weight.WeightCalendarEvent
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
 import com.example.happ_frontend.model.weight.kg
+import com.example.happ_frontend.ui.domain.weight.WeightHistoryFormData
 import com.example.happ_frontend.ui.domain.weight.minus
 import com.example.happ_frontend.ui.domain.weight.plus
 import com.example.happ_frontend.ui.screens.home.HealthCategoryWidget
@@ -112,25 +113,24 @@ fun WeightHistoryScreen(
                 },
                 labelTextForAddEventButton = stringResource(R.string.health_category_weight_button_add_entry),
                 onEventAddButtonClicked = {
+                    viewModel.resetFormData(keepFields =
+                        if (viewModel.validateAddEventDialog())
+                            setOf(WeightHistoryFormData::entryWeightKgString)
+                        else emptySet()
+                    )
                     viewModel.formShown = true
-                }
-            )
-
-            Text(
-                stringResource(R.string.health_category_weight_prediction),
-                fontWeight = FontWeight.Black,
-            )
-            WeightPredictionChartWidget(
-                eventSeries = viewModel.weightEvents
-                    .sortedByDescending { it.dateTime },
-                predictionEventSeries = if (viewModel.weightEvents.isNotEmpty())
-                    viewModel.predictedWeightEvents + viewModel.weightEvents.last()
-                    else viewModel.predictedWeightEvents
+                },
+                visualizeAvailable = true,
+                labelTextForVisualizeButton = stringResource(R.string.health_category_weight_button_visualize),
+                onVisualizeButtonClicked = {
+                    viewModel.visualizeShown = true
+                },
+                visualizeEnabledCondition = { viewModel.weightEvents.size >= 2 }
             )
         }
     }
 
-    if (uiState.formShown) {
+    if (viewModel.formShown) {
         WeightAddEventDialog(
             onCancel = {
                 viewModel.formShown = false
@@ -184,5 +184,20 @@ fun WeightHistoryScreen(
                 viewModel.formShown = false
             }
         )
+    }
+
+    if (viewModel.visualizeShown) {
+        VisualizeDialog(
+            stringResource(R.string.health_category_weight_prediction),
+            onClose = { viewModel.visualizeShown = false }
+        ) {
+            WeightPredictionChartWidget(
+                eventSeries = viewModel.weightEvents
+                    .sortedByDescending { it.dateTime },
+                predictionEventSeries = if (viewModel.weightEvents.isNotEmpty())
+                    viewModel.predictedWeightEvents + viewModel.weightEvents.last()
+                else viewModel.predictedWeightEvents,
+            )
+        }
     }
 }
