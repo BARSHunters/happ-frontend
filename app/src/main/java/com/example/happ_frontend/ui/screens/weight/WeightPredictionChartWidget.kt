@@ -41,6 +41,13 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Fill
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format.Padding
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.ln
+import kotlin.math.log10
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 private const val EXTRAPOLATION_RATE = 10
 private const val OUTSTRETCH_RATE = 1.1
@@ -104,6 +111,9 @@ fun WeightPredictionChartWidget(
             predictedDataPoints.sortedBy { it.first }.distinctBy { it.first },
             xValueFormatter = { value ->
                 dateTimeFormat.format(LocalDateTime.fromEpochMilliseconds(value))
+            },
+            yValueFormatter = { value ->
+                value.format(precision = 1)
             }
         )
     }
@@ -258,6 +268,16 @@ private fun CustomLineChart(
     val startAxis = VerticalAxis.rememberStart(
         valueFormatter = { _, y, _ ->
             if (y.isFinite()) y.toFloat().format(1) else "???"
+        },
+        itemPlacer = remember {
+            VerticalAxis.ItemPlacer.count({ _ ->
+                ceil(min(
+                    max(
+                        2.0, log10(abs(maxY - minY)) + 3
+                    ),
+                    6.0
+                )).roundToInt()
+            }, shiftTopLines = true)
         }
     )  // left Y-axis
     val bottomAxis = HorizontalAxis.rememberBottom(
