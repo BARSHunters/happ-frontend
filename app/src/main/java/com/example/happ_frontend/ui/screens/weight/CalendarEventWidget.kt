@@ -2,6 +2,8 @@ package com.example.happ_frontend.ui.screens.weight
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,8 +25,12 @@ private const val CALENDAR_MAX_DAYS_DEPTH = 3
  * @param onDateSelected A callback function that is invoked when a date is selected in the calendar.
  * @param groupEventsByDate A flag indicating whether events should be grouped by date.
  * @param eventValueFormatter A composable function that formats the event values.
- * @param onEventAddButtonClicked A callback function that is invoked when the add event button is clicked.
- * @param labelTextForAddEventButton The text to be displayed on the add event button.
+ * @param visualizeAvailable A flag indicating whether to show the visualization button.
+ * @param onEventAddButtonClicked A callback function invoked when the add event button is clicked.
+ * @param onVisualizeButtonClicked A callback function invoked upon clicking the visualization button.
+ * @param labelTextForAddEventButton The text to display on the add event button.
+ * @param labelTextForVisualizeButton The text to display on the visualization button.
+ * @param visualizeEnabledCondition Condition that determines if the visualization button is clickable.
  * @author Vad1mChK
  */
 @Composable
@@ -36,8 +42,12 @@ fun <T: Any> CalendarEventWidget(
     onDateSelected: (LocalDate) -> Unit = { _ -> },
     groupEventsByDate: Boolean = false,
     eventValueFormatter: @Composable (T) -> String = { value: T -> value.toString() }, // Formatting function for event values
+    visualizeAvailable: Boolean = false,
     onEventAddButtonClicked: () -> Unit = { },
+    onVisualizeButtonClicked: () -> Unit = { },
     labelTextForAddEventButton: String = "",
+    labelTextForVisualizeButton: String = "",
+    visualizeEnabledCondition: () -> Boolean = { true }
 ) {
     CalendarChipPicker(
         windowCount = windowCount,
@@ -62,5 +72,18 @@ fun <T: Any> CalendarEventWidget(
         onClick = onEventAddButtonClicked
     ) {
         Text(labelTextForAddEventButton)
+    }
+
+    if (visualizeAvailable) {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onVisualizeButtonClicked,
+            enabled = visualizeEnabledCondition(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.tertiary
+            )
+        ) {
+            Text(labelTextForVisualizeButton)
+        }
     }
 }
