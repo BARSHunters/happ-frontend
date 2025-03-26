@@ -44,6 +44,7 @@
     <string name="health_category.weight.prediction">Weight predictions</string>
     <string name="health_category.weight.prediction.not_enough_data">Not enough data to predict weight</string>
     <string name="health_category.weight.button.add_entry">Add Weight Entry</string>
+    <string name="health_category.weight.button.visualize">Visualize Weight Change</string>
     <string name="health_category.weight.dialog.title">New weight entry</string>
     <string name="health_category.weight.dialog.field.date">Entry date</string>
     <string name="health.category.weight.dialog.field.time">Entry time</string>

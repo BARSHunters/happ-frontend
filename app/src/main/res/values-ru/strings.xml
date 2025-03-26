@@ -67,6 +67,7 @@
     <string name="health_category.weight.button.add_entry">Добавить запись о весе</string>
     <string name="health.category.weight.dialog.field.weight">Текущий вес (кг)</string>
     <string name="health_category.activity.title">Активности и тренировки</string>
+    <string name="health_category.weight.button.visualize">График изменения веса</string>
     <string name="health_category.weight.dialog.title">Новая запись о весе</string>
     <string name="health_category.weight.dialog.field.date">Дата записи</string>
     <string name="health.category.weight.dialog.field.time">Время записи</string>
