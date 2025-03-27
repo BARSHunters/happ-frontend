@@ -56,7 +56,7 @@ class NotificationScreen :  ComponentActivity(){
 @Composable
 fun NotificationLayout(
     notificationViewModel: NotificationViewModel = viewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ){
     val notificationUIState by notificationViewModel.uiState.collectAsState()
     Column (

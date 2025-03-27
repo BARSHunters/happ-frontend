@@ -3,7 +3,7 @@ package com.example.happ_frontend.model.repository
 import com.example.happ_frontend.model.notifications.NotificationData
 import java.time.LocalDate
 
-class NotificationRepository {
+class NotificationModelRepository {
     fun getAll() : List<NotificationData>{
         return listOf(
             NotificationData(
