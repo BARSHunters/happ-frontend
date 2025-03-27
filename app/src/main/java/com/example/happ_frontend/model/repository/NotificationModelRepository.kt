@@ -2,37 +2,37 @@ package com.example.happ_frontend.model.repository
 
 import com.example.happ_frontend.model.notifications.FireBaseNotificationService
 import com.example.happ_frontend.model.notifications.NotificationData
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class NotificationModelRepository {
     fun getAll() : MutableList<NotificationData>{
-        return FireBaseNotificationService.localNotification.notifications
-//        return mutableListOf(
-//            NotificationData(
-//                "Activity",
-//                "",
-//                LocalDate.now()
-//            ),
-//            NotificationData(
-//                "FriendRequest",
-//                "Zerumi",
-//                LocalDate.now()
-//            ),
-//            NotificationData(
-//                "FriendRequest",
-//                "Hamza",
-//                LocalDate.now()
-//            ),
-//            NotificationData(
-//                "Achievement",
-//                "Bigger",
-//                LocalDate.now()
-//            ),
-//            NotificationData(
-//                "Lolasdasd",
-//                "AHAHAHAHA",
-//                LocalDate.now()
-//            )
-//        )
+//        return FireBaseNotificationService.localNotification.notifications
+        return mutableListOf(
+            NotificationData(
+                "Activity",
+                "",
+                LocalDateTime.now()
+            ),
+            NotificationData(
+                "FriendRequest",
+                "Zerumi",
+                LocalDateTime.now()
+            ),
+            NotificationData(
+                "FriendRequest",
+                "Hamza",
+                LocalDateTime.now()
+            ),
+            NotificationData(
+                "Achievement",
+                "Bigger",
+                LocalDateTime.now()
+            ),
+            NotificationData(
+                "Lolasdasd",
+                "AHAHAHAHA",
+                LocalDateTime.now()
+            )
+        )
     }
 }

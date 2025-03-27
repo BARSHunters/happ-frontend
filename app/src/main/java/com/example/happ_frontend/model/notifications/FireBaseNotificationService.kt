@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class FireBaseNotificationService : FirebaseMessagingService() {
     override fun onCreate() {
@@ -53,23 +54,23 @@ class FireBaseNotificationService : FirebaseMessagingService() {
         val data = message.data
         if (!data.containsKey("type")) {
             Log.d("Notification error", "Data does not contains key type")
-            return NotificationData("", "", LocalDate.now())
+            return NotificationData("", "", LocalDateTime.now())
         }
         val type = data["type"]
         if (!notificationTypes.types.containsKey(type)) {
             Log.d("Notification error", "Unknown type of message: $type")
-            return NotificationData("", "", LocalDate.now())
+            return NotificationData("", "", LocalDateTime.now())
         }
         for(requiredParam in notificationTypes.types[type]!!){
             if(!data.containsKey(requiredParam)){
                 Log.d("Notification error", "Message of type $type does not have a required param $requiredParam")
-                return NotificationData("", "", LocalDate.now())
+                return NotificationData("", "", LocalDateTime.now())
             }
         }
         //TODO Если параметров больше 1?
         val notData = "" + notificationTypes.types[type]?.map { currentString ->
             data[currentString]
         }?.joinToString("")
-        return NotificationData(type!!, notData, LocalDate.now())
+        return NotificationData(type!!, notData, LocalDateTime.now())
     }
 }

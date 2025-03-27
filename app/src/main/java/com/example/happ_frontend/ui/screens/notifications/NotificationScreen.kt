@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.happ_frontend.R
+import com.example.happ_frontend.model.notifications.localDateTimeFormat
 import com.example.happ_frontend.ui.domain.notifications.NotificationViewModel
 import com.example.happ_frontend.ui.theme.HappfrontendTheme
 import kotlinx.coroutines.CoroutineScope
@@ -47,6 +48,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class NotificationScreen :  ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -124,7 +126,7 @@ fun NotificationLayout(
 fun NotificationCard(
     type: String,
     data: String,
-    date: LocalDate,
+    date: LocalDateTime,
     modifier: Modifier = Modifier
 ){
     val title = when (type){
@@ -150,7 +152,7 @@ fun NotificationCard(
                         .fillMaxWidth()
                         .weight(0.1f)
                         .padding(top = 5.dp),
-                    text = date.toString(),
+                    text = date.format(localDateTimeFormat.format),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
@@ -247,7 +249,7 @@ fun NotificationsPreview(){
         NotificationCard(
             "FriendRequest",
             "Hamza",
-            LocalDate.now()
+            LocalDateTime.now()
         )
     }
 }
