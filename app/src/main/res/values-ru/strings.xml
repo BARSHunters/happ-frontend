@@ -11,4 +11,5 @@
     <string name="wants_to_be_your_friend">хочет быть твоим другом</string>
     <string name="watch_friend_requests">Профиль</string>
     <string name="achievements">Достижения</string>
+    <string name="delete_all_notifications">Удалить все уведомления</string>
 </resources>

@@ -1,14 +1,20 @@
 package com.example.happ_frontend.model.notifications
 
 import android.util.Log
+import androidx.compose.runtime.rememberCoroutineScope
+import com.example.happ_frontend.HappFrontendApplication
+import com.example.happ_frontend.model.notifications.data.NotificationConverter
+import com.example.happ_frontend.model.notifications.data.NotificationsRepository
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import java.time.LocalDate
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class FireBaseNotificationService : FirebaseMessagingService() {
+    private var notificationsRepository: NotificationsRepository? = null
     override fun onCreate() {
         super.onCreate()
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -19,6 +25,7 @@ class FireBaseNotificationService : FirebaseMessagingService() {
             val token = task.result
             Log.d("FCM", "Saved token: $token")
         })
+        notificationsRepository = (application as HappFrontendApplication).container.notificationsRepository
     }
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -34,11 +41,11 @@ class FireBaseNotificationService : FirebaseMessagingService() {
         val notification = parseNotification(message)
         println(notification)
         // Сохраняем нотификацию (пока локально)
-        localNotification.notifications.add(notification)
-    }
+//        localNotification.notifications.add(notification)
+        runBlocking {
+            notificationsRepository?.insertNotification(NotificationConverter.toEntity(notification))
+        }
 
-    object localNotification{
-        val notifications = mutableListOf<NotificationData>()
     }
 
     object notificationTypes {

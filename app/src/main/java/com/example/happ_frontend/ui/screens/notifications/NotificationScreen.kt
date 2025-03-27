@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.happ_frontend.R
 import com.example.happ_frontend.model.notifications.localDateTimeFormat
+import com.example.happ_frontend.ui.AppViewModelProvider
 import com.example.happ_frontend.ui.domain.notifications.NotificationViewModel
 import com.example.happ_frontend.ui.theme.HappfrontendTheme
 import kotlinx.coroutines.CoroutineScope
@@ -65,7 +66,7 @@ class NotificationScreen :  ComponentActivity(){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationLayout(
-    notificationViewModel: NotificationViewModel = viewModel(),
+    notificationViewModel: NotificationViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ){
     val notificationUIState by notificationViewModel.uiState.collectAsState()
@@ -75,13 +76,12 @@ fun NotificationLayout(
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = {
-            isRefreshing = true
             coroutineScope.launch {
-                launch {
-                    delay(1000)
-                    notificationViewModel.updateData()
-                    isRefreshing = false
-                }
+                isRefreshing = true
+                delay(500)
+                notificationViewModel.updateData()
+                delay(500)
+                isRefreshing = false
             }
         },
         modifier = modifier
@@ -116,6 +116,12 @@ fun NotificationLayout(
                         date = notification.date,
                         modifier = modifier
                     )
+                }
+                ElevatedButton(
+                    modifier = modifier.fillMaxWidth(),
+                    onClick = { notificationViewModel.deleteAll() }
+                ) {
+                    Text(text = stringResource(R.string.delete_all_notifications))
                 }
             }
         }
