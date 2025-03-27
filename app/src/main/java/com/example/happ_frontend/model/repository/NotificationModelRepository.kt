@@ -4,8 +4,8 @@ import com.example.happ_frontend.model.notifications.NotificationData
 import java.time.LocalDate
 
 class NotificationModelRepository {
-    fun getAll() : List<NotificationData>{
-        return listOf(
+    fun getAll() : MutableList<NotificationData>{
+        return mutableListOf(
             NotificationData(
                 "Activity",
                 "",

@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,14 +17,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -39,6 +42,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.notifications.NotificationViewModel
 import com.example.happ_frontend.ui.theme.HappfrontendTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class NotificationScreen :  ComponentActivity(){
@@ -53,42 +60,61 @@ class NotificationScreen :  ComponentActivity(){
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationLayout(
     notificationViewModel: NotificationViewModel = viewModel(),
     modifier: Modifier = Modifier,
 ){
     val notificationUIState by notificationViewModel.uiState.collectAsState()
-    Column (
+    var isRefreshing by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            coroutineScope.launch {
+                launch {
+                    delay(1000)
+                    notificationViewModel.updateData()
+                    isRefreshing = false
+                }
+            }
+        },
         modifier = modifier
-            .padding(30.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
-        Text(
-            text = stringResource(R.string.notifications),
+        Column (
             modifier = modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold
-        )
-        if(notificationUIState.isEmpty()){
+                .padding(30.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(7.dp)
+        ) {
             Text(
-                text = stringResource(R.string.notification_history_is_clear),
-                fontSize = 12.sp,
-                modifier = modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                text = stringResource(R.string.notifications),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
             )
-        } else {
-            for (notification in notificationUIState){
-                NotificationCard(
-                    type = notification.type,
-                    data = notification.data,
-                    date = notification.date,
-                    modifier = modifier
+            if(notificationUIState.isEmpty()){
+                Text(
+                    text = stringResource(R.string.notification_history_is_clear),
+                    fontSize = 12.sp,
+                    modifier = modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
+            } else {
+                for (notification in notificationUIState) {
+                    NotificationCard(
+                        type = notification.type,
+                        data = notification.data,
+                        date = notification.date,
+                        modifier = modifier
+                    )
+                }
             }
         }
     }
