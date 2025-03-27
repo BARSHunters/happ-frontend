@@ -14,8 +14,8 @@ class NotificationViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(notifications)
     val uiState : StateFlow<List<NotificationData>> = _uiState.asStateFlow()
     fun updateData(){
-        _uiState.update { notificationData ->
-            notificationData.drop(1).toMutableList()
+        _uiState.update {
+            notificationRepository.getAll()
         }
     }
 }
