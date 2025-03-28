@@ -13,12 +13,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.happ_frontend.ui.viewmodels.Meal
-import com.example.happ_frontend.ui.viewmodels.MealType
-import com.example.happ_frontend.ui.viewmodels.NutritionSummary
+import com.example.happ_frontend.model.nutrition.Meal
+import com.example.happ_frontend.model.nutrition.MealType
+import com.example.happ_frontend.model.nutrition.NutritionSummary
 
 @Composable
 fun NutritionDetailScreen(

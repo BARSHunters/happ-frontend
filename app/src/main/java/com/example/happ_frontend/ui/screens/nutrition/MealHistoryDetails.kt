@@ -10,8 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.happ_frontend.ui.viewmodels.MealDay
-import com.example.happ_frontend.ui.viewmodels.Meal
+import com.example.happ_frontend.model.nutrition.MealDay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

@@ -1,4 +1,4 @@
-package com.example.happ_frontend.ui.viewmodels
+package com.example.happ_frontend.model.nutrition
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
