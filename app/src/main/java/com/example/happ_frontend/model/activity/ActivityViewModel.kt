@@ -220,9 +220,116 @@ data class ActivitySummary(
 
 
 
+/**
+ * Updates the data for a new workout being created
+ */
+fun ActivityViewModel.setNewWorkoutData(
+    type: WorkoutType,
+    date: LocalDate,
+    duration: Int,
+    effort: String
+) {
+    // Store this information in the ViewModel
+    // This is a mock implementation - modify according to your actual ViewModel structure
 
+    // Create a mock workout based on the provided data
+    val newWorkout = Workout(
+        name = "${type.name.lowercase().capitalize()} Workout",
+        time = "12:00 PM", // Mock time
+        duration = duration,
+        calories = calculateEstimatedCalories(type, duration, effort),
+        workoutType = type,
+        activityZones = generateMockActivityZones(effort),
+        heartRateAvg = calculateEstimatedHeartRate(type, effort),
+        heartRateMax = calculateEstimatedMaxHeartRate(type, effort),
+        trainingLoad = TODO(),
+        recoveryTime = TODO()
+    )
 
+    // Store this in the ViewModel (implementation will depend on your ViewModel structure)
+    // For now, this is just a placeholder
+    // viewModel.tempNewWorkout = newWorkout
+}
 
+// Helper functions for mock data generation
 
+/**
+ * Estimates calories burned based on workout type, duration and effort
+ */
+private fun calculateEstimatedCalories(type: WorkoutType, duration: Int, effort: String): Int {
+    val baseCaloriesPerMinute = when (type) {
+        WorkoutType.RUNNING -> 10
+        WorkoutType.HIIT -> 12
+        WorkoutType.STRENGTH -> 8
+        WorkoutType.SWIMMING, WorkoutType.CYCLING -> 9
+        WorkoutType.YOGA, WorkoutType.PILATES -> 5
+        else -> 7
+    }
 
+    val effortMultiplier = when (effort) {
+        "Easy" -> 0.8
+        "Moderate" -> 1.0
+        "Hard" -> 1.2
+        "Very Hard" -> 1.4
+        "Maximum" -> 1.6
+        else -> 1.0
+    }
+
+    return (baseCaloriesPerMinute * duration * effortMultiplier).toInt()
+}
+
+/**
+ * Generates mock activity zones based on effort level
+ */
+private fun generateMockActivityZones(effort: String): List<Int> {
+    return when (effort) {
+        "Easy" -> listOf(15, 10, 5, 2, 0)
+        "Moderate" -> listOf(10, 15, 12, 5, 1)
+        "Hard" -> listOf(5, 12, 15, 10, 5)
+        "Very Hard" -> listOf(3, 7, 12, 17, 10)
+        "Maximum" -> listOf(2, 5, 10, 15, 20)
+        else -> listOf(10, 10, 10, 10, 10)
+    }
+}
+
+/**
+ * Estimates average heart rate based on workout type and effort
+ */
+private fun calculateEstimatedHeartRate(type: WorkoutType, effort: String): Int {
+    val baseHeartRate = when (type) {
+        WorkoutType.RUNNING, WorkoutType.HIIT -> 140
+        WorkoutType.STRENGTH, WorkoutType.SWIMMING, WorkoutType.CYCLING -> 130
+        WorkoutType.YOGA, WorkoutType.PILATES -> 110
+        else -> 120
+    }
+
+    val effortAddition = when (effort) {
+        "Easy" -> -20
+        "Moderate" -> 0
+        "Hard" -> 15
+        "Very Hard" -> 25
+        "Maximum" -> 35
+        else -> 0
+    }
+
+    return baseHeartRate + effortAddition
+}
+
+/**
+ * Estimates max heart rate based on workout type and effort
+ */
+private fun calculateEstimatedMaxHeartRate(type: WorkoutType, effort: String): Int {
+    val avgHeartRate = calculateEstimatedHeartRate(type, effort)
+
+    val maxIncrease = when (effort) {
+        "Easy" -> 15
+        "Moderate" -> 20
+        "Hard" -> 25
+        "Very Hard" -> 30
+        "Maximum" -> 40
+        else -> 20
+    }
+
+    return avgHeartRate + maxIncrease
+}
 

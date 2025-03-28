@@ -22,16 +22,16 @@ fun ActivityScreen(
     val uiState by viewModel.uiState.collectAsState()
     var screenState by remember { mutableStateOf<ActivityScreenState>(ActivityScreenState.Main) }
 
-    // Always render the main screen first
-    MainActivityScreen(
-        viewModel = viewModel,
-        onBackClick = onBackClick,
-        onAddWorkoutClick = { screenState = ActivityScreenState.AddWorkout },
-        onWorkoutDetailClick = { screenState = ActivityScreenState.Detail }
-    )
-
-    // Then render dialogs on top if needed
+    // Only show the current screen based on state
     when (val currentState = screenState) {
+        is ActivityScreenState.Main -> {
+            MainActivityScreen(
+                viewModel = viewModel,
+                onBackClick = onBackClick,
+                onAddWorkoutClick = { screenState = ActivityScreenState.AddWorkout },
+                onWorkoutDetailClick = { screenState = ActivityScreenState.Detail }
+            )
+        }
         is ActivityScreenState.Detail -> {
             ActivityDetailScreen(
                 onBackClick = { screenState = ActivityScreenState.Main },
@@ -49,7 +49,6 @@ fun ActivityScreen(
                 }
             )
         }
-        else -> {} // Main screen is already rendered
     }
 }
 
