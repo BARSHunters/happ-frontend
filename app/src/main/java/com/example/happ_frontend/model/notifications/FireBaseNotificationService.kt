@@ -40,10 +40,10 @@ class FireBaseNotificationService : FirebaseMessagingService() {
         Log.d("New message data:", "${message.data}")
         val notification = parseNotification(message)
         println(notification)
-        // Сохраняем нотификацию (пока локально)
-//        localNotification.notifications.add(notification)
-        runBlocking {
-            notificationsRepository?.insertNotification(NotificationConverter.toEntity(notification))
+        notification?.let {
+            runBlocking {
+                notificationsRepository?.insertNotification(NotificationConverter.toEntity(it))
+            }
         }
 
     }
@@ -57,21 +57,21 @@ class FireBaseNotificationService : FirebaseMessagingService() {
             )
     }
 
-    private fun parseNotification(message: RemoteMessage) : NotificationData {
+    private fun parseNotification(message: RemoteMessage) : NotificationData? {
         val data = message.data
         if (!data.containsKey("type")) {
             Log.d("Notification error", "Data does not contains key type")
-            return NotificationData("", "", LocalDateTime.now())
+            return null
         }
         val type = data["type"]
         if (!notificationTypes.types.containsKey(type)) {
             Log.d("Notification error", "Unknown type of message: $type")
-            return NotificationData("", "", LocalDateTime.now())
+            return null
         }
         for(requiredParam in notificationTypes.types[type]!!){
             if(!data.containsKey(requiredParam)){
                 Log.d("Notification error", "Message of type $type does not have a required param $requiredParam")
-                return NotificationData("", "", LocalDateTime.now())
+                return null
             }
         }
         //TODO Если параметров больше 1?

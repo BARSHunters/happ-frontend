@@ -1,9 +1,5 @@
 package com.example.happ_frontend.ui.screens.notifications
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +8,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -44,28 +39,13 @@ import com.example.happ_frontend.model.notifications.localDateTimeFormat
 import com.example.happ_frontend.ui.AppViewModelProvider
 import com.example.happ_frontend.ui.domain.notifications.NotificationViewModel
 import com.example.happ_frontend.ui.theme.HappfrontendTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.LocalDateTime
-
-class NotificationScreen :  ComponentActivity(){
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            HappfrontendTheme {
-                NotificationLayout()
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationLayout(
+fun NotificationScreen(
     notificationViewModel: NotificationViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
 ){
@@ -78,9 +58,9 @@ fun NotificationLayout(
         onRefresh = {
             coroutineScope.launch {
                 isRefreshing = true
-                delay(500)
+                delay(200)
                 notificationViewModel.updateData()
-                delay(500)
+                delay(200)
                 isRefreshing = false
             }
         },
