@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activities.NutritionActivity"
+            android:name=".ui.domain.NutritionActivity"
             android:exported="false" />
         <activity
             android:name=".ui.domain.ActivityActivity"

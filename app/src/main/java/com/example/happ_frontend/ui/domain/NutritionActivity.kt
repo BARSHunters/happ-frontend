@@ -1,4 +1,4 @@
-package com.example.happ_frontend.ui.activities
+package com.example.happ_frontend.ui.domain
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.happ_frontend.ui.screens.nutrition.NutritionScreen
 import com.example.happ_frontend.ui.theme.HappfrontendTheme
@@ -17,7 +16,7 @@ class NutritionActivity : ComponentActivity() {
         setContent {
             HappfrontendTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.Companion.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     NutritionScreen(
