@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
                                 startActivity(intent)
                             }
                         ) {
-                            Text("Nutrition")
+                            Text("Activity")
                         }
                     }
                 }

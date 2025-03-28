@@ -12,8 +12,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.happ_frontend.model.activity.ActivityDetailScreen
-import com.example.happ_frontend.model.activity.ActivityHistoryDetails
 import com.example.happ_frontend.model.activity.ActivityViewModel
 
 @Composable
@@ -22,85 +20,118 @@ fun ActivityScreen(
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showDetailScreen by remember { mutableStateOf(false) }
+    var screenState by remember { mutableStateOf<ActivityScreenState>(ActivityScreenState.Main) }
 
-    if (showDetailScreen) {
-        ActivityDetailScreen(
-            onBackClick = { showDetailScreen = false },
-            workouts = uiState.currentActivityDay?.workouts ?: emptyList(),
-            activitySummary = viewModel.getActivitySummary(uiState.currentActivityDay?.workouts ?: emptyList())
-        )
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Header with back button and centered title
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier.align(Alignment.CenterStart)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color(0xFFA590B6) // Purple color to match the design
-                    )
+    when (val currentState = screenState) {
+        is ActivityScreenState.Main -> {
+            MainActivityScreen(
+                viewModel = viewModel,
+                onBackClick = onBackClick,
+                onAddWorkoutClick = { screenState = ActivityScreenState.AddWorkout },
+                onWorkoutDetailClick = { screenState = ActivityScreenState.Detail }
+            )
+        }
+        is ActivityScreenState.Detail -> {
+            ActivityDetailScreen(
+                onBackClick = { screenState = ActivityScreenState.Main },
+                workouts = uiState.currentActivityDay?.workouts ?: emptyList(),
+                activitySummary = viewModel.getActivitySummary(uiState.currentActivityDay?.workouts ?: emptyList())
+            )
+        }
+        is ActivityScreenState.AddWorkout -> {
+            AddWorkoutScreen(
+                viewModel = viewModel,
+                onBackClick = { screenState = ActivityScreenState.Main },
+                onSaveClick = {
+                    viewModel.addNewWorkout()
+                    screenState = ActivityScreenState.Main
                 }
+            )
+        }
+    }
+}
 
-                Text(
-                    text = "Activity",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    color = Color(0xFF7B639C), // Purple color to match the design
-                    modifier = Modifier.align(Alignment.Center)
+@Composable
+fun MainActivityScreen(
+    viewModel: ActivityViewModel,
+    onBackClick: () -> Unit,
+    onAddWorkoutClick: () -> Unit,
+    onWorkoutDetailClick: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Header with back button and centered title
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color(0xFFA590B6) // Purple color to match the design
                 )
             }
 
-            // Banner with activity information
-            ActivityHeader(onDetailClick = {
-                if (uiState.currentActivityDay?.workouts?.isNotEmpty() == true) {
-                    showDetailScreen = true
-                }
-            })
-
-            // Calendar to select dates
-            ActivityHistoryCalendar(
-                selectedDate = uiState.selectedDate,
-                onDateSelected = { date ->
-                    viewModel.loadActivitiesForDate(date)
-                }
+            Text(
+                text = "Activity",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = Color(0xFF7B639C), // Purple color to match the design
+                modifier = Modifier.align(Alignment.Center)
             )
+        }
 
-            // Workout details for the selected date
-            ActivityHistoryDetails(activityDay = uiState.currentActivityDay)
+        // Banner with activity information
+        ActivityHeader(onDetailClick = {
+            if (uiState.currentActivityDay?.workouts?.isNotEmpty() == true) {
+                onWorkoutDetailClick()
+            }
+        })
 
-            Spacer(modifier = Modifier.weight(1f))
+        // Calendar to select dates
+        ActivityHistoryCalendar(
+            selectedDate = uiState.selectedDate,
+            onDateSelected = { date ->
+                viewModel.loadActivitiesForDate(date)
+            }
+        )
 
-            // Button to add a new workout
-            AddWorkoutButton(onClick = {
-                viewModel.addNewWorkout()
-                showDetailScreen = true // Show detail screen after adding a new workout
-            })
+        // Workout details for the selected date
+        ActivityHistoryDetails(activityDay = uiState.currentActivityDay)
 
-            // Loading indicator
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = Color(0xFFA590B6) // Purple color to match the design
-                    )
-                }
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Button to add a new workout
+        AddWorkoutButton(onClick = onAddWorkoutClick)
+
+        // Loading indicator
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = Color(0xFFA590B6) // Purple color to match the design
+                )
             }
         }
     }
+}
+
+sealed class ActivityScreenState {
+    object Main : ActivityScreenState()
+    object Detail : ActivityScreenState()
+    object AddWorkout : ActivityScreenState()
 }
