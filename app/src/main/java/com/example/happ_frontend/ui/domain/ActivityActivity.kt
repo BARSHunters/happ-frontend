@@ -16,12 +16,11 @@ class ActivityActivity : ComponentActivity() {
         setContent {
             HappfrontendTheme {
                 Surface(
-                    modifier = Modifier.Companion.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(), // Исправлено: убрано Companion
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ActivityScreen(
                         onBackClick = {
-                            // TODO: Change this to navigate to appropriate screen instead of MainActivity
                             finish()
                         }
                     )
