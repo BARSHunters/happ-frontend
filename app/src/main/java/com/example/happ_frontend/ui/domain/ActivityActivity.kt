@@ -1,6 +1,3 @@
-// File: app/src/main/java/com/example/happ_frontend/ui/domain/ActivityActivity.kt
-// (renamed from NutritionActivity.kt)
-
 package com.example.happ_frontend.ui.domain
 
 import android.os.Bundle
