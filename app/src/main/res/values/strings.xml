@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">happ-frontend</string>
+    <string name="app_name" translatable="false">happ-frontend</string>
 
     <!-- Register/Login screens -->
     <string name="auth.title.register">Register</string>
@@ -35,7 +35,7 @@
     <string name="auth.valid_error.number.notempty">Number must not be empty</string>
     <string name="auth.valid_error.number.format">Invalid number format</string>
     <!-- etc. -->
-    
+
     <!-- Home screen, weight history, etc: health categories -->
     <string name="health_category.title">Health Categories</string>
     <string name="health_category.weight.title">Body Measurements &amp; Weight</string>
@@ -70,7 +70,7 @@
     <string name="biom.weight_desire.remain">Keep weight</string>
     <string name="biom.weight_desire.gain">Gain weight</string>
     <!-- etc. -->
-    
+
     <!-- Unit data -->
     <string name="unit.length.km">km</string>
     <string name="unit.length.m">m</string>
@@ -87,5 +87,22 @@
 
     <!-- User profile -->
     <string name="user.profile.hi">Hi, </string>
+    <!-- etc. -->
+
+    <!-- Everything to do with notifications -->
+    <string name="notifications">Notifications</string>
+    <string name="activityNotification">Activity</string>
+    <string name="friendNotification">New friend Request</string>
+    <string name="achievementNotification">New achievement</string>
+    <string name="nonValidNotification" translatable="false">NonValidNotificatoin</string>
+    <string name="activityNotificationDescription">Dont forget about your activity</string>
+    <string name="friendNotificationDescription">You have a new friend request:</string>
+    <string name="achievementNotificationDescription">"You have a new achievement: "</string>
+    <string name="nonValidNotificationDescription" translatable="false">Non Valid message</string>
+    <string name="notification_history_is_clear">Notification history is clear</string>
+    <string name="wants_to_be_your_friend">wants to be your friend</string>
+    <string name="watch_friend_requests">Profile</string>
+    <string name="achievements">Achievements</string>
+    <string name="delete_all_notifications">Delete all notifications</string>
     <!-- etc. -->
 </resources>
