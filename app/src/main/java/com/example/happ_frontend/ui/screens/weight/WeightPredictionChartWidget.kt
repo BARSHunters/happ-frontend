@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Fill
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format.Padding
+import kotlinx.datetime.toKotlinLocalDateTime
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.ln
@@ -101,10 +102,10 @@ fun WeightPredictionChartWidget(
         }
     } else {
         val dataPoints = eventSeries.map { event ->
-            event.dateTime.toEpochMilliseconds() to event.value.kg
+            event.dateTime.toKotlinLocalDateTime().toEpochMilliseconds() to event.value.kg
         }
         val predictedDataPoints = predictionEventSeries.map { event ->
-            event.dateTime.toEpochMilliseconds() to event.value.kg
+            event.dateTime.toKotlinLocalDateTime().toEpochMilliseconds() to event.value.kg
         }
         CustomLineChart(
             dataPoints.sortedBy { it.first }.distinctBy { it.first },

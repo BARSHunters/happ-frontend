@@ -35,9 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.weight.now
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.format
-import kotlinx.datetime.format.char
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,9 +53,7 @@ fun AuthFormTimePicker(
     var showTimePicker by remember { mutableStateOf(false) }
 
     val formatter = remember {
-        LocalTime.Format {
-                hour(); char(':'); minute()
-        }
+        DateTimeFormatter.ofPattern("HH:mm")
     }
 
     val currentTime = remember { LocalTime.now() }
@@ -123,7 +121,7 @@ fun AuthFormTimePicker(
                         TextButton(
                             onClick = {
                                 onValueChange(
-                                    LocalTime(
+                                    LocalTime.of(
                                         timePickerState.hour,
                                         timePickerState.minute
                                     )

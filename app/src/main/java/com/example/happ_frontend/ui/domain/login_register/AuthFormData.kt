@@ -2,7 +2,7 @@ package com.example.happ_frontend.ui.domain.login_register
 
 import com.example.happ_frontend.model.login_register.Gender
 import com.example.happ_frontend.model.login_register.WeightDesire
-import kotlinx.datetime.LocalDate
+import java.time.LocalDate
 
 /**
  * Data class representing form data for login and registration screens.
@@ -34,7 +34,8 @@ data class AuthFormData(
     val heightCm: Int = DEFAULT_HEIGHT_CM,
     val weightKg: Float = DEFAULT_WEIGHT_KG,
     val weightDesire: WeightDesire = WeightDesire.REMAIN,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val passedFirstRegistrationPage: Boolean = false
 ) {
     companion object {
         const val DEFAULT_HEIGHT_CM = 175

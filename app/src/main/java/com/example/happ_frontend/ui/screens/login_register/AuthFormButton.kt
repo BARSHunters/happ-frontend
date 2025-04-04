@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +19,8 @@ internal fun AuthFormButton(
     text: String,
     onClick: () -> Unit = {},
     // enabledCondition: () -> Boolean = { true }
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    loading: Boolean = false
 ) {
     Button(
         onClick = onClick,
@@ -33,11 +35,15 @@ internal fun AuthFormButton(
         enabled = enabled
     ) {
         Column {
-            Text(
-                text = text.uppercase(),
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                style = Typography.bodyLarge
-            )
+            if (loading) {
+                CircularProgressIndicator()
+            } else {
+                Text(
+                    text = text.uppercase(),
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                    style = Typography.bodyLarge
+                )
+            }
         }
     }
 }

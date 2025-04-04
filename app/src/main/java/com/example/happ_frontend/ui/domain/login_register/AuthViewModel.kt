@@ -2,26 +2,41 @@ package com.example.happ_frontend.ui.domain.login_register
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.happ_frontend.model.login_register.Gender
 import com.example.happ_frontend.model.login_register.WeightDesire
+import com.example.happ_frontend.model.login_register.communication.AuthApiService
+import com.example.happ_frontend.model.login_register.communication.AuthNetworkModule
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
+import com.example.happ_frontend.model.login_register.request.LoginDto
+import com.example.happ_frontend.model.login_register.request.RegisterDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.LocalDate
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 /**
  * A ViewModel for managing login and registration data.
  * It uses Kotlin Flow to handle state changes and provides methods for validating and accepting user input.
  * @author Vad1mChK
  */
-class AuthViewModel : ViewModel() {
+class AuthViewModel (
+    private val authApi: AuthApiService = AuthNetworkModule.authApiService,
+    private val prefs: AuthSharedPreferencesEditor = AuthSharedPreferencesProvider.editor
+        ?: throw IllegalStateException("AuthSharedPreferencesEditor not initialized yet")
+) : ViewModel() {
     private val data = MutableStateFlow(AuthFormData())
     val uiState: StateFlow<AuthFormData> = data.asStateFlow()
 
-    init {
-        Log.d("LoginViewModel#<init>", "LoginViewModel initialized")
-    }
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
+
+//    init {
+//        Log.d("AuthViewModel#init", "ViewModel initialized")
+//    }
 
     var username: String
         get() = data.value.username
@@ -83,6 +98,12 @@ class AuthViewModel : ViewModel() {
             data.update { login -> login.copy(weightDesire = value) }
         }
 
+    var passedFirstRegistrationPage: Boolean
+        get() = data.value.passedFirstRegistrationPage
+        set(value) {
+            data.update { login -> login.copy(passedFirstRegistrationPage = value) }
+        }
+
     /**
      * Validates the login credentials.
      *
@@ -132,15 +153,76 @@ class AuthViewModel : ViewModel() {
         ).all { it is AuthValidationResult.Success }
     }
 
-    fun acceptLogin() {
-        Log.d("LoginViewModel#acceptLogin", "Accept ${data.value}")
+    fun registerUser() {
+        if (!validateRegister()) return
+
+        viewModelScope.launch {
+            _authState.value = AuthState.Loading
+            try {
+                val response = authApi.register(
+                    RegisterDto(
+                        username = data.value.username,
+                        password = data.value.password,
+                        name = data.value.name,
+                        birthDate = data.value.birthDate,
+                        gender = data.value.gender,
+                        heightCm = data.value.heightCm,
+                        weightKg = data.value.weightKg,
+                        weightDesire = data.value.weightDesire
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    response.body()?.let { authResponse ->
+                        prefs.username = data.value.username
+                        prefs.jwt = authResponse.jwt ?: ""
+                        _authState.value = AuthState.Success(authResponse.jwt ?: "")
+                    }
+                } else {
+                    _authState.value = AuthState.Error("Server error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error("Network error: ${e.localizedMessage}")
+            }
+        }
     }
 
-    fun acceptRegisterCheckUsername() {
-        Log.d("LoginViewModel#acceptRegisterCheckUsername", "Accept ${data.value}")
+    fun loginUser() {
+        if (!validateLogin()) return
+
+        viewModelScope.launch {
+            _authState.value = AuthState.Loading
+            try {
+                val response = authApi.login(
+                    LoginDto(
+                        username = data.value.username,
+                        password = data.value.password
+                    )
+                )
+
+                if (response.isSuccessful) {
+                    response.body()?.let { authResponse ->
+                        prefs.username = data.value.username
+                        prefs.jwt = authResponse.jwt ?: ""
+                        _authState.value = AuthState.Success(authResponse.jwt ?: "")
+                    }
+                } else {
+                    _authState.value = AuthState.Error("Server error: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error("Network error: ${e.localizedMessage}")
+            }
+        }
     }
 
-    fun acceptRegister() {
-        Log.d("LoginViewModel#acceptRegisterCheckUsername", "Accept ${data.value}")
+    fun clearAuthState() {
+        _authState.value = AuthState.Idle
     }
+}
+
+sealed class AuthState {
+    object Idle : AuthState()
+    object Loading : AuthState()
+    data class Success(val jwt: String) : AuthState()
+    data class Error(val message: String) : AuthState()
 }

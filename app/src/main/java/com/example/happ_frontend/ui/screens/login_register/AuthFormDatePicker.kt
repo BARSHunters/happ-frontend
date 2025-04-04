@@ -28,12 +28,11 @@ import androidx.compose.ui.text.input.ImeAction
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.login_register.fromEpochMilliseconds
 import com.example.happ_frontend.ui.domain.login_register.toEpochMilliseconds
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.format
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinLocalDate
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,12 +46,10 @@ fun AuthFormDatePicker(
 ) {
     val context = LocalContext.current
     var showDatePicker by remember { mutableStateOf(false) }
-    val dateFormatter = remember {
-        LocalDate.Formats.ISO
-    }
+    val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
 
     // Convert between LocalDate and timestamp
-    val initialDate = value?.toEpochMilliseconds()
+    val initialDate = value?.toKotlinLocalDate()?.toEpochMilliseconds()
 
     TextField(
         value = value?.format(dateFormatter) ?: "",
@@ -102,7 +99,7 @@ fun AuthFormDatePicker(
                 TextButton(
                     onClick = {
                         datePickerState.selectedDateMillis?.let {
-                            onValueChange(LocalDate.fromEpochMilliseconds(it))
+                            onValueChange(fromEpochMilliseconds(it).toJavaLocalDate())
                         }
                         showDatePicker = false
                     }

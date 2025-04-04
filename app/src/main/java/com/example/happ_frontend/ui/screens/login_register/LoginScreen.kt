@@ -1,6 +1,7 @@
 package com.example.happ_frontend.ui.screens.login_register
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +18,14 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -37,9 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
-import com.example.happ_frontend.ui.domain.login_register.AuthFormData
+import com.example.happ_frontend.ui.domain.login_register.AuthState
 import com.example.happ_frontend.ui.domain.login_register.AuthValidator
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
+import com.example.happ_frontend.ui.navigation.HomeDest
 import com.example.happ_frontend.ui.navigation.RegisterDest
 import com.example.happ_frontend.ui.theme.Typography
 import kotlinx.coroutines.launch
@@ -63,14 +67,36 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navigationController: NavHostController? = null,
-    onLoginClick: (data: AuthFormData) -> Unit = { _ -> },
+    viewModel: AuthViewModel = viewModel(),
     onForgotPasswordClick: () -> Unit = {},
     onSwitchToRegisterClick: (NavHostController) -> Unit = ::onSwitchToRegisterClickDefault,
-    viewModel: AuthViewModel = viewModel()
+    onLoginClick: () -> Unit = {
+        viewModel.loginUser()
+    }
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope() // Remember coroutine scope
+
     val uiState by viewModel.uiState.collectAsState()
+    val authState by viewModel.authState.collectAsState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Success -> @Composable {
+                navigationController?.navigate(HomeDest.route)
+            }
+            is AuthState.Error -> @Composable {
+                Toast.makeText(
+                    context,
+                    "Error: ${(authState as AuthState.Error).message}", Toast.LENGTH_LONG
+                ).show()
+            }
+            AuthState.Loading -> {}
+            AuthState.Idle -> {}
+        }
+    }
 
     val dontHaveAccountAnnotatedString = buildAnnotatedString {
         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
@@ -187,9 +213,10 @@ fun LoginScreen(
 
                     AuthFormButton(
                         text = stringResource(R.string.auth_button_login),
-                        onClick = { onLoginClick(uiState) },
+                        onClick = { onLoginClick() },
 //                        enabledCondition = { viewModel.validateLogin() }
-                        enabled = viewModel.validateLogin()
+                        enabled = viewModel.validateLogin() && authState !is AuthState.Loading,
+                        loading = authState is AuthState.Loading,
                     )
 
                     ClickableText(

@@ -1,8 +1,8 @@
 package com.example.happ_frontend.ui.domain.weight
 
 import com.example.happ_frontend.ui.domain.login_register.now
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
+import java.time.LocalDate
+import java.time.LocalTime
 
 /**
  * Data class representing the form data for weight history entries.

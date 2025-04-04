@@ -1,6 +1,6 @@
 package com.example.happ_frontend.model.weight
 
-import kotlinx.datetime.LocalDateTime
+import java.time.LocalDateTime
 
 /**
  * Abstract class representing a calendar event associated with a specific value.

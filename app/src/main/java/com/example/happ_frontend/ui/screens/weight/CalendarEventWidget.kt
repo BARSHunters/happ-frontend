@@ -9,9 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.happ_frontend.ui.domain.login_register.now
 import com.example.happ_frontend.model.weight.CalendarEvent
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.minus
+import java.time.LocalDate
 
 private const val CALENDAR_MAX_DAYS_DEPTH = 3
 
@@ -59,8 +57,8 @@ fun <T: Any> CalendarEventWidget(
         events = events
             .sortedByDescending { it.dateTime }
             .filter {
-                it.dateTime.date <= selectedDate &&
-                it.dateTime.date > selectedDate.minus(CALENDAR_MAX_DAYS_DEPTH, DateTimeUnit.DAY)
+                it.dateTime.toLocalDate() <= selectedDate &&
+                it.dateTime.toLocalDate() > selectedDate.minusDays(CALENDAR_MAX_DAYS_DEPTH.toLong())
             },
         todayDate = todayDate,
         groupByDate = groupEventsByDate,

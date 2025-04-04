@@ -23,10 +23,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.happ_frontend.ui.domain.login_register.now
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 const val DAYS_IN_WEEK = 7
 
@@ -48,7 +50,7 @@ fun CalendarChipPicker(
     windowCount: Int = DAYS_IN_WEEK,
     windowPosition: Int = (windowCount - 1) / 2
 ) {
-    val beginningDay = selectedDate.minus(windowPosition, DateTimeUnit.DAY)
+    val beginningDay = selectedDate.minusDays(windowPosition.toLong())
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -59,7 +61,7 @@ fun CalendarChipPicker(
             modifier = Modifier.size(48.dp),
             onClick = {
                 onDateSelected(
-                    selectedDate.minus(1, DateTimeUnit.DAY)
+                    selectedDate.minusDays(1L)
                 )
             }
         ) {
@@ -74,10 +76,8 @@ fun CalendarChipPicker(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.Center,
         ) {
-            for (i in 0 ..< windowCount) {
-                val cellDate = beginningDay.plus(
-                    i, DateTimeUnit.DAY
-                )
+            for (i in 0L ..< windowCount) {
+                val cellDate = beginningDay.plusDays(i)
                 CalendarChip(
                     date = cellDate,
                     selected = cellDate == selectedDate,
@@ -90,7 +90,7 @@ fun CalendarChipPicker(
             modifier = Modifier.size(48.dp),
             onClick = {
                 onDateSelected(
-                    selectedDate.plus(1, DateTimeUnit.DAY)
+                    selectedDate.plusDays(1L)
                 )
             }
         ) {
@@ -108,9 +108,7 @@ private fun CalendarChip(
     selected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
-    val dayOfWeekFormatter = LocalDate.Format {
-        dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
-    }
+    val dayOfWeekFormatter = DateTimeFormatter.ofPattern("eee", Locale.getDefault())
 
     InputChip(
         selected = selected,

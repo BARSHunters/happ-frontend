@@ -64,7 +64,7 @@ fun HealthCategoryWidget(
             )
             .padding(32.dp),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.headlineLarge)
         Text(

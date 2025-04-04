@@ -1,6 +1,6 @@
 package com.example.happ_frontend.model.weight
 
-import kotlinx.datetime.LocalDateTime
+import java.time.LocalDateTime
 
 /**
  * Represents a weight measurement event in a calendar view.

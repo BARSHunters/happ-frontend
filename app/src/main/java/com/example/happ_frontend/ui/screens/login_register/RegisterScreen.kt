@@ -3,6 +3,7 @@ package com.example.happ_frontend.ui.screens.login_register
 import AuthFormDatePicker
 import AuthFormNumberField
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,10 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
+import com.example.happ_frontend.ui.AppViewModelProvider
 import com.example.happ_frontend.ui.domain.login_register.AuthFormData
+import com.example.happ_frontend.ui.domain.login_register.AuthState
 import com.example.happ_frontend.ui.domain.login_register.AuthValidator
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
 import com.example.happ_frontend.ui.domain.login_register.getNameMap
+import com.example.happ_frontend.ui.navigation.HomeDest
 import com.example.happ_frontend.ui.navigation.LoginDest
 import com.example.happ_frontend.ui.theme.Typography
 import kotlinx.coroutines.launch
@@ -51,15 +56,35 @@ import kotlinx.coroutines.launch
 @Composable
 fun RegisterScreen(
     navigationController: NavHostController? = null,
-    onCheckIfAccountExistsClick: () -> Unit = { },
-    onRegisterClick: () -> Unit = {},
+    viewModel: AuthViewModel = viewModel(),
     onSwitchToLoginClick: (NavHostController) -> Unit = ::onSwitchToLoginClickDefault,
-    viewModel: AuthViewModel = viewModel()
+    onRegisterClick: () -> Unit = {
+        viewModel.registerUser()
+    }
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope() // Remember coroutine scope
 
     val uiState by viewModel.uiState.collectAsState()
+    val authState by viewModel.authState.collectAsState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthState.Success -> @Composable {
+                navigationController?.navigate(HomeDest.route)
+            }
+            is AuthState.Error -> @Composable {
+                Toast.makeText(
+                    context,
+                    "Error: ${(authState as AuthState.Error).message}", Toast.LENGTH_LONG
+                ).show()
+            }
+            AuthState.Loading -> {}
+            AuthState.Idle -> {}
+        }
+    }
 
     val alreadyHaveAccountAnnotatedString = buildAnnotatedString {
         withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
@@ -86,7 +111,10 @@ fun RegisterScreen(
         }
     }
 
-    HorizontalPager(state = pagerState, userScrollEnabled = false) { pageIndex ->
+    HorizontalPager(
+        state = pagerState,
+        userScrollEnabled = uiState.passedFirstRegistrationPage
+    ) { pageIndex ->
         AuthFormPagerPage(pageIndex) {
             when (pageIndex) {
                 0 -> { // Initial registration data
@@ -147,14 +175,12 @@ fun RegisterScreen(
                         enabled = viewModel.validateRegisterFirstPart(),
                         onClick = {
                             Log.d("RegisterScreen", "continue button clicked")
-                            // TODO check if username doesn't already exist, then allow scroll, else display error
+                            // check if username doesn't already exist, then allow scroll, else display error
+                            viewModel.passedFirstRegistrationPage = true
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(1)
                             }
                         }
-                    )
-                    Text(
-                        text = viewModel.validateRegisterFirstPart().toString()
                     )
                 }
 
@@ -230,9 +256,11 @@ fun RegisterScreen(
                     AuthFormButton(
                         text = stringResource(R.string.auth_button_register),
                         // enabledCondition = { viewModel.validateRegister() },
-                        enabled = viewModel.validateRegister(),
+                        enabled = viewModel.validateRegister() && authState !is AuthState.Loading,
+                        loading = authState is AuthState.Loading,
                         onClick = {
                             Log.d("RegisterScreen", "register button clicked")
+                            onRegisterClick()
                         },
                     )
                 }

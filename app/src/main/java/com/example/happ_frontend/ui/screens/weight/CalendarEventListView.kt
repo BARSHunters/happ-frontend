@@ -24,11 +24,13 @@ import androidx.compose.ui.unit.dp
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.login_register.now
 import com.example.happ_frontend.model.weight.CalendarEvent
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format
 import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
  * A composable function that displays a list of calendar events in a scrollable view.
@@ -77,22 +79,24 @@ fun <T: Any> CalendarEventListView(
                     shape = MaterialTheme.shapes.medium
                 )
         ) {
-            val dateFormatter = LocalDate.Format {
-                dayOfMonth()
-                chars(" ")
-                monthName(MonthNames.ENGLISH_FULL)
-                chars(" - ")
-                dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
-            }
+            val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM - eee", Locale.getDefault())
+//                LocalDate.Format {
+//                dayOfMonth()
+//                chars(" ")
+//                monthName(MonthNames.ENGLISH_FULL)
+//                chars(" - ")
+//                dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
+//            }
 
-            val timeFormatter = LocalDateTime.Format {
-                hour(Padding.ZERO)
-                chars(":")
-                minute(Padding.ZERO)
-            }
+            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+//                LocalDateTime.Format {
+//                hour(Padding.ZERO)
+//                chars(":")
+//                minute(Padding.ZERO)
+//            }
 
             if (groupByDate) {
-                items(events.groupBy { it.dateTime.date }.toList()) { (eventsDate, eventGroup) ->
+                items(events.groupBy { it.dateTime.toLocalDate() }.toList()) { (eventsDate, eventGroup) ->
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -142,11 +146,11 @@ fun <T: Any> CalendarEventListView(
                             horizontalArrangement = Arrangement.Absolute.SpaceBetween
                         ) {
                             Text(
-                                dateFormatter.format(event.dateTime.date),
+                                dateFormatter.format(event.dateTime.toLocalDate()),
                                 fontStyle = FontStyle.Italic,
                                 fontWeight = FontWeight.Bold,
                             )
-                            if (event.dateTime.date == todayDate) {
+                            if (event.dateTime.toLocalDate() == todayDate) {
                                 Text(
                                     stringResource(R.string.health_category_common_event_list_today)
                                 )

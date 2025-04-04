@@ -3,9 +3,9 @@ package com.example.happ_frontend.ui.domain.login_register
 import android.annotation.SuppressLint
 import android.content.Context
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Instant as KInstant
+import kotlinx.datetime.LocalDate as KLocalDate
+import kotlinx.datetime.LocalDateTime as KLocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
@@ -36,8 +36,8 @@ fun Float.format(precision: Int): String =
  * @return The current date as a [LocalDate] object.
  * @author Vad1mChK
  */
-fun LocalDate.Companion.now(): LocalDate {
-    return LocalDateTime.now().date
+fun KLocalDate.Companion.now(): KLocalDate {
+    return KLocalDateTime.now().date
 }
 
 /**
@@ -48,17 +48,17 @@ fun LocalDate.Companion.now(): LocalDate {
  * @return The current date as a [LocalDateTime] object.
  * @author Vad1mChK
  */
-fun LocalDateTime.Companion.now(): LocalDateTime {
+fun KLocalDateTime.Companion.now(): KLocalDateTime {
     val now = Clock.System.now()
     val tz = TimeZone.currentSystemDefault()
     return now.toLocalDateTime(tz)
 }
 
 // Extension functions for date conversion
-fun LocalDate.toEpochMilliseconds() = this.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+fun KLocalDate.toEpochMilliseconds() = this.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
 
-fun LocalDate.Companion.fromEpochMilliseconds(milliseconds: Long): LocalDate =
-    Instant.fromEpochMilliseconds(milliseconds).toLocalDateTime(TimeZone.UTC).date
+fun fromEpochMilliseconds(milliseconds: Long): KLocalDate =
+    KInstant.fromEpochMilliseconds(milliseconds).toLocalDateTime(TimeZone.UTC).date
 
 /**
  * Creates a map of enum values to their corresponding localized string resources.

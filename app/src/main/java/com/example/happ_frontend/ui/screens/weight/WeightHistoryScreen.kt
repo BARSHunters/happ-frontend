@@ -33,10 +33,10 @@ import com.example.happ_frontend.ui.domain.weight.WeightHistoryFormData
 import com.example.happ_frontend.ui.domain.weight.minus
 import com.example.happ_frontend.ui.domain.weight.plus
 import com.example.happ_frontend.ui.screens.home.HealthCategoryWidget
-import kotlinx.datetime.DateTimePeriod
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.atTime
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toKotlinLocalDateTime
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Displays a page header with a back button, a health category widget, a calendar widget for
@@ -160,11 +160,11 @@ fun WeightHistoryScreen(
                         viewModel.setAllPredictedWeightEvents(
                             listOf(
                                 WeightCalendarEvent(
-                                    dateTime = LocalDateTime.now() + DateTimePeriod(hours = 12),
+                                    dateTime = LocalDateTime.now().plusHours(12L),
                                     value = viewModel.weightEvents.last().value,
                                 ),
                                 WeightCalendarEvent(
-                                    dateTime = LocalDateTime.now() + DateTimePeriod(hours = 24),
+                                    dateTime = LocalDateTime.now().plusDays(1L),
                                     value = viewModel.weightEvents.last().value,
                                 )
                             )
@@ -176,7 +176,10 @@ fun WeightHistoryScreen(
 
                         viewModel.setAllPredictedWeightEvents(listOf(
                             WeightCalendarEvent(
-                                dateTime = lastX + (lastX - firstX),
+                                dateTime = (
+                                        lastX.toKotlinLocalDateTime() +
+                                                (lastX.toKotlinLocalDateTime() - firstX.toKotlinLocalDateTime())
+                                        ).toJavaLocalDateTime(),
                                 value = lastY + (lastY - firstY),
                             )
                         ))
