@@ -10,12 +10,12 @@ import androidx.annotation.StringRes
  * - [Failure] - Indicates that the validation failed. Contains an error resource ID and optional format arguments.
  * @author Vad1mChK
  */
-sealed interface LoginRegisterValidationResult {
+sealed interface AuthValidationResult {
     /**
      * Represents a successful validation result.
      * @author Vad1mChK
      */
-    data object Success : LoginRegisterValidationResult
+    data object Success : AuthValidationResult
 
     /**
      * Represents a failed validation result.
@@ -27,5 +27,5 @@ sealed interface LoginRegisterValidationResult {
     class Failure(
         @StringRes val errorResId: Int,
         vararg val formatArgs: Any
-    ) : LoginRegisterValidationResult
+    ) : AuthValidationResult
 }

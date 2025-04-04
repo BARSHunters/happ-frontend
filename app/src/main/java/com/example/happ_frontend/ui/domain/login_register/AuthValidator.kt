@@ -10,15 +10,15 @@ import java.math.RoundingMode
  * @param T The type of the value to be validated.
  * @author Vad1mChK
  */
-sealed interface LoginRegisterValidator<T> {
+sealed interface AuthValidator<T> {
     /**
      * Validates the given value according to the specific validator's rules.
      *
      * @param value The value to be validated.
-     * @return A [LoginRegisterValidationResult] indicating the success or failure of the validation.
+     * @return A [AuthValidationResult] indicating the success or failure of the validation.
      * @author Vad1mChK
      */
-    fun validate(value: T): LoginRegisterValidationResult
+    fun validate(value: T): AuthValidationResult
 
     /**
      * Validates if an integer is within a specified range.
@@ -29,15 +29,15 @@ sealed interface LoginRegisterValidator<T> {
      */
     class IntInRangeValidator(
         val min: Int? = null, val max: Int? = null
-    ) : LoginRegisterValidator<Int> {
-        override fun validate(value: Int): LoginRegisterValidationResult {
+    ) : AuthValidator<Int> {
+        override fun validate(value: Int): AuthValidationResult {
             if (min != null && value < min) {
-                return LoginRegisterValidationResult.Failure(R.string.auth_valid_error_number_min)
+                return AuthValidationResult.Failure(R.string.auth_valid_error_number_min)
             }
             if (max != null && value > max) {
-                return LoginRegisterValidationResult.Failure(R.string.auth_valid_error_number_max)
+                return AuthValidationResult.Failure(R.string.auth_valid_error_number_max)
             }
-            return LoginRegisterValidationResult.Success
+            return AuthValidationResult.Success
         }
     }
 
@@ -50,15 +50,15 @@ sealed interface LoginRegisterValidator<T> {
      */
     class FloatInRangeValidator(
         val min: Float? = null, val max: Float? = null
-    ) : LoginRegisterValidator<Float> {
-        override fun validate(value: Float): LoginRegisterValidationResult {
+    ) : AuthValidator<Float> {
+        override fun validate(value: Float): AuthValidationResult {
             if (min != null && value < min) {
-                return LoginRegisterValidationResult.Failure(R.string.auth_valid_error_number_min)
+                return AuthValidationResult.Failure(R.string.auth_valid_error_number_min)
             }
             if (max != null && value > max) {
-                return LoginRegisterValidationResult.Failure(R.string.auth_valid_error_number_max)
+                return AuthValidationResult.Failure(R.string.auth_valid_error_number_max)
             }
-            return LoginRegisterValidationResult.Success
+            return AuthValidationResult.Success
         }
     }
 
@@ -66,7 +66,7 @@ sealed interface LoginRegisterValidator<T> {
      * Validates a username string based on length and regex pattern.
      * @author Vad1mChK
      */
-    class UsernameValidator : LoginRegisterValidator<String> {
+    class UsernameValidator : AuthValidator<String> {
         companion object {
             private const val USERNAME_REGEX_STRING = "^[a-zA-Z_][a-zA-Z0-9_]*\$"
             private const val USERNAME_MIN_LENGTH = 5
@@ -74,19 +74,19 @@ sealed interface LoginRegisterValidator<T> {
 
         private val regex = Regex(USERNAME_REGEX_STRING)
 
-        override fun validate(value: String): LoginRegisterValidationResult {
+        override fun validate(value: String): AuthValidationResult {
             if (value.length < USERNAME_MIN_LENGTH) {
-                return LoginRegisterValidationResult.Failure(
+                return AuthValidationResult.Failure(
                     R.string.auth_valid_error_username_length,
                     USERNAME_MIN_LENGTH
                 )
             }
             if (!regex.matches(value)) {
-                return LoginRegisterValidationResult.Failure(
+                return AuthValidationResult.Failure(
                     R.string.auth_valid_error_username_regex
                 )
             }
-            return LoginRegisterValidationResult.Success
+            return AuthValidationResult.Success
         }
     }
 
@@ -94,19 +94,19 @@ sealed interface LoginRegisterValidator<T> {
      * Validates a password string based on minimum length.
      * @author Vad1mChK
      */
-    class PasswordValidator : LoginRegisterValidator<String> {
+    class PasswordValidator : AuthValidator<String> {
         companion object {
             private const val PASSWORD_MIN_LENGTH = 8
         }
 
-        override fun validate(value: String): LoginRegisterValidationResult {
+        override fun validate(value: String): AuthValidationResult {
             if (value.length < PASSWORD_MIN_LENGTH) {
-                return LoginRegisterValidationResult.Failure(
+                return AuthValidationResult.Failure(
                     R.string.auth_valid_error_password_length,
                     PASSWORD_MIN_LENGTH
                 )
             }
-            return LoginRegisterValidationResult.Success
+            return AuthValidationResult.Success
         }
     }
 
@@ -116,14 +116,14 @@ sealed interface LoginRegisterValidator<T> {
      * @property firstPassword The password to match against.
      * @author Vad1mChK
      */
-    class PasswordMatchValidator(val firstPassword: String) : LoginRegisterValidator<String> {
-        override fun validate(value: String): LoginRegisterValidationResult {
+    class PasswordMatchValidator(val firstPassword: String) : AuthValidator<String> {
+        override fun validate(value: String): AuthValidationResult {
             if (value != firstPassword) {
-                return LoginRegisterValidationResult.Failure(
+                return AuthValidationResult.Failure(
                     R.string.auth_valid_error_password_match
                 )
             }
-            return LoginRegisterValidationResult.Success
+            return AuthValidationResult.Success
         }
     }
 
@@ -131,7 +131,7 @@ sealed interface LoginRegisterValidator<T> {
      * Validates a name string based on non-emptiness and regex pattern.
      * @author Vad1mChK
      */
-    class NameValidator : LoginRegisterValidator<String> {
+    class NameValidator : AuthValidator<String> {
         companion object {
             private const val NAME_REGEX_STRING =
                 "^\\p{L}(?:[-']?\\p{L}+)*(?: +\\p{L}(?:[-']?\\p{L}+)*)*\$"
@@ -139,18 +139,18 @@ sealed interface LoginRegisterValidator<T> {
 
         private val regex = Regex(NAME_REGEX_STRING)
 
-        override fun validate(value: String): LoginRegisterValidationResult {
+        override fun validate(value: String): AuthValidationResult {
             if (value.isEmpty()) {
-                return LoginRegisterValidationResult.Failure(
+                return AuthValidationResult.Failure(
                     R.string.auth_valid_error_name_notempty
                 )
             }
             if (regex.matchEntire(value) == null) {
-                return LoginRegisterValidationResult.Failure(
+                return AuthValidationResult.Failure(
                     R.string.auth_valid_error_name_regex
                 )
             }
-            return LoginRegisterValidationResult.Success
+            return AuthValidationResult.Success
         }
     }
 
@@ -166,10 +166,10 @@ sealed interface LoginRegisterValidator<T> {
         private val min: Float? = null,
         private val max: Float? = null,
         private val precision: Int
-    ) : LoginRegisterValidator<String> {
-        override fun validate(value: String): LoginRegisterValidationResult {
+    ) : AuthValidator<String> {
+        override fun validate(value: String): AuthValidationResult {
             if (value.isEmpty()) {
-                return LoginRegisterValidationResult.Failure(R.string.auth_valid_error_number_notempty)
+                return AuthValidationResult.Failure(R.string.auth_valid_error_number_notempty)
             }
 
             return try {
@@ -178,21 +178,21 @@ sealed interface LoginRegisterValidator<T> {
 
                 when {
                     min != null && floatValue < min ->
-                        LoginRegisterValidationResult.Failure(
+                        AuthValidationResult.Failure(
                             R.string.auth_valid_error_number_min,
                             min.format(precision)
                         )
 
                     max != null && floatValue > max ->
-                        LoginRegisterValidationResult.Failure(
+                        AuthValidationResult.Failure(
                             R.string.auth_valid_error_number_max,
                             max.format(precision)
                         )
 
-                    else -> LoginRegisterValidationResult.Success
+                    else -> AuthValidationResult.Success
                 }
             } catch (e: NumberFormatException) {
-                LoginRegisterValidationResult.Failure(R.string.auth_valid_error_number_format)
+                AuthValidationResult.Failure(R.string.auth_valid_error_number_format)
             }
         }
     }

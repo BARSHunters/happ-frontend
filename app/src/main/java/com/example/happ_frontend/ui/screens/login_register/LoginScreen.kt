@@ -35,10 +35,12 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterFormData
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidator
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterViewModel
+import com.example.happ_frontend.ui.domain.login_register.AuthFormData
+import com.example.happ_frontend.ui.domain.login_register.AuthValidator
+import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
+import com.example.happ_frontend.ui.navigation.RegisterDest
 import com.example.happ_frontend.ui.theme.Typography
 import kotlinx.coroutines.launch
 
@@ -53,17 +55,18 @@ import kotlinx.coroutines.launch
  * @param onForgotPasswordClick A lambda function that is invoked when the "forgot password"
  * text is clicked. It is optional and defaults to an empty function.
  * @param onSwitchToRegisterClick A lambda function that is invoked when the "don't have an account"
- * text is clicked. It is optional and defaults to an empty function.
+ * text is clicked. Defaults to navigating to register
  *
  * @author Vad1mChK
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoginScreen(
-    onLoginClick: (data: LoginRegisterFormData) -> Unit = { _ -> },
+    navigationController: NavHostController? = null,
+    onLoginClick: (data: AuthFormData) -> Unit = { _ -> },
     onForgotPasswordClick: () -> Unit = {},
-    onSwitchToRegisterClick: () -> Unit = {},
-    viewModel: LoginRegisterViewModel = viewModel()
+    onSwitchToRegisterClick: (NavHostController) -> Unit = ::onSwitchToRegisterClickDefault,
+    viewModel: AuthViewModel = viewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope() // Remember coroutine scope
@@ -146,7 +149,7 @@ fun LoginScreen(
                         onValueChange = { viewModel.username = it },
                         labelText = stringResource(R.string.auth_field_username),
                         leadingIconVector = Icons.Default.AccountCircle,
-                        validator = LoginRegisterValidator.UsernameValidator()
+                        validator = AuthValidator.UsernameValidator()
                     )
 
                     AuthFormTextField(
@@ -157,7 +160,7 @@ fun LoginScreen(
                         censored = uiState.passwordCensored,
                         onCensoredChange = { viewModel.passwordCensored = it },
                         leadingIconVector = Icons.Default.Lock,
-                        validator = LoginRegisterValidator.PasswordValidator()
+                        validator = AuthValidator.PasswordValidator()
                     )
 
                     ClickableText(
@@ -185,9 +188,8 @@ fun LoginScreen(
                     AuthFormButton(
                         text = stringResource(R.string.auth_button_login),
                         onClick = { onLoginClick(uiState) },
-                        enabledCondition = {
-                            viewModel.validateLogin()
-                        }
+//                        enabledCondition = { viewModel.validateLogin() }
+                        enabled = viewModel.validateLogin()
                     )
 
                     ClickableText(
@@ -200,7 +202,7 @@ fun LoginScreen(
                                 end = offset
                             ).firstOrNull()?.let {
                                 Log.d("LoginScreen", "switching to register...")
-                                onSwitchToRegisterClick()
+                                navigationController?.let(onSwitchToRegisterClick)
                             }
                         },
                         style = Typography.bodyLarge
@@ -237,7 +239,7 @@ fun LoginScreen(
                                 end = offset
                             ).firstOrNull()?.let {
                                 Log.d("LoginScreen", "switching to login...")
-                                onSwitchToRegisterClick()
+                                navigationController?.let(onSwitchToRegisterClick)
                             }
                         },
                         style = Typography.bodyLarge
@@ -246,4 +248,8 @@ fun LoginScreen(
             }
         }
     }
+}
+
+private fun onSwitchToRegisterClickDefault(navigationController: NavHostController) {
+    navigationController.navigate(RegisterDest.route)
 }

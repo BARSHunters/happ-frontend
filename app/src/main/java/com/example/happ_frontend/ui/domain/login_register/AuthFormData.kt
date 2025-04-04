@@ -23,7 +23,7 @@ import kotlinx.datetime.LocalDate
  * @see WeightDesire
  * @author Vad1mChK
  */
-data class LoginRegisterFormData(
+data class AuthFormData(
     val username: String = "",
     val password: String = "",
     val confirmPassword: String = "",

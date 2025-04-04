@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.login_register.format
 import com.example.happ_frontend.ui.domain.login_register.now
@@ -49,7 +50,8 @@ import kotlinx.datetime.atTime
  */
 @Composable
 fun WeightHistoryScreen(
-    onGoBack: () -> Unit = {},
+    navigationController: NavHostController? = null,
+    onGoBack: (NavHostController) -> Unit = ::onGoBackDefault,
     viewModel: WeightHistoryViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -80,7 +82,7 @@ fun WeightHistoryScreen(
     ) {
         PageHeaderWithBackButton(
             title = stringResource(R.string.health_category_weight_page_title),
-            onGoBack = onGoBack
+            onGoBack = { navigationController?.let(onGoBack) }
         )
         Column(
             modifier = Modifier
@@ -200,4 +202,8 @@ fun WeightHistoryScreen(
             )
         }
     }
+}
+
+private fun onGoBackDefault(navigationController: NavHostController) {
+    navigationController.popBackStack()
 }

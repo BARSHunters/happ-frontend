@@ -42,7 +42,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -64,6 +63,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.retrofit)
     implementation(libs.retrofit2.converter.gson)
+    implementation(libs.logging.interceptor) // okhttp3 logging interceptor
     implementation(libs.gson)
     implementation(libs.vico.compose) // com.patrykandpatrick.vico:compose
     testImplementation(libs.junit)

@@ -21,10 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidationResult
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidator
+import com.example.happ_frontend.ui.domain.login_register.AuthValidationResult
+import com.example.happ_frontend.ui.domain.login_register.AuthValidator
 import com.example.happ_frontend.ui.domain.login_register.format
-import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,13 +39,13 @@ internal fun AuthFormNumberField(
     var text by remember { mutableStateOf(value.format(precision)) }
     var isFocused by remember { mutableStateOf(false) }
     var validationResult by remember {
-        mutableStateOf<LoginRegisterValidationResult>(
-            LoginRegisterValidationResult.Success
+        mutableStateOf<AuthValidationResult>(
+            AuthValidationResult.Success
         )
     }
 
     val validator = remember(min, max, precision) {
-        LoginRegisterValidator.NumberInputValidator(min, max, precision)
+        AuthValidator.NumberInputValidator(min, max, precision)
     }
 
     // Synchronize with external value changes when not focused
@@ -73,11 +72,11 @@ internal fun AuthFormNumberField(
                 isFocused = focusState.isFocused
                 if (!focusState.isFocused) {
                     when (val result = validator.validate(text)) {
-                        is LoginRegisterValidationResult.Success -> {
+                        is AuthValidationResult.Success -> {
                             text = value.format(precision)
                         }
 
-                        is LoginRegisterValidationResult.Failure -> {
+                        is AuthValidationResult.Failure -> {
                             validationResult = result
                         }
                     }
@@ -99,10 +98,10 @@ internal fun AuthFormNumberField(
             onDone = { focusRequester.freeFocus() }
         ),
         singleLine = true,
-        isError = validationResult is LoginRegisterValidationResult.Failure,
+        isError = validationResult is AuthValidationResult.Failure,
         label = { Text(labelText) },
         supportingText = {
-            (validationResult as? LoginRegisterValidationResult.Failure)?.let { error ->
+            (validationResult as? AuthValidationResult.Failure)?.let { error ->
                 Text(text = stringResource(error.errorResId, *error.formatArgs))
             }
         }

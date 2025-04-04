@@ -15,9 +15,9 @@ import kotlinx.datetime.LocalDate
  * It uses Kotlin Flow to handle state changes and provides methods for validating and accepting user input.
  * @author Vad1mChK
  */
-class LoginRegisterViewModel : ViewModel() {
-    private val data = MutableStateFlow(LoginRegisterFormData())
-    val uiState: StateFlow<LoginRegisterFormData> = data.asStateFlow()
+class AuthViewModel : ViewModel() {
+    private val data = MutableStateFlow(AuthFormData())
+    val uiState: StateFlow<AuthFormData> = data.asStateFlow()
 
     init {
         Log.d("LoginViewModel#<init>", "LoginViewModel initialized")
@@ -91,9 +91,9 @@ class LoginRegisterViewModel : ViewModel() {
      */
     fun validateLogin(): Boolean {
         return listOf(
-            LoginRegisterValidator.UsernameValidator().validate(username),
-            LoginRegisterValidator.PasswordValidator().validate(password)
-        ).all { it is LoginRegisterValidationResult.Success }
+            AuthValidator.UsernameValidator().validate(username),
+            AuthValidator.PasswordValidator().validate(password)
+        ).all { it is AuthValidationResult.Success }
     }
 
     /**
@@ -104,10 +104,12 @@ class LoginRegisterViewModel : ViewModel() {
      */
     fun validateRegisterFirstPart(): Boolean {
         return listOf(
-            LoginRegisterValidator.UsernameValidator().validate(username),
-            LoginRegisterValidator.PasswordValidator().validate(password),
-            LoginRegisterValidator.PasswordMatchValidator(password).validate(confirmPassword)
-        ).all { it is LoginRegisterValidationResult.Success }
+            AuthValidator.UsernameValidator().validate(username),
+            AuthValidator.PasswordValidator().validate(password),
+            AuthValidator.PasswordMatchValidator(password).validate(confirmPassword)
+        ).all {
+            it is AuthValidationResult.Success
+        }
     }
 
     /**
@@ -118,16 +120,16 @@ class LoginRegisterViewModel : ViewModel() {
     fun validateRegister(): Boolean {
         val firstPartResult = validateRegisterFirstPart()
         return firstPartResult && listOf(
-            LoginRegisterValidator.NameValidator().validate(name),
-            LoginRegisterValidator.IntInRangeValidator(
-                min = LoginRegisterFormData.MIN_HEIGHT_CM,
-                max = LoginRegisterFormData.MAX_HEIGHT_CM,
+            AuthValidator.NameValidator().validate(name),
+            AuthValidator.IntInRangeValidator(
+                min = AuthFormData.MIN_HEIGHT_CM,
+                max = AuthFormData.MAX_HEIGHT_CM,
             ).validate(heightCm),
-            LoginRegisterValidator.FloatInRangeValidator(
-                min = LoginRegisterFormData.MIN_WEIGHT_KG,
-                max = LoginRegisterFormData.MAX_WEIGHT_KG,
+            AuthValidator.FloatInRangeValidator(
+                min = AuthFormData.MIN_WEIGHT_KG,
+                max = AuthFormData.MAX_WEIGHT_KG,
             ).validate(weightKg),
-        ).all { it is LoginRegisterValidationResult.Success }
+        ).all { it is AuthValidationResult.Success }
     }
 
     fun acceptLogin() {

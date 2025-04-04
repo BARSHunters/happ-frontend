@@ -22,7 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
+import com.example.happ_frontend.ui.navigation.NotificationDest
+import com.example.happ_frontend.ui.navigation.WeightHistoryDest
 
 /**
  * Composable function that represents the main screen of the application.
@@ -30,7 +33,9 @@ import com.example.happ_frontend.R
  * @author Vad1mChK
  */
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    navigationController: NavHostController? = null
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,7 +55,8 @@ fun HomeScreen() {
                 HomeIconButton(
                     size = 40.dp,
                     cornerRadius = 12.dp,
-                    imageVector = Icons.Outlined.Notifications
+                    imageVector = Icons.Outlined.Notifications,
+                    onClick = { navigationController?.navigate(NotificationDest.route) }
                 )
                 HomeIconButton(
                     size = 40.dp,
@@ -80,6 +86,7 @@ fun HomeScreen() {
             clickable = true,
             onClickSeeMore = {
                 Log.d("HomeScreen, HealthCategoryWidget (weight)", "onClickSeeMore")
+                navigationController?.navigate(WeightHistoryDest.route)
             }
         )
 

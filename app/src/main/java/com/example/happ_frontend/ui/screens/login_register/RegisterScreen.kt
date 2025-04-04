@@ -37,21 +37,24 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterFormData
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidator
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterViewModel
+import com.example.happ_frontend.ui.domain.login_register.AuthFormData
+import com.example.happ_frontend.ui.domain.login_register.AuthValidator
+import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
 import com.example.happ_frontend.ui.domain.login_register.getNameMap
+import com.example.happ_frontend.ui.navigation.LoginDest
 import com.example.happ_frontend.ui.theme.Typography
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RegisterScreen(
+    navigationController: NavHostController? = null,
     onCheckIfAccountExistsClick: () -> Unit = { },
     onRegisterClick: () -> Unit = {},
-    onSwitchToLoginClick: () -> Unit = {},
-    viewModel: LoginRegisterViewModel = viewModel()
+    onSwitchToLoginClick: (NavHostController) -> Unit = ::onSwitchToLoginClickDefault,
+    viewModel: AuthViewModel = viewModel()
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope() // Remember coroutine scope
@@ -116,7 +119,7 @@ fun RegisterScreen(
                         onValueChange = { viewModel.username = it },
                         labelText = stringResource(R.string.auth_field_username),
                         leadingIconVector = Icons.Default.AccountCircle,
-                        validator = LoginRegisterValidator.UsernameValidator()
+                        validator = AuthValidator.UsernameValidator()
                     )
                     AuthFormTextField(
                         value = uiState.password,
@@ -126,7 +129,7 @@ fun RegisterScreen(
                         censorable = true,
                         censored = uiState.passwordCensored,
                         onCensoredChange = { viewModel.passwordCensored = it },
-                        validator = LoginRegisterValidator.PasswordValidator()
+                        validator = AuthValidator.PasswordValidator()
                     )
                     AuthFormTextField(
                         value = uiState.confirmPassword,
@@ -136,11 +139,12 @@ fun RegisterScreen(
                         censorable = true,
                         censored = uiState.passwordCensored,
                         onCensoredChange = { viewModel.passwordCensored = it },
-                        validator = LoginRegisterValidator.PasswordMatchValidator(uiState.password)
+                        validator = AuthValidator.PasswordMatchValidator(uiState.password)
                     )
                     AuthFormButton(
                         text = stringResource(R.string.auth_button_register_continue),
-                        enabledCondition = { viewModel.validateRegisterFirstPart() },
+                        // enabledCondition = { viewModel.validateRegisterFirstPart() },
+                        enabled = viewModel.validateRegisterFirstPart(),
                         onClick = {
                             Log.d("RegisterScreen", "continue button clicked")
                             // TODO check if username doesn't already exist, then allow scroll, else display error
@@ -148,6 +152,9 @@ fun RegisterScreen(
                                 pagerState.animateScrollToPage(1)
                             }
                         }
+                    )
+                    Text(
+                        text = viewModel.validateRegisterFirstPart().toString()
                     )
                 }
 
@@ -177,7 +184,7 @@ fun RegisterScreen(
                         onValueChange = { viewModel.name = it },
                         labelText = stringResource(R.string.auth_field_name),
                         leadingIconVector = Icons.Default.Face,
-                        validator = LoginRegisterValidator.NameValidator()
+                        validator = AuthValidator.NameValidator()
                     )
                     AuthFormDatePicker(
                         value = uiState.birthDate,
@@ -198,15 +205,15 @@ fun RegisterScreen(
                     AuthFormNumberField(
                         value = uiState.heightCm.toFloat(),
                         onValueChange = { viewModel.heightCm = it.toInt() },
-                        min = LoginRegisterFormData.MIN_HEIGHT_CM.toFloat(),
-                        max = LoginRegisterFormData.MAX_HEIGHT_CM.toFloat(),
+                        min = AuthFormData.MIN_HEIGHT_CM.toFloat(),
+                        max = AuthFormData.MAX_HEIGHT_CM.toFloat(),
                         labelText = stringResource(R.string.auth_field_height),
                     )
                     AuthFormNumberField(
                         value = uiState.weightKg,
                         onValueChange = { viewModel.weightKg = it },
-                        min = LoginRegisterFormData.MIN_WEIGHT_KG,
-                        max = LoginRegisterFormData.MAX_WEIGHT_KG,
+                        min = AuthFormData.MIN_WEIGHT_KG,
+                        max = AuthFormData.MAX_WEIGHT_KG,
                         labelText = stringResource(R.string.auth_field_weight),
                         precision = 3
                     )
@@ -222,7 +229,8 @@ fun RegisterScreen(
                     )
                     AuthFormButton(
                         text = stringResource(R.string.auth_button_register),
-                        enabledCondition = { viewModel.validateRegister() },
+                        // enabledCondition = { viewModel.validateRegister() },
+                        enabled = viewModel.validateRegister(),
                         onClick = {
                             Log.d("RegisterScreen", "register button clicked")
                         },
@@ -244,7 +252,7 @@ fun RegisterScreen(
                             end = offset
                         ).firstOrNull()?.let {
                             Log.d("RegisterScreen", "switching to login...")
-                            onSwitchToLoginClick()
+                            navigationController?.let(onSwitchToLoginClick)
                         }
                     },
                     style = Typography.bodyLarge
@@ -252,4 +260,8 @@ fun RegisterScreen(
             }
         }
     }
+}
+
+private fun onSwitchToLoginClickDefault(navigationController: NavHostController) {
+    navigationController.navigate(LoginDest.route)
 }

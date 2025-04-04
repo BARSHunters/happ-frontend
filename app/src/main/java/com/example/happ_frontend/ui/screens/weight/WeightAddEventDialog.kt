@@ -1,9 +1,6 @@
 package com.example.happ_frontend.ui.screens.weight
 
 import AuthFormDatePicker
-import AuthFormNumberField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,8 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.happ_frontend.R
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidator
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterViewModel
+import com.example.happ_frontend.ui.domain.login_register.AuthValidator
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryFormData
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
 import com.example.happ_frontend.ui.screens.login_register.AuthFormTextField
@@ -48,7 +44,7 @@ fun WeightAddEventDialog(
     val uiState by viewModel.uiState.collectAsState()
 
     val weightValidator by remember {
-        mutableStateOf(LoginRegisterValidator.NumberInputValidator(
+        mutableStateOf(AuthValidator.NumberInputValidator(
             min = WeightHistoryFormData.MIN_WEIGHT_KG,
             max = WeightHistoryFormData.MAX_WEIGHT_KG,
             precision = 1
@@ -88,7 +84,7 @@ fun WeightAddEventDialog(
             onValueChange = {
                 viewModel.entryWeightKgString = it
             },
-            validator = LoginRegisterValidator.NumberInputValidator(
+            validator = AuthValidator.NumberInputValidator(
                 min = WeightHistoryFormData.MIN_WEIGHT_KG,
                 max = WeightHistoryFormData.MAX_WEIGHT_KG,
                 precision = 1

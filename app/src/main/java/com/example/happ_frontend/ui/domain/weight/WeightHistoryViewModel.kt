@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.happ_frontend.model.weight.WeightCalendarEvent
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidationResult
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidator
+import com.example.happ_frontend.ui.domain.login_register.AuthValidationResult
+import com.example.happ_frontend.ui.domain.login_register.AuthValidator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -84,13 +84,13 @@ class WeightHistoryViewModel : ViewModel() {
      */
     fun validateAddEventDialog(): Boolean {
         return listOf(
-            LoginRegisterValidator.NumberInputValidator (
+            AuthValidator.NumberInputValidator (
                 min = WeightHistoryFormData.MIN_WEIGHT_KG,
                 max = WeightHistoryFormData.MAX_WEIGHT_KG,
                 precision = 1
             ).validate(entryWeightKgString)
         ).all {
-            it == LoginRegisterValidationResult.Success
+            it == AuthValidationResult.Success
         }
     }
 

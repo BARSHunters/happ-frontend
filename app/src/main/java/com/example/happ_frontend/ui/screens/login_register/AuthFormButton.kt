@@ -17,7 +17,8 @@ import com.example.happ_frontend.ui.theme.Typography
 internal fun AuthFormButton(
     text: String,
     onClick: () -> Unit = {},
-    enabledCondition: () -> Boolean = { true }
+    // enabledCondition: () -> Boolean = { true }
+    enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
@@ -28,7 +29,8 @@ internal fun AuthFormButton(
             contentColor = MaterialTheme.colorScheme.onPrimary
         ),
         shape = RoundedCornerShape(6.dp),
-        enabled = enabledCondition()
+        // enabled = enabledCondition()
+        enabled = enabled
     ) {
         Column {
             Text(

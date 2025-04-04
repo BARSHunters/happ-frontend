@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidationResult
-import com.example.happ_frontend.ui.domain.login_register.LoginRegisterValidator
+import com.example.happ_frontend.ui.domain.login_register.AuthValidationResult
+import com.example.happ_frontend.ui.domain.login_register.AuthValidator
 
 /**
  * Composable function that represents a form field for inputting text.
@@ -44,10 +44,10 @@ internal fun AuthFormTextField(
     censored: Boolean = false,
     onCensoredChange: (Boolean) -> Unit = { _ -> },
     leadingIconVector: ImageVector? = null,
-    validator: LoginRegisterValidator<String>? = null
+    validator: AuthValidator<String>? = null
 ) {
     val validationResult = validator?.validate(value)
-    val validationErrorMessage = if (validationResult is LoginRegisterValidationResult.Failure) {
+    val validationErrorMessage = if (validationResult is AuthValidationResult.Failure) {
         stringResource(validationResult.errorResId, *validationResult.formatArgs)
     } else null
 
@@ -94,7 +94,7 @@ internal fun AuthFormTextField(
             focusedLeadingIconColor = MaterialTheme.colorScheme.primary,
             unfocusedLeadingIconColor = MaterialTheme.colorScheme.primary,
         ),
-        isError = validationResult is LoginRegisterValidationResult.Failure,
+        isError = validationResult is AuthValidationResult.Failure,
         supportingText = {
             if (validationErrorMessage != null) {
                 Text(validationErrorMessage, color = MaterialTheme.colorScheme.error)
