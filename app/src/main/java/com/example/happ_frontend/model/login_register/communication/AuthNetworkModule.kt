@@ -1,5 +1,6 @@
 package com.example.happ_frontend.model.login_register.communication
 
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
 import com.example.happ_frontend.model.login_register.serialization.LocalDateTimeAdapter
 import com.example.happ_frontend.model.login_register.serialization.LocalDateAdapter
 import com.example.happ_frontend.model.login_register.serialization.LocalTimeAdapter
@@ -22,6 +23,17 @@ object AuthNetworkModule {
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
+        .addInterceptor { chain ->
+            val jwt = AuthSharedPreferencesProvider.editor?.jwt
+            val request = chain.request().newBuilder()
+                .let {
+                    if (jwt != null)
+                        it.addHeader("Authorization", "Bearer $jwt")
+                    else it
+                }
+                .build()
+            chain.proceed(request)
+        }
         .connectTimeout(DEFAULT_API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .readTimeout(DEFAULT_API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .writeTimeout(DEFAULT_API_TIMEOUT_SECONDS, TimeUnit.SECONDS)

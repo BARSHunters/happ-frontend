@@ -34,9 +34,18 @@ class AuthViewModel (
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
+    private val _profileState = MutableStateFlow<ProfileState>(ProfileState.Loading)
+    val profileState: StateFlow<ProfileState> = _profileState.asStateFlow()
+
 //    init {
 //        Log.d("AuthViewModel#init", "ViewModel initialized")
 //    }
+
+    sealed class ProfileState {
+        data class Success(val username: String) : ProfileState()
+        data class Error(val message: String) : ProfileState()
+        object Loading : ProfileState()
+    }
 
     var username: String
         get() = data.value.username
@@ -211,6 +220,23 @@ class AuthViewModel (
                 }
             } catch (e: Exception) {
                 _authState.value = AuthState.Error("Network error: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun checkAuth() {
+        viewModelScope.launch {
+            try {
+                val response = authApi.checkJwt()
+                if (response.isSuccessful) {
+                    _profileState.value = ProfileState.Success(response.body()?.username ?: "")
+                } else {
+                    _profileState.value = ProfileState.Error("Session expired")
+                    prefs.clearUserData()
+                }
+            } catch (e: Exception) {
+                _profileState.value = ProfileState.Error("Network error: $e")
+                prefs.clearUserData()
             }
         }
     }
