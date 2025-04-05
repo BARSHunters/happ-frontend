@@ -15,5 +15,6 @@ import java.time.LocalDateTime
  */
 data class WeightCalendarEvent(
     override val dateTime: LocalDateTime,
-    override val value: Mass
+    override val value: Mass,
+    val prediction: Boolean = false,
 ) : CalendarEvent<Mass>(dateTime, value)

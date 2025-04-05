@@ -1,5 +1,7 @@
 package com.example.happ_frontend.model.login_register
 
+import kotlin.jvm.Throws
+
 /**
  * Represents a user's weight management goal or desire.
  *
@@ -10,19 +12,31 @@ package com.example.happ_frontend.model.login_register
  *
  * @author Vad1mChK
  */
-enum class WeightDesire {
+enum class WeightDesire(val weightControlWishString: String) {
     /**
      * Indicates the user wants to lose weight.
      */
-    LOSS,
+    LOSS("lose"),
 
     /**
      * Indicates the user wants to maintain their current weight.
      */
-    REMAIN,
+    REMAIN("keep"),
 
     /**
      * Indicates the user wants to gain weight.
      */
-    GAIN,
+    GAIN("gain");
+
+    fun toWeightControlWishString(): String {
+        return weightControlWishString
+    }
+
+    companion object {
+        @JvmStatic
+        @Throws(NoSuchElementException::class)
+        fun fromWeightControlWishString(wishString: String): WeightDesire {
+            return entries.first { it.weightControlWishString == wishString }
+        }
+    }
 }

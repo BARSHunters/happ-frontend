@@ -1,19 +1,24 @@
 package com.example.happ_frontend
 
 import android.content.Context
+import androidx.compose.ui.Modifier
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.happ_frontend.model.notifications.data.NotificationDAO
 import com.example.happ_frontend.model.notifications.data.NotificationEntity
+import com.example.happ_frontend.model.weight.data.WeightHistoryDAO
+import com.example.happ_frontend.model.weight.data.WeightHistoryEventEntity
 
 @Database(
-    entities = [NotificationEntity::class],
+    entities = [NotificationEntity::class, WeightHistoryEventEntity::class],
     version = 1,
     exportSchema = false
 )
 abstract class HappFrontendDatabase : RoomDatabase(){
     abstract fun notificationDAO() : NotificationDAO
+    abstract fun weightHistoryDAO(): WeightHistoryDAO
+
     companion object {
         @Volatile
         private var Instance : HappFrontendDatabase? = null
