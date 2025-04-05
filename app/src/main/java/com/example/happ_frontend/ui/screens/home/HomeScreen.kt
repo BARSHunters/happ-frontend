@@ -14,16 +14,23 @@ import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
+import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
+import com.example.happ_frontend.ui.navigation.LoginDest
 import com.example.happ_frontend.ui.navigation.NotificationDest
 import com.example.happ_frontend.ui.navigation.WeightHistoryDest
 
@@ -34,7 +41,46 @@ import com.example.happ_frontend.ui.navigation.WeightHistoryDest
  */
 @Composable
 fun HomeScreen(
-    navigationController: NavHostController? = null
+    navigationController: NavHostController? = null,
+    viewModel: AuthViewModel = viewModel()
+) {
+    val profileState by viewModel.profileState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.checkAuth()
+    }
+
+    when (val state = profileState) {
+        is AuthViewModel.ProfileState.Success -> {
+            Log.d("HomeScreen", "Success")
+            HomeScreenContent(state.username, navigationController)
+        }
+        is AuthViewModel.ProfileState.Error -> {
+            LaunchedEffect(state) {
+                Log.d("HomeScreen", "Error: ${state.message}")
+                navigationController?.navigate(LoginDest.route) {
+                    popUpTo(0)
+                }
+            }
+        }
+        is AuthViewModel.ProfileState.Loading -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 64.dp, horizontal = 32.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomeScreenContent(
+    username: String,
+    navigationController: NavHostController?
 ) {
     Column(
         modifier = Modifier
@@ -69,7 +115,7 @@ fun HomeScreen(
                     imageVector = Icons.Outlined.Search
                 )
             }
-            ProfileChip("kitterinka", "Blaze the Cat")
+            ProfileChip(username, "Blaze the Cat") // TODO fetch userData from server or smth and place username here
         }
 
         Text(
