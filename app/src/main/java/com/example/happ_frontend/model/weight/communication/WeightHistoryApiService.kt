@@ -8,7 +8,7 @@ import retrofit2.http.GET
 
 interface WeightHistoryApiService {
     companion object {
-        const val BASE_URL = "http://10.0.2.2:3000/api/auth/" // TODO replace with actual API URL and endpoints
+        const val BASE_URL = "http://10.0.2.2:3000/api/weight/" // TODO replace with actual API URL and endpoints
     }
 
     @GET("weightHistoryAndPredictions")
