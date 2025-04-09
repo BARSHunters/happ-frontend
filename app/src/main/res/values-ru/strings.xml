@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notifications">Уведомления</string>
+    <string name="activityNotification">Activity</string>
+    <string name="friendNotification">Заявка в друзья</string>
+    <string name="achievementNotification">Новое достижение</string>
+    <string name="activityNotificationDescription">Не забудь про свои активности!</string>
+    <string name="friendNotificationDescription">У вас новая заявка в друзья</string>
+    <string name="achievementNotificationDescription">"У вас новое достижение: "</string>
+    <string name="notification_history_is_clear">Уведомления отсутсвуют</string>
+    <string name="wants_to_be_your_friend">хочет быть твоим другом</string>
+    <string name="watch_friend_requests">Профиль</string>
+    <string name="achievements">Достижения</string>
+    <string name="delete_all_notifications">Удалить все уведомления</string>
+</resources>
