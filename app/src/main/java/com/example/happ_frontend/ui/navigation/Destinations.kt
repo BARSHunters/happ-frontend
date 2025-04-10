@@ -6,3 +6,7 @@ interface Destination {
 object NotificationDest : Destination {
     override val route: String = "notificationDest"
 }
+
+object NutritionDest : Destination {
+    override val route: String = "nutritionDest"
+}
