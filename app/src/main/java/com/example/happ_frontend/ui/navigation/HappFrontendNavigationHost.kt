@@ -12,6 +12,7 @@ import com.example.happ_frontend.ui.screens.home.HomeScreen
 import com.example.happ_frontend.ui.screens.login_register.LoginScreen
 import com.example.happ_frontend.ui.screens.login_register.RegisterScreen
 import com.example.happ_frontend.ui.screens.notifications.NotificationScreen
+import com.example.happ_frontend.ui.screens.nutrition.NutritionScreen
 import com.example.happ_frontend.ui.screens.search.SearchScreen
 import com.example.happ_frontend.ui.screens.weight.WeightHistoryScreen
 
@@ -32,6 +33,9 @@ fun HappFrontendNavigationHost(
         ) {
             composable(route = NotificationDest.route) {
                 NotificationScreen()
+            }
+            composable(route = NutritionDest.route) {
+                NutritionScreen(onBackClick = { navigationController.popBackStack() })
             }
             composable(route = ActivityDest.route) {
                 ActivityScreen(onBackClick = { navigationController.popBackStack() })

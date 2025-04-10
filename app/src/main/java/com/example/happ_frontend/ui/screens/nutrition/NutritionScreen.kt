@@ -48,7 +48,7 @@ fun NutritionScreen(
                     Icon(
                         imageVector = Icons.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color(0xFFA590B6) // Purple color to match the design
+                        tint = Color(0xFFA590B6) // Purple color
                     )
                 }
 
@@ -57,7 +57,7 @@ fun NutritionScreen(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    color = Color(0xFF7B639C), // Purple color to match the design
+                    color = Color(0xFF7B639C), // Purple color
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
