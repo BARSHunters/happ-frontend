@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material.icons.filled.LocalFireDepartment
@@ -152,37 +154,44 @@ private fun HomeScreenContent(
 
         HorizontalDivider()
 
-        HealthCategoryWidget(
-            stringResource(R.string.health_category_weight_title),
-            stringResource(R.string.health_category_weight_description),
-            Icons.Default.Accessibility,
-            clickable = true,
-            onClickSeeMore = {
-                Log.d("HomeScreen, HealthCategoryWidget (weight)", "onClickSeeMore")
-                onNavigateToWeightHistory()
-            }
-        )
+        Column(
+            modifier = Modifier
+                .verticalScroll(state = rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+            horizontalAlignment = Alignment.Start
+        ) {
+            HealthCategoryWidget(
+                stringResource(R.string.health_category_weight_title),
+                stringResource(R.string.health_category_weight_description),
+                Icons.Default.Accessibility,
+                clickable = true,
+                onClickSeeMore = {
+                    Log.d("HomeScreen, HealthCategoryWidget (weight)", "onClickSeeMore")
+                    onNavigateToWeightHistory()
+                }
+            )
 
-        HealthCategoryWidget(
-            stringResource(R.string.health_category_activity_title),
-            stringResource(R.string.health_category_activity_description),
-            Icons.Default.LocalFireDepartment,
-            clickable = true,
-            onClickSeeMore = {
-                Log.d("HomeScreen, HealthCategoryWidget (activity)", "onClickSeeMore")
-                onNavigateToActivity()
-            }
-        )
+            HealthCategoryWidget(
+                stringResource(R.string.health_category_activity_title),
+                stringResource(R.string.health_category_activity_description),
+                Icons.Default.LocalFireDepartment,
+                clickable = true,
+                onClickSeeMore = {
+                    Log.d("HomeScreen, HealthCategoryWidget (activity)", "onClickSeeMore")
+                    onNavigateToActivity()
+                }
+            )
 
-        HealthCategoryWidget(
-            stringResource(R.string.health_category_nutrition_title),
-            stringResource(R.string.health_category_nutrition_description),
-            Icons.Default.SwapHoriz,
-            clickable = true,
-            onClickSeeMore = {
-                Log.d("HomeScreen, HealthCategoryWidget (nutrition)", "onClickSeeMore")
-                onNavigateToNutrition()
-            }
-        )
+            HealthCategoryWidget(
+                stringResource(R.string.health_category_nutrition_title),
+                stringResource(R.string.health_category_nutrition_description),
+                Icons.Default.SwapHoriz,
+                clickable = true,
+                onClickSeeMore = {
+                    Log.d("HomeScreen, HealthCategoryWidget (nutrition)", "onClickSeeMore")
+                    onNavigateToNutrition()
+                }
+            )
+        }
     }
 }
