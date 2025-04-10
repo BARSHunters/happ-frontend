@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.happ_frontend.ui.screens.activity.ActivityScreen
 import com.example.happ_frontend.ui.screens.notifications.NotificationScreen
 
 @Composable
@@ -22,6 +23,9 @@ fun HappFrontendNavigationHost(
         ) {
             composable(route = NotificationDest.route) {
                 NotificationScreen()
+            }
+            composable(route = ActivityDest.route) {
+                ActivityScreen(onBackClick = { navigationController.popBackStack() })
             }
         }
     }
