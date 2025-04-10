@@ -34,7 +34,7 @@ private const val CALENDAR_MAX_DAYS_DEPTH = 3
 @Composable
 fun <T: Any> CalendarEventWidget(
     events: List<CalendarEvent<T>>,
-    windowCount: Int = 5, // Count of windows in calendar picker
+    windowCount: Int = 7, // Count of windows in calendar picker
     todayDate: LocalDate = LocalDate.now(),
     selectedDate: LocalDate = todayDate,
     onDateSelected: (LocalDate) -> Unit = { _ -> },
