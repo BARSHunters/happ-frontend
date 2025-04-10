@@ -60,8 +60,7 @@ import kotlin.math.abs
  */
 @Composable
 fun WeightHistoryScreen(
-    navigationController: NavHostController? = null,
-    onGoBack: (NavHostController) -> Unit = ::onGoBackDefault,
+    onGoBack: () -> Unit = {},
     viewModel: WeightHistoryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -98,7 +97,7 @@ fun WeightHistoryScreen(
     ) {
         PageHeaderWithBackButton(
             title = stringResource(R.string.health_category_weight_page_title),
-            onGoBack = { navigationController?.let(onGoBack) }
+            onGoBack = onGoBack
         )
         Column(
             modifier = Modifier
@@ -257,8 +256,4 @@ fun WeightHistoryScreen(
             )
         }
     }
-}
-
-private fun onGoBackDefault(navigationController: NavHostController) {
-    navigationController.popBackStack()
 }

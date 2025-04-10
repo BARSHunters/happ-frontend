@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
+import com.example.happ_frontend.ui.AppViewModelProvider
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
 import com.example.happ_frontend.ui.navigation.LoginDest
 import com.example.happ_frontend.ui.navigation.NotificationDest
@@ -41,8 +42,15 @@ import com.example.happ_frontend.ui.navigation.WeightHistoryDest
  */
 @Composable
 fun HomeScreen(
-    navigationController: NavHostController? = null,
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onNavigateToLogin: () -> Unit = {},
+    onNavigateToWeightHistory: () -> Unit = {},
+    onNavigateToNutrition: () -> Unit = {},
+    onNavigateToActivity: () -> Unit = {},
+    onNavigateToNotification: () -> Unit = {},
+    onNavigateToSettings: () -> Unit = {},
+    onNavigateToSearch: () -> Unit = {},
+    onNavigateToUserProfile: () -> Unit = {},
 ) {
     val profileState by viewModel.profileState.collectAsState()
 
@@ -53,14 +61,21 @@ fun HomeScreen(
     when (val state = profileState) {
         is AuthViewModel.ProfileState.Success -> {
             Log.d("HomeScreen", "Success")
-            HomeScreenContent(navigationController, viewModel)
+            HomeScreenContent(
+                viewModel,
+                onNavigateToWeightHistory = onNavigateToWeightHistory,
+                onNavigateToNutrition = onNavigateToNutrition,
+                onNavigateToActivity = onNavigateToActivity,
+                onNavigateToNotification = onNavigateToNotification,
+                onNavigateToSettings = onNavigateToSettings,
+                onNavigateToSearch = onNavigateToSearch,
+                onNavigateToUserProfile = onNavigateToUserProfile,
+            )
         }
         is AuthViewModel.ProfileState.Error -> {
             LaunchedEffect(state) {
                 Log.d("HomeScreen", "Error: ${state.message}")
-                navigationController?.navigate(LoginDest.route) {
-                    popUpTo(0)
-                }
+                onNavigateToLogin()
             }
         }
         is AuthViewModel.ProfileState.Loading -> {
@@ -79,8 +94,14 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    navigationController: NavHostController?,
-    viewModel: AuthViewModel
+    viewModel: AuthViewModel,
+    onNavigateToWeightHistory: () -> Unit,
+    onNavigateToNutrition: () -> Unit,
+    onNavigateToActivity: () -> Unit,
+    onNavigateToNotification: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToUserProfile: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -102,20 +123,26 @@ private fun HomeScreenContent(
                     size = 40.dp,
                     cornerRadius = 12.dp,
                     imageVector = Icons.Outlined.Notifications,
-                    onClick = { navigationController?.navigate(NotificationDest.route) }
+                    onClick = onNavigateToNotification
                 )
                 HomeIconButton(
                     size = 40.dp,
                     cornerRadius = 12.dp,
-                    imageVector = Icons.Outlined.Settings
+                    imageVector = Icons.Outlined.Settings,
+                    onClick = onNavigateToSettings
                 )
                 HomeIconButton(
                     size = 40.dp,
                     cornerRadius = 12.dp,
-                    imageVector = Icons.Outlined.Search
+                    imageVector = Icons.Outlined.Search,
+                    onClick = onNavigateToSearch
                 )
             }
-            ProfileChip(viewModel.username, viewModel.name) // TODO fetch userData from server or smth and place username here
+            ProfileChip(
+                viewModel.username,
+                viewModel.name,
+                onClick = onNavigateToUserProfile
+            )
         }
 
         Text(
@@ -132,7 +159,7 @@ private fun HomeScreenContent(
             clickable = true,
             onClickSeeMore = {
                 Log.d("HomeScreen, HealthCategoryWidget (weight)", "onClickSeeMore")
-                navigationController?.navigate(WeightHistoryDest.route)
+                onNavigateToWeightHistory()
             }
         )
 
@@ -143,6 +170,7 @@ private fun HomeScreenContent(
             clickable = true,
             onClickSeeMore = {
                 Log.d("HomeScreen, HealthCategoryWidget (activity)", "onClickSeeMore")
+                onNavigateToActivity()
             }
         )
 
@@ -153,6 +181,7 @@ private fun HomeScreenContent(
             clickable = true,
             onClickSeeMore = {
                 Log.d("HomeScreen, HealthCategoryWidget (nutrition)", "onClickSeeMore")
+                onNavigateToNutrition()
             }
         )
     }

@@ -1,5 +1,6 @@
 package com.example.happ_frontend.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -30,25 +31,39 @@ fun HappFrontendNavigationHost(
             }
             composable(route = LoginDest.route) {
                 LoginScreen(
-                    navigationController,
-                    viewModel = viewModel()
+                    onNavigateToRegister = { navigationController.navigate(RegisterDest.route) },
+                    onNavigateToHome = { navigationController.navigate(HomeDest.route) }
                 )
             }
             composable(route = RegisterDest.route) {
                 RegisterScreen(
-                    navigationController,
-                    viewModel = viewModel()
+                    onNavigateToHome = { navigationController.navigate(HomeDest.route) },
+                    onNavigateToLogin = { navigationController.navigate(LoginDest.route) }
                 )
             }
             composable(route = HomeDest.route) {
                 HomeScreen(
-                    navigationController
+                    onNavigateToLogin = { navigationController.navigate(LoginDest.route) },
+                    onNavigateToWeightHistory = {
+                        navigationController.navigate(WeightHistoryDest.route)
+                    },
+                    onNavigateToNutrition = { /* TODO */ },
+                    onNavigateToActivity = { /* TODO */ },
+                    onNavigateToNotification = {
+                        navigationController.navigate(NotificationDest.route)
+                    },
+                    onNavigateToSettings = { /* TODO */ },
+                    onNavigateToSearch = { /* TODO */ },
+                    onNavigateToUserProfile = {
+                        /* TODO */
+                    }
                 )
             }
             composable(route = WeightHistoryDest.route) {
                 WeightHistoryScreen(
-                    navigationController,
-                    viewModel = viewModel()
+                    onGoBack = {
+                        navigationController.navigate(HomeDest.route)
+                    }
                 )
             }
          }

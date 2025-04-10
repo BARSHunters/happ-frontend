@@ -34,7 +34,7 @@ import kotlin.reflect.KProperty
  * and provides methods for adding, clearing, and validating weight events.
  */
 class WeightHistoryViewModel(
-    private val weightHistoryRepository: WeightHistoryRepository? = null, // TODO actually make it work
+    private val weightHistoryRepository: WeightHistoryRepository,
     private val weightHistoryApi: WeightHistoryApiService = WeightHistoryNetworkModule.weightHistoryApiService
 ): ViewModel() {
     private val _weightEvents = mutableStateListOf<WeightCalendarEvent>()

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,12 +29,13 @@ fun ProfileChip(
     username: String,
     name: String,
     circleProfilePicture: Boolean = false,
-    roundedProfilePicture: Boolean = false
+    roundedProfilePicture: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.wrapContentSize()
+        modifier = Modifier.wrapContentSize(),
     ) {
         Column(
             horizontalAlignment = Alignment.End,

@@ -67,10 +67,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoginScreen(
-    navigationController: NavHostController? = null,
     viewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onForgotPasswordClick: () -> Unit = {},
-    onSwitchToRegisterClick: (NavHostController) -> Unit = ::onSwitchToRegisterClickDefault,
+    onNavigateToRegister: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
     onLoginClick: () -> Unit = {
         viewModel.loginUser()
     }
@@ -85,9 +85,7 @@ fun LoginScreen(
 
     LaunchedEffect(authState) {
         when (authState) {
-            is AuthState.Success -> @Composable {
-                navigationController?.navigate(HomeDest.route)
-            }
+            is AuthState.Success -> onNavigateToHome()
             is AuthState.Error -> @Composable {
                 Toast.makeText(
                     context,
@@ -230,7 +228,7 @@ fun LoginScreen(
                                 end = offset
                             ).firstOrNull()?.let {
                                 Log.d("LoginScreen", "switching to register...")
-                                navigationController?.let(onSwitchToRegisterClick)
+                                onNavigateToRegister()
                             }
                         },
                         style = Typography.bodyLarge
@@ -267,7 +265,7 @@ fun LoginScreen(
                                 end = offset
                             ).firstOrNull()?.let {
                                 Log.d("LoginScreen", "switching to login...")
-                                navigationController?.let(onSwitchToRegisterClick)
+                                onNavigateToRegister()
                             }
                         },
                         style = Typography.bodyLarge
@@ -276,8 +274,4 @@ fun LoginScreen(
             }
         }
     }
-}
-
-private fun onSwitchToRegisterClickDefault(navigationController: NavHostController) {
-    navigationController.navigate(RegisterDest.route)
 }

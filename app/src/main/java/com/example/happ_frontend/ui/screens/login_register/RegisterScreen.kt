@@ -55,12 +55,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RegisterScreen(
-    navigationController: NavHostController? = null,
     viewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onSwitchToLoginClick: (NavHostController) -> Unit = ::onSwitchToLoginClickDefault,
+    onNavigateToLogin: () -> Unit = {},
+    onNavigateToHome: () -> Unit = {},
     onRegisterClick: () -> Unit = {
         viewModel.registerUser()
-    }
+    },
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope() // Remember coroutine scope
@@ -72,9 +72,7 @@ fun RegisterScreen(
 
     LaunchedEffect(authState) {
         when (authState) {
-            is AuthState.Success -> @Composable {
-                navigationController?.navigate(HomeDest.route)
-            }
+            is AuthState.Success -> onNavigateToHome()
             is AuthState.Error -> @Composable {
                 Toast.makeText(
                     context,
@@ -280,7 +278,7 @@ fun RegisterScreen(
                             end = offset
                         ).firstOrNull()?.let {
                             Log.d("RegisterScreen", "switching to login...")
-                            navigationController?.let(onSwitchToLoginClick)
+                            onNavigateToLogin()
                         }
                     },
                     style = Typography.bodyLarge
@@ -288,8 +286,4 @@ fun RegisterScreen(
             }
         }
     }
-}
-
-private fun onSwitchToLoginClickDefault(navigationController: NavHostController) {
-    navigationController.navigate(LoginDest.route)
 }
