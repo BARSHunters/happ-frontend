@@ -57,7 +57,8 @@ fun <T: Any> CalendarEventListView(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.onBackground,
                     shape = MaterialTheme.shapes.medium
-                ),
+                )
+                .padding(all = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(stringResource(
@@ -78,6 +79,7 @@ fun <T: Any> CalendarEventListView(
                     color = MaterialTheme.colorScheme.onBackground,
                     shape = MaterialTheme.shapes.medium
                 )
+                .padding(all = 16.dp)
         ) {
             val dateFormatter = DateTimeFormatter.ofPattern("dd MMMM - eee", Locale.getDefault())
 //                LocalDate.Format {

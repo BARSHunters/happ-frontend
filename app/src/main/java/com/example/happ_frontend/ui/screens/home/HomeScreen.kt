@@ -3,6 +3,7 @@ package com.example.happ_frontend.ui.screens.home
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,13 +30,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.AppViewModelProvider
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
-import com.example.happ_frontend.ui.navigation.LoginDest
-import com.example.happ_frontend.ui.navigation.NotificationDest
-import com.example.happ_frontend.ui.navigation.WeightHistoryDest
 
 /**
  * Composable function that represents the main screen of the application.
@@ -108,7 +105,11 @@ private fun HomeScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 64.dp, horizontal = 32.dp),
+            .padding(paddingValues = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                top = 32.dp,
+            )),
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
         horizontalAlignment = Alignment.Start
     ) {

@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -91,7 +92,11 @@ fun WeightHistoryScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 64.dp, horizontal = 32.dp),
+            .padding(paddingValues = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                top = 32.dp,
+            )),
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
         horizontalAlignment = Alignment.Start
     ) {
