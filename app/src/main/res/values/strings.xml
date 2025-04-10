@@ -49,6 +49,8 @@
     <string name="health_category.weight.dialog.field.date">Entry date</string>
     <string name="health.category.weight.dialog.field.time">Entry time</string>
     <string name="health.category.weight.dialog.field.weight">Current weight (kg)</string>
+    <string name="health.category.weight.widget.failure">Failed to load weight history. Reason: %1$s</string>
+    <string name="health.category.weight.widget.reload">Reload</string>
     <string name="health_category.activity.title">Activity &amp; Workouts</string>
     <string name="health_category.activity.page_title">Activity</string>
     <string name="health_category.activity.description">Move more,\nfeel better!</string>

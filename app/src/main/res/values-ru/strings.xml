@@ -65,6 +65,7 @@
     <string name="health_category.weight.prediction.not_enough_data">Не хватает данных для предсказания веса</string>
     <string name="health_category.weight.button.add_entry">Добавить запись о весе</string>
     <string name="health.category.weight.dialog.field.weight">Текущий вес (кг)</string>
+    <string name="health.category.weight.widget.reload">Перезагрузить</string>
     <string name="health_category.activity.title">Активности и тренировки</string>
     <string name="health_category.weight.button.visualize">График изменения веса</string>
     <string name="health_category.weight.dialog.title">Новая запись о весе</string>
@@ -82,4 +83,5 @@
     <string name="watch_friend_requests">Профиль</string>
     <string name="achievements">Достижения</string>
     <string name="delete_all_notifications">Удалить все уведомления</string>
+    <string name="health.category.weight.widget.failure">Не удалось загрузить историю весов. Причина: %1$s</string>
 </resources>
