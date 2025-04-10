@@ -1,10 +1,10 @@
 package com.example.happ_frontend.ui.screens.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,7 +35,9 @@ fun ProfileChip(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.wrapContentSize(),
+        modifier = Modifier
+            .wrapContentSize()
+            .clickable(onClick = onClick),
     ) {
         Column(
             horizontalAlignment = Alignment.End,

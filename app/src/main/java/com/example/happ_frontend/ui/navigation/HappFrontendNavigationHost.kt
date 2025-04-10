@@ -54,9 +54,7 @@ fun HappFrontendNavigationHost(
                     },
                     onNavigateToSettings = { /* TODO */ },
                     onNavigateToSearch = { /* TODO */ },
-                    onNavigateToUserProfile = {
-                        /* TODO */
-                    }
+                    onNavigateToUserProfile = { /* TODO */ }
                 )
             }
             composable(route = WeightHistoryDest.route) {
