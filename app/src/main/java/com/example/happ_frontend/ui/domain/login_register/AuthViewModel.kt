@@ -226,10 +226,21 @@ class AuthViewModel (
 
     fun checkAuth() {
         viewModelScope.launch {
+            Log.d("AuthViewModel#checkAuth", "jwt is ${prefs.jwt}")
+            if (prefs.jwt == null) {
+                _profileState.value = ProfileState.Error("JWT is null")
+                prefs.clearUserData()
+                return@launch
+            }
+
             try {
-                val response = authApi.checkJwt()
+                val response = authApi.getUserInfo()
                 if (response.isSuccessful) {
                     _profileState.value = ProfileState.Success(response.body()?.username ?: "")
+                    response.body()?.let {
+                        name = it.name
+                        username = it.username
+                    }
                 } else {
                     _profileState.value = ProfileState.Error("Session expired")
                     prefs.clearUserData()

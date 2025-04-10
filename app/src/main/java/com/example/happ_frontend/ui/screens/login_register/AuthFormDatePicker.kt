@@ -46,7 +46,7 @@ fun AuthFormDatePicker(
 ) {
     val context = LocalContext.current
     var showDatePicker by remember { mutableStateOf(false) }
-    val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
+    val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
 
     // Convert between LocalDate and timestamp
     val initialDate = value?.toKotlinLocalDate()?.toEpochMilliseconds()

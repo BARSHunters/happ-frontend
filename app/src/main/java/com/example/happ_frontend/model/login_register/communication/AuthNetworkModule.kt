@@ -52,5 +52,5 @@ object AuthNetworkModule {
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-    val authApiService: AuthApiService = retrofit.create(AuthApiService::class.java)
+    val authApiService: AuthApiService by lazy { retrofit.create(AuthApiService::class.java) }
 }

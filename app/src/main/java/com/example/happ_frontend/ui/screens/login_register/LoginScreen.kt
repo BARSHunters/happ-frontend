@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
+import com.example.happ_frontend.ui.AppViewModelProvider
 import com.example.happ_frontend.ui.domain.login_register.AuthState
 import com.example.happ_frontend.ui.domain.login_register.AuthValidator
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
@@ -67,7 +68,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navigationController: NavHostController? = null,
-    viewModel: AuthViewModel = viewModel(),
+    viewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onForgotPasswordClick: () -> Unit = {},
     onSwitchToRegisterClick: (NavHostController) -> Unit = ::onSwitchToRegisterClickDefault,
     onLoginClick: () -> Unit = {

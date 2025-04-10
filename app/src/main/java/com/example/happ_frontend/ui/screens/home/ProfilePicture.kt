@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.happ_frontend.R
+import kotlin.math.abs
 
 private const val MARK_REGEX_STRING = "\\b(марк|mark)"
 private const val MARK_ISU_NUMBER = 368164
@@ -76,7 +77,7 @@ private fun chooseImageForUsername(username: String): Int {
 
     if (
         markRegex.containsMatchIn(username) ||
-        username.hashCode() % MARK_ISU_NUMBER == 0
+        abs(username.hashCode() % 1_000_000) == MARK_ISU_NUMBER
     ) return R.drawable.pfp_mark_transparent
 
     val catImages = arrayOf(
@@ -93,8 +94,7 @@ private fun chooseImageForUsername(username: String): Int {
     // Maybe not hardcode references to cat images in the future
     // But without hardcoding we'll have to get the resource id in runtime, which is not optimized
 
-    // use mod instead of %, so that the quotient has the divisor's sign
-    val imageIndex = username.hashCode().mod(catImages.size)
+    val imageIndex = abs(username.hashCode()) % catImages.size
 
     return catImages[imageIndex]
 }

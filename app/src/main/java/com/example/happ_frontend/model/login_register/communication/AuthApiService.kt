@@ -13,7 +13,7 @@ import retrofit2.http.POST
 
 interface AuthApiService {
     companion object {
-        const val BASE_URL = "http://10.0.2.2:3000/api/auth/" // TODO replace with actual API URL and endpoints
+        const val BASE_URL = "http://10.0.2.2:3000/" // TODO replace with actual API URL and endpoints
     }
 
     @POST("register")
@@ -26,6 +26,9 @@ interface AuthApiService {
         @Body request: LoginDto
     ): Response<LoginResponse>
 
-    @GET("checkJwt")
-    suspend fun checkJwt(): Response<JwtValidationResponse>
+    @GET("getUserInfo")
+    suspend fun getUserInfo(): Response<UserDataResponse>
+
+    @POST("updateInfo")
+    suspend fun updateInfo(): Response<Unit>
 }

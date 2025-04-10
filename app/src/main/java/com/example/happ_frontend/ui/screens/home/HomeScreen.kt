@@ -53,7 +53,7 @@ fun HomeScreen(
     when (val state = profileState) {
         is AuthViewModel.ProfileState.Success -> {
             Log.d("HomeScreen", "Success")
-            HomeScreenContent(state.username, navigationController)
+            HomeScreenContent(navigationController, viewModel)
         }
         is AuthViewModel.ProfileState.Error -> {
             LaunchedEffect(state) {
@@ -79,8 +79,8 @@ fun HomeScreen(
 
 @Composable
 private fun HomeScreenContent(
-    username: String,
-    navigationController: NavHostController?
+    navigationController: NavHostController?,
+    viewModel: AuthViewModel
 ) {
     Column(
         modifier = Modifier
@@ -115,7 +115,7 @@ private fun HomeScreenContent(
                     imageVector = Icons.Outlined.Search
                 )
             }
-            ProfileChip(username, "Blaze the Cat") // TODO fetch userData from server or smth and place username here
+            ProfileChip(viewModel.username, viewModel.name) // TODO fetch userData from server or smth and place username here
         }
 
         Text(

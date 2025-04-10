@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RegisterScreen(
     navigationController: NavHostController? = null,
-    viewModel: AuthViewModel = viewModel(),
+    viewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onSwitchToLoginClick: (NavHostController) -> Unit = ::onSwitchToLoginClickDefault,
     onRegisterClick: () -> Unit = {
         viewModel.registerUser()
