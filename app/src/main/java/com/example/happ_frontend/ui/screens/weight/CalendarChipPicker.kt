@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -100,7 +101,7 @@ fun CalendarChipPicker(
                 repeat(calculatedWindowCount) { i ->
                     val cellDate = beginningDay.plusDays(i.toLong())
                     CalendarChip(
-                        modifier = Modifier.width(chipWidth),
+                        modifier = Modifier.requiredWidth(chipWidth),
                         date = cellDate,
                         selected = cellDate == selectedDate,
                         onClick = { onDateSelected(cellDate) }
