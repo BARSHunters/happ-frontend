@@ -1,13 +1,19 @@
 package com.example.happ_frontend.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.happ_frontend.ui.screens.home.HomeScreen
+import com.example.happ_frontend.ui.screens.login_register.LoginScreen
+import com.example.happ_frontend.ui.screens.login_register.RegisterScreen
 import com.example.happ_frontend.ui.screens.notifications.NotificationScreen
+import com.example.happ_frontend.ui.screens.weight.WeightHistoryScreen
 
 @Composable
 fun HappFrontendNavigationHost(
@@ -18,11 +24,46 @@ fun HappFrontendNavigationHost(
         NavHost(
             modifier = modifier.padding(innerPadding),
             navController = navigationController,
-            startDestination = NotificationDest.route
+            startDestination = HomeDest.route // NotificationDest.route
         ) {
             composable(route = NotificationDest.route) {
                 NotificationScreen()
             }
-        }
+            composable(route = LoginDest.route) {
+                LoginScreen(
+                    onNavigateToRegister = { navigationController.navigate(RegisterDest.route) },
+                    onNavigateToHome = { navigationController.navigate(HomeDest.route) }
+                )
+            }
+            composable(route = RegisterDest.route) {
+                RegisterScreen(
+                    onNavigateToHome = { navigationController.navigate(HomeDest.route) },
+                    onNavigateToLogin = { navigationController.navigate(LoginDest.route) }
+                )
+            }
+            composable(route = HomeDest.route) {
+                HomeScreen(
+                    onNavigateToLogin = { navigationController.navigate(LoginDest.route) },
+                    onNavigateToWeightHistory = {
+                        navigationController.navigate(WeightHistoryDest.route)
+                    },
+                    onNavigateToNutrition = { /* TODO */ },
+                    onNavigateToActivity = { /* TODO */ },
+                    onNavigateToNotification = {
+                        navigationController.navigate(NotificationDest.route)
+                    },
+                    onNavigateToSettings = { /* TODO */ },
+                    onNavigateToSearch = { /* TODO */ },
+                    onNavigateToUserProfile = { /* TODO */ }
+                )
+            }
+            composable(route = WeightHistoryDest.route) {
+                WeightHistoryScreen(
+                    onGoBack = {
+                        navigationController.navigate(HomeDest.route)
+                    }
+                )
+            }
+         }
     }
 }
