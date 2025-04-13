@@ -97,4 +97,7 @@
     <string name="error.home.loadingError.withMessage">Ошибка загрузки главного экрана: %1$s</string>
     <string name="error.weight.userData.loadFail">Не удалось загрузить данные пользователя</string>
     <string name="error.weight.userData.updateFail">Не удалось обновить данные пользователя</string>
+    <string name="UserSearchTop">Поиск пользователей</string>
+    <string name="EnterSearchQuery">Введите запрос</string>
+    <string name="no_users_found">Пользователи не найдены</string>
 </resources>

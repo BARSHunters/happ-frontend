@@ -8,10 +8,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.happ_frontend.model.search.data.SearchUserDto
 import com.example.happ_frontend.ui.screens.home.HomeScreen
 import com.example.happ_frontend.ui.screens.login_register.LoginScreen
 import com.example.happ_frontend.ui.screens.login_register.RegisterScreen
 import com.example.happ_frontend.ui.screens.notifications.NotificationScreen
+import com.example.happ_frontend.ui.screens.search.SearchScreen
 import com.example.happ_frontend.ui.screens.weight.WeightHistoryScreen
 
 @Composable
@@ -27,7 +29,7 @@ fun HappFrontendNavigationHost(
         NavHost(
             modifier = modifier.padding(innerPadding),
             navController = navigationController,
-            startDestination = HomeDest.route // NotificationDest.route
+            startDestination = SearchDest.route
         ) {
             composable(route = NotificationDest.route) {
                 NotificationScreen()
@@ -73,6 +75,11 @@ fun HappFrontendNavigationHost(
                     onUnauthorized = {
                         navigationController.navigateAndClear(LoginDest.route)
                     }
+                )
+            }
+            composable(route = SearchDest.route) {
+                SearchScreen(
+                    onBackClick = {}
                 )
             }
          }

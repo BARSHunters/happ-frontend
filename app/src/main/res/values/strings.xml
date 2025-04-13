@@ -123,4 +123,7 @@
     <string name="achievements">Achievements</string>
     <string name="delete_all_notifications">Delete all notifications</string>
     <!-- etc. -->
+    <string name="UserSearchTop">Search for users</string>
+    <string name="EnterSearchQuery">Enter a query</string>
+    <string name="no_users_found">No users found</string>
 </resources>
