@@ -1,11 +1,14 @@
 package com.example.happ_frontend.ui.domain.search
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.happ_frontend.model.search.communication.SearchRetrofitInstance
 import com.example.happ_frontend.model.search.data.SearchUserDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
     private var searchUIState = SearchScreenUIState()
@@ -13,12 +16,21 @@ class SearchViewModel : ViewModel() {
     val uiState: StateFlow<SearchScreenUIState> = _uiState.asStateFlow()
 
     fun searchForUser(search: String) {
-        val newData = emptyList<SearchUserDto>()
-        _uiState.update {
-            SearchScreenUIState(
-                search,
-                newData
-            )
+        viewModelScope.launch {
+            val newData = emptyList<SearchUserDto>()
+            try {
+                val fetchedUsers = SearchRetrofitInstance.searchApiService.getSearchUsers(search)
+                println(fetchedUsers.isSuccessful)
+                println(fetchedUsers.body())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            _uiState.update {
+                SearchScreenUIState(
+                    search,
+                    newData
+                )
+            }
         }
     }
 }
