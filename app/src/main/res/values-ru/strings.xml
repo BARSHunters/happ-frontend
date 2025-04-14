@@ -100,4 +100,5 @@
     <string name="UserSearchTop">Поиск пользователей</string>
     <string name="EnterSearchQuery">Введите запрос</string>
     <string name="no_users_found">Пользователи не найдены</string>
+    <string name="server_unavailable">Сервер недоступен</string>
 </resources>

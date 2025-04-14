@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.happ_frontend.model.search.data.SearchUserDto
 import com.example.happ_frontend.ui.screens.home.HomeScreen
 import com.example.happ_frontend.ui.screens.login_register.LoginScreen
 import com.example.happ_frontend.ui.screens.login_register.RegisterScreen
@@ -29,7 +28,7 @@ fun HappFrontendNavigationHost(
         NavHost(
             modifier = modifier.padding(innerPadding),
             navController = navigationController,
-            startDestination = SearchDest.route
+            startDestination = HomeDest.route
         ) {
             composable(route = NotificationDest.route) {
                 NotificationScreen()
@@ -60,7 +59,9 @@ fun HappFrontendNavigationHost(
                         navigationController.navigate(NotificationDest.route)
                     },
                     onNavigateToSettings = { /* TODO */ },
-                    onNavigateToSearch = { /* TODO */ },
+                    onNavigateToSearch = {
+                        navigationController.navigate(SearchDest.route)
+                    },
                     onNavigateToUserProfile = { /* TODO */ }
                 )
             }
@@ -79,7 +80,15 @@ fun HappFrontendNavigationHost(
             }
             composable(route = SearchDest.route) {
                 SearchScreen(
-                    onBackClick = {}
+                    onUserClick = { username ->
+                        Log.d("Click on search user", username)
+                    },
+                    onBackClick = {
+                        navigationController.popBackStack()
+                    },
+                    onUnAuth = {
+                        Log.d("Unauthorized (from Search Screen)", "JWT expired")
+                    }
                 )
             }
          }

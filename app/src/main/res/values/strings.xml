@@ -126,4 +126,5 @@
     <string name="UserSearchTop">Search for users</string>
     <string name="EnterSearchQuery">Enter a query</string>
     <string name="no_users_found">No users found</string>
+    <string name="server_unavailable">Server is unavailable</string>
 </resources>
