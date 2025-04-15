@@ -1,8 +1,10 @@
 package com.example.happ_frontend.ui.domain.login_register
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.happ_frontend.R
 import com.example.happ_frontend.model.login_register.Gender
 import com.example.happ_frontend.model.login_register.WeightDesire
 import com.example.happ_frontend.model.login_register.communication.AuthApiService
@@ -43,7 +45,12 @@ class AuthViewModel (
 
     sealed class ProfileState {
         data class Success(val username: String) : ProfileState()
-        data class Error(val message: String) : ProfileState()
+        data class Error(
+            @StringRes val messageResId: Int,
+            val formatArgs: List<Any> = emptyList(),
+            val fallbackMessage: String,
+            val isUnauthorizedError: Boolean,
+        ) : ProfileState()
         object Loading : ProfileState()
     }
 
@@ -212,7 +219,11 @@ class AuthViewModel (
                 if (response.isSuccessful) {
                     response.body()?.let { authResponse ->
                         prefs.username = data.value.username
-                        prefs.jwt = authResponse.jwt ?: ""
+                        prefs.jwt = authResponse.jwt
+                        Log.d(
+                            "AuthViewModel#login",
+                            "login success; username: ${prefs.username}, jwt: ${prefs.jwt}"
+                        )
                         _authState.value = AuthState.Success(authResponse.jwt ?: "")
                     }
                 } else {
@@ -225,14 +236,21 @@ class AuthViewModel (
     }
 
     fun checkAuth() {
-        viewModelScope.launch {
-            Log.d("AuthViewModel#checkAuth", "jwt is ${prefs.jwt}")
-            if (prefs.jwt == null) {
-                _profileState.value = ProfileState.Error("JWT is null")
-                prefs.clearUserData()
-                return@launch
-            }
+        Log.d("AuthViewModel#checkAuth", "jwt is ${prefs.jwt}")
+        if (prefs.jwt == null) {
+            _profileState.value = ProfileState.Error(
+                R.string.error_auth_noJwt,
+                fallbackMessage = "JWT is null",
+                isUnauthorizedError = true
+            )
+            prefs.clearUserData()
+            return
+        }
 
+        var isUnauthorizedError = false
+
+        viewModelScope.launch {
+            _profileState.value = ProfileState.Loading
             try {
                 val response = authApi.getUserInfo()
                 if (response.isSuccessful) {
@@ -242,24 +260,44 @@ class AuthViewModel (
                         username = it.username
                     }
                 } else {
-                    _profileState.value = ProfileState.Error("Session expired")
-                    prefs.clearUserData()
+                    if (response.code() == 401) {
+                        isUnauthorizedError = true
+                    }
+                    _profileState.value = ProfileState.Error(
+                        R.string.error_home_loadingError,
+                        fallbackMessage = "Error loading homepage",
+                        isUnauthorizedError = isUnauthorizedError
+                    )
                 }
             } catch (e: Exception) {
-                _profileState.value = ProfileState.Error("Network error: $e")
-                prefs.clearUserData()
+                _profileState.value = ProfileState.Error(
+                    R.string.error_misc_network_withMessage,
+                    formatArgs = listOf(e),
+                    fallbackMessage = "Error loading homepage due to network error: $e",
+                    isUnauthorizedError = true
+                )
+            } finally {
+                if (isUnauthorizedError) {
+                    prefs.clearUserData()
+                }
             }
         }
     }
 
-    fun clearAuthState() {
+    fun logoutUser() {
+        prefs.clearUserData()
         _authState.value = AuthState.Idle
+        _profileState.value = ProfileState.Error(
+            R.string.error_misc_unknown,
+            fallbackMessage = "Logged out",
+            isUnauthorizedError = true
+        )
     }
 }
 
-sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
-    data class Success(val jwt: String) : AuthState()
-    data class Error(val message: String) : AuthState()
+sealed interface AuthState {
+    data object Idle : AuthState
+    data object Loading : AuthState
+    data class Success(val jwt: String) : AuthState
+    data class Error(val message: String) : AuthState
 }

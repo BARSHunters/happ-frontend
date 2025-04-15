@@ -1,5 +1,6 @@
 package com.example.happ_frontend.model.weight.communication
 
+import android.util.Log
 import androidx.compose.ui.Modifier
 import com.example.happ_frontend.model.login_register.communication.AuthApiService
 import com.example.happ_frontend.model.login_register.communication.AuthNetworkModule
@@ -30,6 +31,10 @@ object WeightHistoryNetworkModule {
             val jwt = AuthSharedPreferencesProvider.editor?.jwt
             val request = chain.request().newBuilder()
                 .let {
+                    Log.d(
+                        "WeightHistoryNetworkModule (request builder)",
+                        "jwt: ${jwt}"
+                    )
                     if (jwt != null)
                         it.addHeader("Authorization", "Bearer $jwt")
                     else it

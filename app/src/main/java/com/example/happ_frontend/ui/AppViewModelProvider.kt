@@ -1,5 +1,6 @@
 package com.example.happ_frontend.ui
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
@@ -22,15 +23,12 @@ object AppViewModelProvider{
         initializer {
             WeightHistoryViewModel(
                 weightHistoryRepository = happFrontendApplication().container.weightHistoryRepository,
-                weightHistoryApi = WeightHistoryNetworkModule.weightHistoryApiService
+                weightHistoryApi = WeightHistoryNetworkModule.weightHistoryApiService,
             )
         }
         initializer {
             AuthViewModel(
-                authApi = AuthNetworkModule.authApiService, // Direct access
-                prefs = AuthSharedPreferencesEditor(
-                    context = happFrontendApplication().applicationContext
-                )
+                authApi = AuthNetworkModule.authApiService,
             )
         }
     }

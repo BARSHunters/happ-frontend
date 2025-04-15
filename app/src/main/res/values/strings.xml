@@ -24,6 +24,7 @@
     <string name="auth.button.login">Login</string>
     <string name="auth.button.register">Register</string>
     <string name="auth.button.register_continue">Continue</string>
+    <string name="auth.button.logout">Logout</string>
     <string name="auth.valid_error.username.length">Username must be at least %1$d characters long</string>
     <string name="auth.valid_error.username.regex">Username can only contain letters, numbers, underscores, and must start with a letter</string>
     <string name="auth.valid_error.password.length">Password must be at least %1$d characters long</string>
@@ -84,11 +85,26 @@
     <!--Dialogs -->
     <string name="dialog.misc.buttons.ok">OK</string>
     <string name="dialog.misc.buttons.cancel">Cancel</string>
+    <string name="dialog.misc.buttons.retry">Retry</string>
     <string name="dialog.datepicker.header">Select date</string>
     <!-- etc. -->
 
     <!-- User profile -->
     <string name="user.profile.hi">Hi, </string>
+    <!-- etc. -->
+
+    <!-- Server communication errors -->
+    <string name="error.misc.errorPrefix">Error: %1$s</string>
+    <string name="error.misc.unknown">Unknown error</string>
+    <string name="error.misc.network">Network error</string>
+    <string name="error.misc.network.withMessage">Network error: %1$s</string>
+    <string name="error.auth.noJwt">JWT is not set, have to log in again</string>
+    <string name="error.auth.unauthorized">Authorization error</string>
+    <string name="error.home.loadingError">There was an error loading the home screen.</string>
+    <string name="error.home.loadingError.withMessage">Error loading home screen: %1$s</string>
+    <string name="error.weight.userData.loadFail">Failed to load user data</string>
+    <string name="error.weight.userData.updateFail">Failed to update user data</string>
+    <string name="error.weight.weightHistory.loadFail">Failed to load weight history</string>
     <!-- etc. -->
 
     <!-- Everything to do with notifications -->
