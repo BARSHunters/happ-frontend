@@ -2,7 +2,6 @@ package com.example.happ_frontend.model.weight.communication
 
 import com.example.happ_frontend.model.login_register.request.UserDataDto
 import com.example.happ_frontend.model.login_register.response.UserDataResponse
-import com.example.happ_frontend.model.weight.request.APIGatewayToWeightHistoryRequest
 import com.example.happ_frontend.model.weight.response.WeightHistoryResponse
 import retrofit2.Response
 import retrofit2.http.Body

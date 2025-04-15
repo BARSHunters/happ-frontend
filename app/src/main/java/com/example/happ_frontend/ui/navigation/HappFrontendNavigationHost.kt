@@ -12,6 +12,7 @@ import com.example.happ_frontend.ui.screens.home.HomeScreen
 import com.example.happ_frontend.ui.screens.login_register.LoginScreen
 import com.example.happ_frontend.ui.screens.login_register.RegisterScreen
 import com.example.happ_frontend.ui.screens.notifications.NotificationScreen
+import com.example.happ_frontend.ui.screens.search.SearchScreen
 import com.example.happ_frontend.ui.screens.weight.WeightHistoryScreen
 
 @Composable
@@ -27,7 +28,7 @@ fun HappFrontendNavigationHost(
         NavHost(
             modifier = modifier.padding(innerPadding),
             navController = navigationController,
-            startDestination = HomeDest.route // NotificationDest.route
+            startDestination = HomeDest.route
         ) {
             composable(route = NotificationDest.route) {
                 NotificationScreen()
@@ -58,7 +59,9 @@ fun HappFrontendNavigationHost(
                         navigationController.navigate(NotificationDest.route)
                     },
                     onNavigateToSettings = { /* TODO */ },
-                    onNavigateToSearch = { /* TODO */ },
+                    onNavigateToSearch = {
+                        navigationController.navigate(SearchDest.route)
+                    },
                     onNavigateToUserProfile = { /* TODO */ }
                 )
             }
@@ -72,6 +75,19 @@ fun HappFrontendNavigationHost(
                     },
                     onUnauthorized = {
                         navigationController.navigateAndClear(LoginDest.route)
+                    }
+                )
+            }
+            composable(route = SearchDest.route) {
+                SearchScreen(
+                    onUserClick = { username ->
+                        Log.d("Click on search user", username)
+                    },
+                    onBackClick = {
+                        navigationController.popBackStack()
+                    },
+                    onUnAuth = {
+                        Log.d("Unauthorized (from Search Screen)", "JWT expired")
                     }
                 )
             }

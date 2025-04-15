@@ -72,7 +72,7 @@ fun ProfilePicture(
  * @author Vad1mChK
  */
 @DrawableRes
-private fun chooseImageForUsername(username: String): Int {
+fun chooseImageForUsername(username: String): Int {
     val markRegex = Regex(MARK_REGEX_STRING, option = RegexOption.IGNORE_CASE)
 
     if (
