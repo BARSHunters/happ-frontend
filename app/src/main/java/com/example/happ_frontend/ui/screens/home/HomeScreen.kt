@@ -17,8 +17,11 @@ import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,7 +45,7 @@ import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
 @Composable
 fun HomeScreen(
     viewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onNavigateToLogin: () -> Unit = {},
+    onUnauthorized: () -> Unit = {},
     onNavigateToWeightHistory: () -> Unit = {},
     onNavigateToNutrition: () -> Unit = {},
     onNavigateToActivity: () -> Unit = {},
@@ -73,8 +76,41 @@ fun HomeScreen(
         }
         is AuthViewModel.ProfileState.Error -> {
             LaunchedEffect(state) {
-                Log.d("HomeScreen", "Error: ${state.message}")
-                onNavigateToLogin()
+                Log.d("HomeScreen", "Error loading home page: ${state.fallbackMessage}")
+            }
+            if (state.isUnauthorizedError) {
+                onUnauthorized()
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = 32.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        stringResource(
+                            id = state.messageResId,
+                            formatArgs = state.formatArgs.toTypedArray()
+                        )
+                    )
+                    Button(
+                        onClick = viewModel::checkAuth,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.dialog_misc_buttons_retry).uppercase())
+                    }
+                    Button(
+                        onClick = viewModel::logoutUser,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    ) {
+                        Text(stringResource(R.string.auth_button_logout).uppercase())
+                    }
+                }
             }
         }
         is AuthViewModel.ProfileState.Loading -> {

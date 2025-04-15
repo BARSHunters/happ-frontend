@@ -38,12 +38,14 @@
     <string name="auth.button.register">Зарегистрироваться</string>
     <string name="dialog.misc.buttons.ok">ОК</string>
     <string name="dialog.misc.buttons.cancel">Отмена</string>
+    <string name="dialog.misc.buttons.retry">Повторить</string>
     <string name="dialog.datepicker.header">Выберите дату</string>
     <string name="biom.weight_desire">Пожелания по весу</string>
     <string name="biom.weight_desire.loss">Сбросить вес</string>
     <string name="biom.weight_desire.remain">Сохранить вес</string>
     <string name="auth.hint.already_have_account">Уже есть аккаунт?</string>
     <string name="auth.hint.forgot_password.condolence">Соболезнуем.</string>
+    <string name="auth.button.logout">Выйти</string>
     <string name="auth.valid_error.username.length">Никнейм должен быть не короче %1$d символов</string>
     <string name="auth.valid_error.username.regex">Никнейм может содержать только буквы, цифры, подчёркивание, и должен начинаться не с цифры</string>
     <string name="auth.valid_error.password.length">Пароль должен быть не короче %1$d символов</string>
@@ -71,6 +73,7 @@
     <string name="health_category.weight.dialog.title">Новая запись о весе</string>
     <string name="health_category.weight.dialog.field.date">Дата записи</string>
     <string name="health.category.weight.dialog.field.time">Время записи</string>
+    <string name="error.weight.weightHistory.loadFail">Не удалось загрузить историю весов</string>
     <string name="notifications">Уведомления</string>
     <string name="activityNotification">Activity</string>
     <string name="friendNotification">Заявка в друзья</string>
@@ -84,4 +87,14 @@
     <string name="achievements">Достижения</string>
     <string name="delete_all_notifications">Удалить все уведомления</string>
     <string name="health.category.weight.widget.failure">Не удалось загрузить историю весов. Причина: %1$s</string>
+    <string name="error.misc.errorPrefix">Ошибка: %1$s</string>
+    <string name="error.misc.unknown">Неизвестная ошибка</string>
+    <string name="error.misc.network">Ошибка сети</string>
+    <string name="error.misc.network.withMessage">Ошибка сети: %1$s</string>
+    <string name="error.auth.noJwt">JWT не установлен, войдите снова</string>
+    <string name="error.auth.unauthorized">Ошибка авторизации</string>
+    <string name="error.home.loadingError">Ошибка загрузки главного экрана.</string>
+    <string name="error.home.loadingError.withMessage">Ошибка загрузки главного экрана: %1$s</string>
+    <string name="error.weight.userData.loadFail">Не удалось загрузить данные пользователя</string>
+    <string name="error.weight.userData.updateFail">Не удалось обновить данные пользователя</string>
 </resources>

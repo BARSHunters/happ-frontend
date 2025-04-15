@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,6 +19,10 @@ fun HappFrontendNavigationHost(
     navigationController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    navigationController.addOnDestinationChangedListener { controller, dest, bundle ->
+        Log.d("HappFrontendNavigationHost", "Navigated to ${dest.route}")
+    }
+
     Scaffold { innerPadding ->
         NavHost(
             modifier = modifier.padding(innerPadding),
@@ -32,18 +35,20 @@ fun HappFrontendNavigationHost(
             composable(route = LoginDest.route) {
                 LoginScreen(
                     onNavigateToRegister = { navigationController.navigate(RegisterDest.route) },
-                    onNavigateToHome = { navigationController.navigate(HomeDest.route) }
+                    onNavigateToHome = { navigationController.navigateAndClear(HomeDest.route) }
                 )
             }
             composable(route = RegisterDest.route) {
                 RegisterScreen(
-                    onNavigateToHome = { navigationController.navigate(HomeDest.route) },
+                    onNavigateToHome = { navigationController.navigateAndClear(HomeDest.route) },
                     onNavigateToLogin = { navigationController.navigate(LoginDest.route) }
                 )
             }
             composable(route = HomeDest.route) {
                 HomeScreen(
-                    onNavigateToLogin = { navigationController.navigate(LoginDest.route) },
+                    onUnauthorized = {
+                        navigationController.navigateAndClear(LoginDest.route)
+                    },
                     onNavigateToWeightHistory = {
                         navigationController.navigate(WeightHistoryDest.route)
                     },
@@ -60,10 +65,34 @@ fun HappFrontendNavigationHost(
             composable(route = WeightHistoryDest.route) {
                 WeightHistoryScreen(
                     onGoBack = {
-                        navigationController.navigate(HomeDest.route)
+                        navigationController.popBackStack(
+                            route = WeightHistoryDest.route,
+                            inclusive = true
+                        )
+                    },
+                    onUnauthorized = {
+                        navigationController.navigateAndClear(LoginDest.route)
                     }
                 )
             }
          }
+    }
+}
+
+/**
+ * Navigates to the destination route and attempts to pop back stack up to the current route
+ * (inclusive).
+ *
+ * @param destinationRoute Destination route to navigate to
+ * @author Vad1mChK
+ */
+fun NavHostController.navigateAndClear(destinationRoute: String) {
+    val currentRoute = this.currentDestination?.route
+    this.navigate(destinationRoute) {
+        currentRoute?.let {
+            popUpTo(it) {
+                inclusive = true
+            }
+        }
     }
 }
