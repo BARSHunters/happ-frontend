@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navOptions
 import com.example.happ_frontend.ui.screens.home.HomeScreen
 import com.example.happ_frontend.ui.screens.login_register.LoginScreen
 import com.example.happ_frontend.ui.screens.login_register.RegisterScreen

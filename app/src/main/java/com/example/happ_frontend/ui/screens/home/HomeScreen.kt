@@ -18,7 +18,6 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -37,7 +36,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.AppViewModelProvider
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
-import com.example.happ_frontend.ui.domain.login_register.capitalize
 
 /**
  * Composable function that represents the main screen of the application.

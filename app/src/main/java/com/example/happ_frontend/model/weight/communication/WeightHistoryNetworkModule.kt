@@ -1,9 +1,7 @@
 package com.example.happ_frontend.model.weight.communication
 
 import android.util.Log
-import androidx.compose.ui.Modifier
 import com.example.happ_frontend.model.login_register.communication.AuthApiService
-import com.example.happ_frontend.model.login_register.communication.AuthNetworkModule
 import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
 import com.example.happ_frontend.model.login_register.serialization.LocalDateAdapter
 import com.example.happ_frontend.model.login_register.serialization.LocalDateTimeAdapter

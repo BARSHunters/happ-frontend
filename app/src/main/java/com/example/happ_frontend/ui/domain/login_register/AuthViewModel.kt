@@ -191,8 +191,8 @@ class AuthViewModel (
                 if (response.isSuccessful) {
                     response.body()?.let { authResponse ->
                         prefs.username = data.value.username
-                        prefs.jwt = authResponse.jwt ?: ""
-                        _authState.value = AuthState.Success(authResponse.jwt ?: "")
+                        prefs.jwt = authResponse.jwt
+                        _authState.value = AuthState.Success(authResponse.jwt)
                     }
                 } else {
                     _authState.value = AuthState.Error("Server error: ${response.code()}")
@@ -224,7 +224,7 @@ class AuthViewModel (
                             "AuthViewModel#login",
                             "login success; username: ${prefs.username}, jwt: ${prefs.jwt}"
                         )
-                        _authState.value = AuthState.Success(authResponse.jwt ?: "")
+                        _authState.value = AuthState.Success(authResponse.jwt)
                     }
                 } else {
                     _authState.value = AuthState.Error("Server error: ${response.code()}")

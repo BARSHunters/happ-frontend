@@ -210,7 +210,7 @@ class WeightHistoryViewModel(
 
         @StringRes
         var errorMessageRes: Int? = null
-        var isUnauthorizedError: Boolean = false
+        var isUnauthorizedError = false
 
         viewModelScope.launch {
             try {
