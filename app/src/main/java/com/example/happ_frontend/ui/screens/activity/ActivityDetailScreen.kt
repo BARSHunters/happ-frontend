@@ -277,46 +277,6 @@ fun ActivityZonesChart(activityZones: List<Pair<String, Float>>) {
     }
 }
 
-@Composable
-fun WorkoutDetailItem(workout: Workout) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFF6F3FD)
-        ),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = workout.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "${workout.time}   ${workout.duration} min",
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-            
-            Text(
-                text = "${workout.calories} cal",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF9D89C5)
-            )
-        }
-    }
-}
-
 fun getZoneColor(zoneName: String): Color {
     return when(zoneName) {
         "Easy" -> Color(0xFF8BC34A)
