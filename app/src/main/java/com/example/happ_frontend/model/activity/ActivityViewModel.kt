@@ -1,4 +1,3 @@
-
 package com.example.happ_frontend.model.activity
 
 import androidx.lifecycle.ViewModel
@@ -8,10 +7,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class ActivityViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ActivityUiState())
+    internal val _uiState = MutableStateFlow(ActivityUiState())
     val uiState: StateFlow<ActivityUiState> = _uiState.asStateFlow()
 
     init {
@@ -40,7 +41,7 @@ class ActivityViewModel : ViewModel() {
                         activityZones = listOf(8, 4, 2, 1, 0),
                         trainingLoad = 25,
                         recoveryTime = 1,
-                        workoutType = WorkoutType.BREATHING
+                        intensity = 50
                     ),
                     Workout(
                         time = "08:00 am",
@@ -52,7 +53,7 @@ class ActivityViewModel : ViewModel() {
                         activityZones = listOf(5, 20, 25, 8, 2),
                         trainingLoad = 65,
                         recoveryTime = 8,
-                        workoutType = WorkoutType.PILATES
+                        intensity = 50
                     )
                 )
             } else if (date.isBefore(LocalDate.now())) {
@@ -68,7 +69,7 @@ class ActivityViewModel : ViewModel() {
                         activityZones = listOf(2, 5, 15, 6, 2),
                         trainingLoad = 78,
                         recoveryTime = 12,
-                        workoutType = WorkoutType.RUNNING
+                        intensity = 50
                     ),
                     Workout(
                         time = "06:00 pm",
@@ -80,7 +81,7 @@ class ActivityViewModel : ViewModel() {
                         activityZones = listOf(10, 20, 10, 5, 0),
                         trainingLoad = 35,
                         recoveryTime = 4,
-                        workoutType = WorkoutType.YOGA
+                        intensity = 50
                     )
                 )
             } else {
@@ -113,15 +114,15 @@ class ActivityViewModel : ViewModel() {
             // Mock data for a newly created workout
             val newWorkout = Workout(
                 time = "10:00 am",
-                name = "HIIT Training",
-                duration = 25,
-                calories = 280,
+                name = "Тренировка",
+                duration = 30,
+                calories = 180,
                 heartRateAvg = 150,
                 heartRateMax = 180,
                 activityZones = listOf(2, 5, 8, 7, 3),
-                trainingLoad = 85,
-                recoveryTime = 14,
-                workoutType = WorkoutType.HIIT
+                trainingLoad = 45,
+                recoveryTime = 2,
+                intensity = (30..100).random() // Случайная интенсивность
             )
 
             // Get current workouts or create empty list
@@ -183,19 +184,6 @@ data class ActivityDay(
     val workouts: List<Workout>
 )
 
-enum class WorkoutType {
-    RUNNING,
-    WALKING,
-    CYCLING,
-    SWIMMING,
-    YOGA,
-    PILATES,
-    HIIT,
-    STRENGTH,
-    BREATHING,
-    OTHER
-}
-
 data class Workout(
     val time: String,
     val name: String,
@@ -206,7 +194,7 @@ data class Workout(
     val activityZones: List<Int>, // Time in each of the 5 zones (in minutes)
     val trainingLoad: Int,
     val recoveryTime: Int, // in hours
-    val workoutType: WorkoutType = WorkoutType.OTHER
+    val intensity: Int = 50 // Intensity percentage from 0 to 100
 )
 
 data class ActivitySummary(
@@ -218,54 +206,86 @@ data class ActivitySummary(
     val recoveryTime: Int
 )
 
-
-
 /**
  * Updates the data for a new workout being created
  */
 fun ActivityViewModel.setNewWorkoutData(
-    type: WorkoutType,
+    name: String,
     date: LocalDate,
     duration: Int,
     effort: String
 ) {
-    // Store this information in the ViewModel
-    // This is a mock implementation - modify according to your actual ViewModel structure
+    // Выбираем случайный уровень нагрузки для разнообразия данных
+    val effortLevels = listOf("Easy", "Moderate", "Hard", "Very Hard", "Maximum")
+    val randomEffort = effortLevels.random()
+    
+    // Используем переданный параметр effort только для совместимости
+    // Фактически мы будем использовать случайно сгенерированный уровень
+    val actualEffort = randomEffort
+    
+    // Генерация данных по зонам активности на основе уровня нагрузки
+    val activityZones = generateMockActivityZones(actualEffort)
+    
+    // Расчет интенсивности на основе распределения времени по зонам
+    // Чем больше времени проведено в высоких зонах, тем выше интенсивность
+    val zoneWeights = listOf(0.2f, 0.4f, 0.6f, 0.8f, 1.0f)  // Веса для каждой зоны
+    val totalZoneTime = activityZones.sum().toFloat().coerceAtLeast(1f)
+    
+    val weightedIntensity = activityZones.mapIndexed { index, minutes ->
+        val zoneWeight = if (index < zoneWeights.size) zoneWeights[index] else 0.5f
+        minutes * zoneWeight
+    }.sum() / totalZoneTime
+    
+    // Масштабируем интенсивность от 30 до 100
+    val calculatedIntensity = (30 + (weightedIntensity * 70)).toInt().coerceIn(30, 100)
+    
+    // Генерация текущего времени (можно улучшить, если нужен более точный формат)
+    val currentTime = LocalTime.now().withSecond(0).withNano(0)
+    val formattedTime = DateTimeFormatter
+        .ofPattern("hh:mm a")
+        .format(currentTime)
+        .lowercase()
 
     // Create a mock workout based on the provided data
     val newWorkout = Workout(
-        name = "${type.name.lowercase().capitalize()} Workout",
-        time = "12:00 PM", // Mock time
+        name = name,
+        time = formattedTime,
         duration = duration,
-        calories = calculateEstimatedCalories(type, duration, effort),
-        workoutType = type,
-        activityZones = generateMockActivityZones(effort),
-        heartRateAvg = calculateEstimatedHeartRate(type, effort),
-        heartRateMax = calculateEstimatedMaxHeartRate(type, effort),
-        trainingLoad = TODO(),
-        recoveryTime = TODO()
+        calories = calculateEstimatedCalories(duration, actualEffort),
+        activityZones = activityZones,
+        heartRateAvg = calculateEstimatedHeartRate(actualEffort),
+        heartRateMax = calculateEstimatedMaxHeartRate(actualEffort),
+        trainingLoad = (duration * 1.5).toInt(),
+        recoveryTime = (duration / 15),
+        intensity = calculatedIntensity
     )
 
-    // Store this in the ViewModel (implementation will depend on your ViewModel structure)
-    // For now, this is just a placeholder
-    // viewModel.tempNewWorkout = newWorkout
+    // Now add the workout to the UI state
+    viewModelScope.launch {
+        // Get current workouts or create empty list
+        val currentWorkouts = _uiState.value.currentActivityDay?.workouts ?: emptyList()
+        
+        // Add new workout to the beginning of the list
+        val updatedWorkouts = listOf(newWorkout) + currentWorkouts
+        val activityDay = ActivityDay(date = date, workouts = updatedWorkouts)
+
+        // Update UI state with the new workout added
+        _uiState.value = _uiState.value.copy(
+            selectedDate = date,
+            currentActivityDay = activityDay,
+            isLoading = false
+        )
+    }
 }
 
 // Helper functions for mock data generation
 
 /**
- * Estimates calories burned based on workout type, duration and effort
+ * Estimates calories burned based on duration and effort
  */
-private fun calculateEstimatedCalories(type: WorkoutType, duration: Int, effort: String): Int {
-    val baseCaloriesPerMinute = when (type) {
-        WorkoutType.RUNNING -> 10
-        WorkoutType.HIIT -> 12
-        WorkoutType.STRENGTH -> 8
-        WorkoutType.SWIMMING, WorkoutType.CYCLING -> 9
-        WorkoutType.YOGA, WorkoutType.PILATES -> 5
-        else -> 7
-    }
-
+private fun calculateEstimatedCalories(duration: Int, effort: String): Int {
+    val baseCaloriesPerMinute = 7
+    
     val effortMultiplier = when (effort) {
         "Easy" -> 0.8
         "Moderate" -> 1.0
@@ -293,16 +313,11 @@ private fun generateMockActivityZones(effort: String): List<Int> {
 }
 
 /**
- * Estimates average heart rate based on workout type and effort
+ * Estimates average heart rate based on effort
  */
-private fun calculateEstimatedHeartRate(type: WorkoutType, effort: String): Int {
-    val baseHeartRate = when (type) {
-        WorkoutType.RUNNING, WorkoutType.HIIT -> 140
-        WorkoutType.STRENGTH, WorkoutType.SWIMMING, WorkoutType.CYCLING -> 130
-        WorkoutType.YOGA, WorkoutType.PILATES -> 110
-        else -> 120
-    }
-
+private fun calculateEstimatedHeartRate(effort: String): Int {
+    val baseHeartRate = 125
+    
     val effortAddition = when (effort) {
         "Easy" -> -20
         "Moderate" -> 0
@@ -316,10 +331,10 @@ private fun calculateEstimatedHeartRate(type: WorkoutType, effort: String): Int 
 }
 
 /**
- * Estimates max heart rate based on workout type and effort
+ * Estimates max heart rate based on effort
  */
-private fun calculateEstimatedMaxHeartRate(type: WorkoutType, effort: String): Int {
-    val avgHeartRate = calculateEstimatedHeartRate(type, effort)
+private fun calculateEstimatedMaxHeartRate(effort: String): Int {
+    val avgHeartRate = calculateEstimatedHeartRate(effort)
 
     val maxIncrease = when (effort) {
         "Easy" -> 15
