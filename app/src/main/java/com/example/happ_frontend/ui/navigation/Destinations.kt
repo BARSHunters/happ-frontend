@@ -22,4 +22,6 @@ object SearchDest : Destination{
     override val route: String = "searchDest"
 object NutritionDest : Destination {
     override val route: String = "nutritionDest"
+object ActivityDest : Destination {
+    override val route: String = "activityDest"
 }
