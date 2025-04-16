@@ -39,7 +39,7 @@ fun ActivityHistoryCalendar(
     ) {
         Text(
             text = "Activity History",
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Bold
         )
 
@@ -68,7 +68,7 @@ fun ActivityHistoryCalendar(
 
             Text(
                 text = selectedDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
@@ -172,7 +172,7 @@ fun DateItem(
     ) {
         Text(
             text = date.dayOfMonth.toString(),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             color = textColor
         )

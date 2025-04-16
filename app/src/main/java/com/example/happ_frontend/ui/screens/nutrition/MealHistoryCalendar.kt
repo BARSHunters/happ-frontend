@@ -39,7 +39,7 @@ fun MealHistoryCalendar(
     ) {
         Text(
             text = "Meal History",
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Bold
         )
 
@@ -135,7 +135,7 @@ fun DateItem(
     ) {
         Text(
             text = date.dayOfMonth.toString(),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             color = textColor
         )

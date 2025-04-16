@@ -14,8 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.happ_frontend.R
 
 @Composable
 fun ActivityHeader(onDetailClick: () -> Unit = {}) {
@@ -23,21 +26,22 @@ fun ActivityHeader(onDetailClick: () -> Unit = {}) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFF6E9F8)) // Light purple from screenshot
+            .background(Color(0xFFF6F3FD)) // Light purple background to match the weight design
             .clickable { onDetailClick() }
             .padding(24.dp)
     ) {
         Column(modifier = Modifier.align(Alignment.CenterStart)) {
             Text(
-                text = "Activity & Workouts",
-                style = MaterialTheme.typography.titleMedium,
+                text = stringResource(R.string.health_category_activity_title),
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF4A4A4A)
+                color = Color(0xFF4A4A4A),
+                textAlign = TextAlign.Start
             )
 
             Text(
-                text = "Move more,\nfeel better!",
-                style = MaterialTheme.typography.bodyMedium,
+                text = stringResource(R.string.health_category_activity_description),
+                style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFF4A4A4A),
                 modifier = Modifier.padding(top = 8.dp)
             )

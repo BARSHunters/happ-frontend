@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -111,7 +112,8 @@ fun WeightHistoryScreen(
             )
             Text(
                 stringResource(R.string.health_category_weight_page_title),
-                fontWeight = FontWeight.Black,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Bold,
             )
 
             when (val state = weightHistoryState) {

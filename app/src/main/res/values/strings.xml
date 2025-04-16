@@ -134,4 +134,61 @@
     <string name="EnterSearchQuery">Enter a query</string>
     <string name="no_users_found">No users found</string>
     <string name="server_unavailable">Server is unavailable</string>
+
+    <!-- Activity -->
+    <string name="health_category_activity_button_add_workout">Add Workout</string>
+    <string name="health_category_activity_button_visualize">Visualize Activity</string>
+    <string name="health_category_activity_widget_failure">Failed to load activity data: %s</string>
+    <string name="health_category_activity_widget_reload">Reload</string>
+    <string name="health_category_activity_error_loading">Error loading activity data</string>
+    <string name="health_category_activity_error_adding">Error adding workout</string>
+    <string name="health_category_activity_dialog_add_title">Add Workout</string>
+    <string name="health_category_activity_dialog_name">Workout name</string>
+    <string name="health_category_activity_dialog_duration">Duration (min)</string>
+    <string name="health_category_activity_dialog_calories">Calories</string>
+    <string name="health_category_activity_dialog_type">Workout type</string>
+    <string name="health_category_activity_detail_title">Workout Details</string>
+    <string name="health_category_activity_detail_summary">Summary</string>
+    <string name="health_category_activity_detail_duration">Duration</string>
+    <string name="health_category_activity_detail_calories">Calories</string>
+    <string name="health_category_activity_detail_heart_rate">Heart Rate</string>
+    <string name="health_category_activity_detail_zones">Activity Zones</string>
+    <string name="health_category_activity_visualization">Activity Visualization</string>
+    <string name="health_category_activity_visualization_calories">Calories</string>
+    <string name="health_category_activity_visualization_not_enough_data">Not enough data for visualization</string>
+
+    <!-- Nutrition -->
+    <string name="health_category_nutrition_button_add_meal">Add Meal</string>
+    <string name="health_category_nutrition_button_visualize">Visualize Nutrition</string>
+    <string name="health_category_nutrition_widget_failure">Failed to load nutrition data: %s</string>
+    <string name="health_category_nutrition_widget_reload">Reload</string>
+    <string name="health_category_nutrition_error_loading">Error loading nutrition data</string>
+    <string name="health_category_nutrition_error_adding">Error adding meal</string>
+    <string name="health_category_nutrition_dialog_add_title">Add Meal</string>
+    <string name="health_category_nutrition_dialog_name">Meal name</string>
+    <string name="health_category_nutrition_dialog_calories">Calories</string>
+    <string name="health_category_nutrition_dialog_protein">Protein (g)</string>
+    <string name="health_category_nutrition_dialog_fat">Fat (g)</string>
+    <string name="health_category_nutrition_dialog_carbs">Carbs (g)</string>
+    <string name="health_category_nutrition_dialog_portion">Portion size</string>
+    <string name="health_category_nutrition_detail_title">Today\'s Menu</string>
+    <string name="health_category_nutrition_detail_summary">Daily Summary</string>
+    <string name="health_category_nutrition_detail_breakfast">Breakfast</string>
+    <string name="health_category_nutrition_detail_lunch">Lunch</string>
+    <string name="health_category_nutrition_detail_dinner">Dinner</string>
+    <string name="health_category_nutrition_detail_snack">Snack</string>
+    <string name="health_category_nutrition_detail_nutrition">Nutrition</string>
+    <string name="health_category_nutrition_detail_portion">Portion Size</string>
+    <string name="health_category_nutrition_detail_view_recipe">View Recipe</string>
+    <string name="health_category_nutrition_visualization">Nutrition Visualization</string>
+    <string name="health_category_nutrition_visualization_calories">Calories</string>
+    <string name="health_category_nutrition_visualization_protein">Protein</string>
+    <string name="health_category_nutrition_visualization_fat">Fat</string>
+    <string name="health_category_nutrition_visualization_carbs">Carbs</string>
+    <string name="health_category_nutrition_visualization_not_enough_data">Not enough data for visualization</string>
+
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="close">Close</string>
 </resources>

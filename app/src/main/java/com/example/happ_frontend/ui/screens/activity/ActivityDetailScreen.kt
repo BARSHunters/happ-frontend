@@ -13,11 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.happ_frontend.R
 import com.example.happ_frontend.model.activity.ActivitySummary
 import com.example.happ_frontend.model.activity.Workout
+import com.example.happ_frontend.ui.screens.weight.PageHeaderWithBackButton
 
 @Composable
 fun ActivityDetailScreen(
@@ -28,301 +31,298 @@ fun ActivityDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(paddingValues = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                top = 32.dp
+            ))
     ) {
         // Header with back button and title
-        Box(
+        PageHeaderWithBackButton(
+            title = stringResource(R.string.health_category_activity_detail_title),
+            onGoBack = onBackClick
+        )
+
+        // Content
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
+                .fillMaxSize()
+                .padding(0.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+            horizontalAlignment = Alignment.Start
         ) {
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color(0xFFA590B6)
+            // Summary Card
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFFF6F3FD) // Light purple background to match the weight design
                 )
-            }
-
-            Text(
-                text = "Workout Details",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = Color(0xFF7B639C),
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-
-        // Summary Card
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFF6E9F8)
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    text = "Summary",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    SummaryItem(
-                        label = "Duration",
-                        value = "${activitySummary.duration} min"
-                    )
-                    SummaryItem(
-                        label = "Calories",
-                        value = "${activitySummary.calories} cal"
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    SummaryItem(
-                        label = "Avg HR",
-                        value = "${activitySummary.heartRateAvg} bpm"
-                    )
-                    SummaryItem(
-                        label = "Max HR",
-                        value = "${activitySummary.heartRateMax} bpm"
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    SummaryItem(
-                        label = "Training Load",
-                        value = "${activitySummary.trainingLoad}"
-                    )
-                    SummaryItem(
-                        label = "Recovery",
-                        value = "${activitySummary.recoveryTime} hrs"
-                    )
-                }
-            }
-        }
-
-        // Activity Zones Chart
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = "Activity Zones",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                if (workouts.isNotEmpty()) {
-                    val workout = workouts[0] // Using the first workout for the chart
-                    ActivityZonesChart(activityZones = workout.activityZones)
-                }
-            }
-        }
-
-        // Heart Rate Chart
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = "Heart Rate",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-
-                // Placeholder for heart rate chart
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFFF6E9F8)),
-                    contentAlignment = Alignment.Center
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "Heart Rate Chart\nAvg: ${activitySummary.heartRateAvg} bpm\nMax: ${activitySummary.heartRateMax} bpm",
-                        textAlign = TextAlign.Center
+                        text = stringResource(R.string.health_category_activity_detail_summary),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF7B639C)
                     )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        SummaryItem(
+                            label = stringResource(R.string.health_category_activity_detail_duration),
+                            value = "${activitySummary.duration} min"
+                        )
+                        SummaryItem(
+                            label = stringResource(R.string.health_category_activity_detail_calories),
+                            value = "${activitySummary.calories} cal"
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        SummaryItem(
+                            label = "Avg HR",
+                            value = "${activitySummary.heartRateAvg} bpm"
+                        )
+                        SummaryItem(
+                            label = "Max HR",
+                            value = "${activitySummary.heartRateMax} bpm"
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        SummaryItem(
+                            label = "Training Load",
+                            value = "${activitySummary.trainingLoad}"
+                        )
+                        SummaryItem(
+                            label = "Recovery",
+                            value = "${activitySummary.recoveryTime} hrs"
+                        )
+                    }
                 }
             }
-        }
 
-        // Workout Details
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = "Workout Details",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+            // Activity Zones Chart
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
                 )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.health_category_activity_detail_zones),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
 
-                workouts.forEach { workout ->
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    if (workouts.isNotEmpty()) {
+                        val workout = workouts[0] // Using the first workout for the chart
+                        ActivityZonesChart(activityZones = convertToZonesPairs(workout.activityZones))
+                    }
+                }
+            }
+
+            // Heart Rate Chart
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.health_category_activity_detail_heart_rate),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    // Placeholder for heart rate chart
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFFF6F3FD)),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = workout.name,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Time: ${workout.time}",
+                            text = "Heart Rate Chart\nAvg: ${activitySummary.heartRateAvg} bpm\nMax: ${activitySummary.heartRateMax} bpm",
+                            textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            text = "Duration: ${workout.duration} minutes",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            text = "Calories: ${workout.calories} cal",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        Text(
-                            text = "Type: ${workout.workoutType.name.lowercase().capitalize()}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-
-                    if (workout != workouts.last()) {
-                        Divider(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                         )
                     }
                 }
             }
+
+            // Workout Details
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Workout Details",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    // Display workout details
+                    workouts.forEach { workout ->
+                        WorkoutDetailItem(workout = workout)
+                    }
+                }
+            }
         }
+    }
+}
+
+// Функция для конвертации списка Int в список пар String, Float
+fun convertToZonesPairs(activityZones: List<Int>): List<Pair<String, Float>> {
+    val zoneNames = listOf("Easy", "Fat Burn", "Cardio", "Peak", "Anaerobic")
+    val totalTime = activityZones.sum().toFloat().coerceAtLeast(1f)
+    
+    return activityZones.mapIndexed { index, time ->
+        val zoneName = if (index < zoneNames.size) zoneNames[index] else "Zone ${index + 1}"
+        val percentage = time / totalTime
+        zoneName to percentage
     }
 }
 
 @Composable
 fun SummaryItem(label: String, value: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-        )
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF7B639C)
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
     }
 }
 
 @Composable
-fun ActivityZonesChart(activityZones: List<Int>) {
-    if (activityZones.size != 5) {
-        Text(text = "Activity zones data unavailable")
-        return
-    }
-
-    val totalTime = activityZones.sum().toFloat().coerceAtLeast(1f)
-    val zoneColors = listOf(
-        Color(0xFF8DD8F8), // Zone 1 - Light blue
-        Color(0xFF41B6E6), // Zone 2 - Medium blue
-        Color(0xFF00A1DF), // Zone 3 - Dark blue
-        Color(0xFFFF9500), // Zone 4 - Orange
-        Color(0xFFFF3B30)  // Zone 5 - Red
-    )
-
+fun ActivityZonesChart(activityZones: List<Pair<String, Float>>) {
+    // Simple implementation - in a real app this would be a proper chart
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Bar chart for zones
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(24.dp)
-                .clip(RoundedCornerShape(4.dp))
-        ) {
-            for (i in activityZones.indices) {
-                val width = (activityZones[i] / totalTime)
-                if (width > 0) {
-                    Box(
-                        modifier = Modifier
-                            .weight(width)
-                            .fillMaxHeight()
-                            .background(zoneColors[i])
-                    )
-                }
-            }
-        }
-
-        // Legend
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            for (i in activityZones.indices) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+        activityZones.forEach { (zoneName, percentage) ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = zoneName,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.width(80.dp)
+                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(16.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFFEEEEEE))
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(12.dp)
-                            .background(zoneColors[i], RoundedCornerShape(2.dp))
-                    )
-                    Text(
-                        text = "Z${i + 1}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Text(
-                        text = "${activityZones[i]} min",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold
+                            .fillMaxHeight()
+                            .fillMaxWidth(percentage)
+                            .background(getZoneColor(zoneName))
                     )
                 }
+                Text(
+                    text = "${(percentage * 100).toInt()}%",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.width(40.dp),
+                    textAlign = TextAlign.End
+                )
             }
         }
+    }
+}
+
+@Composable
+fun WorkoutDetailItem(workout: Workout) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFF6F3FD)
+        ),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = workout.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "${workout.time}   ${workout.duration} min",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            
+            Text(
+                text = "${workout.calories} cal",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF9D89C5)
+            )
+        }
+    }
+}
+
+fun getZoneColor(zoneName: String): Color {
+    return when(zoneName) {
+        "Easy" -> Color(0xFF8BC34A)
+        "Fat Burn" -> Color(0xFF4CAF50)
+        "Cardio" -> Color(0xFFFF9800)
+        "Peak" -> Color(0xFFE91E63)
+        else -> Color(0xFF9C27B0)
     }
 }

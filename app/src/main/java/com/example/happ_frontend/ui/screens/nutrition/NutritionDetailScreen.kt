@@ -7,17 +7,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.happ_frontend.R
 import com.example.happ_frontend.model.nutrition.Meal
 import com.example.happ_frontend.model.nutrition.MealType
 import com.example.happ_frontend.model.nutrition.NutritionSummary
+import com.example.happ_frontend.ui.screens.weight.PageHeaderWithBackButton
 
 @Composable
 fun NutritionDetailScreen(
@@ -28,35 +33,26 @@ fun NutritionDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(paddingValues = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                top = 32.dp
+            ))
     ) {
         // Top app bar with back button
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 16.dp)
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color(0xFF9D89C5) // Purple color to match the design
-                )
-            }
-
-            Text(
-                text = "Today's Menu",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF7B639C) // Purple color to match the design
-            )
-        }
+        PageHeaderWithBackButton(
+            title = stringResource(R.string.health_category_nutrition_detail_title),
+            onGoBack = onBackClick
+        )
 
         // Content
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(0.dp)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+            horizontalAlignment = Alignment.Start
         ) {
             NutritionSummary(nutritionSummary)
 
@@ -68,28 +64,28 @@ fun NutritionDetailScreen(
 
             if (breakfast != null) {
                 MealCard(
-                    title = "Breakfast",
+                    title = stringResource(R.string.health_category_nutrition_detail_breakfast),
                     meal = breakfast
                 )
             }
 
             if (lunch != null) {
                 MealCard(
-                    title = "Lunch",
+                    title = stringResource(R.string.health_category_nutrition_detail_lunch),
                     meal = lunch
                 )
             }
 
             if (dinner != null) {
                 MealCard(
-                    title = "Dinner",
+                    title = stringResource(R.string.health_category_nutrition_detail_dinner),
                     meal = dinner
                 )
             }
 
             if (snack != null) {
                 MealCard(
-                    title = "Snack",
+                    title = stringResource(R.string.health_category_nutrition_detail_snack),
                     meal = snack,
                     isSnack = true
                 )
@@ -112,8 +108,8 @@ fun NutritionSummary(summary: NutritionSummary) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Daily Summary",
-                style = MaterialTheme.typography.titleMedium,
+                text = stringResource(R.string.health_category_nutrition_detail_summary),
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF7B639C) // Purple color to match the design
             )
@@ -122,10 +118,26 @@ fun NutritionSummary(summary: NutritionSummary) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                NutrientItem("Calories", "${summary.calories}", Color(0xFF8BC34A))
-                NutrientItem("Protein", "${summary.protein}g", Color(0xFF03A9F4))
-                NutrientItem("Fat", "${summary.fat}g", Color(0xFFFF9800))
-                NutrientItem("Carbs", "${summary.carbs}g", Color(0xFFE91E63))
+                NutrientItem(
+                    stringResource(R.string.health_category_nutrition_visualization_calories), 
+                    "${summary.calories}", 
+                    Color(0xFF8BC34A)
+                )
+                NutrientItem(
+                    stringResource(R.string.health_category_nutrition_visualization_protein), 
+                    "${summary.protein}g", 
+                    Color(0xFF03A9F4)
+                )
+                NutrientItem(
+                    stringResource(R.string.health_category_nutrition_visualization_fat), 
+                    "${summary.fat}g", 
+                    Color(0xFFFF9800)
+                )
+                NutrientItem(
+                    stringResource(R.string.health_category_nutrition_visualization_carbs), 
+                    "${summary.carbs}g", 
+                    Color(0xFFE91E63)
+                )
             }
         }
     }
@@ -136,7 +148,7 @@ fun NutrientItem(label: String, value: String, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = value,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             color = color
         )
@@ -166,7 +178,7 @@ fun MealCard(
         ) {
             Text(
                 text = "$title: ${meal.name}",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF7B639C) // Purple color to match the design
             )
@@ -177,7 +189,7 @@ fun MealCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(160.dp)
+                        .height(120.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(Color(0xFFF3F0F9)) // Light purple background
                 ) {
@@ -199,20 +211,20 @@ fun MealCard(
             ) {
                 Column {
                     Text(
-                        text = "Nutrition",
+                        text = stringResource(R.string.health_category_nutrition_detail_nutrition),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF4A4A4A)
                     )
 
                     Text(
-                        text = "Calories: ${meal.calories} kcal",
+                        text = "${stringResource(R.string.health_category_nutrition_visualization_calories)}: ${meal.calories} kcal",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF4A4A4A)
                     )
 
                     Text(
-                        text = "Protein: ${meal.protein}g • Fat: ${meal.fat}g • Carbs: ${meal.carbs}g",
+                        text = "${stringResource(R.string.health_category_nutrition_visualization_protein)}: ${meal.protein}g • ${stringResource(R.string.health_category_nutrition_visualization_fat)}: ${meal.fat}g • ${stringResource(R.string.health_category_nutrition_visualization_carbs)}: ${meal.carbs}g",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF4A4A4A)
                     )
@@ -221,7 +233,7 @@ fun MealCard(
                 if (!isSnack) {
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "Portion Size",
+                            text = stringResource(R.string.health_category_nutrition_detail_portion),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF4A4A4A)
@@ -245,7 +257,7 @@ fun MealCard(
                         contentColor = Color(0xFF9D89C5) // Purple color for the button
                     )
                 ) {
-                    Text("View Recipe")
+                    Text(stringResource(R.string.health_category_nutrition_detail_view_recipe))
                 }
             }
         }

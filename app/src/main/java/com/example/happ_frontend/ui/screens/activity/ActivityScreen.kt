@@ -1,18 +1,24 @@
 package com.example.happ_frontend.ui.screens.activity
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.happ_frontend.R
 import com.example.happ_frontend.model.activity.ActivityViewModel
+import com.example.happ_frontend.ui.screens.weight.PageHeaderWithBackButton
 
 @Composable
 fun ActivityScreen(
@@ -64,58 +70,52 @@ fun MainActivityScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(paddingValues = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                top = 32.dp
+            )),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+        horizontalAlignment = Alignment.Start
     ) {
-        // Header with back button and centered title
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-        ) {
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color(0xFFA590B6) // Purple color to match the design
-                )
-            }
-
-            Text(
-                text = "Activity",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = Color(0xFF7B639C), // Purple color to match the design
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-
-        // Banner with activity information
-        ActivityHeader(onDetailClick = {
-            if (uiState.currentActivityDay?.workouts?.isNotEmpty() == true) {
-                onWorkoutDetailClick()
-            }
-        })
-
-        // Calendar to select dates
-        ActivityHistoryCalendar(
-            selectedDate = uiState.selectedDate,
-            onDateSelected = { date ->
-                viewModel.loadActivitiesForDate(date)
-            }
+        // Header with back button and title
+        PageHeaderWithBackButton(
+            title = stringResource(R.string.health_category_activity_page_title),
+            onGoBack = onBackClick
         )
 
-        // Workout details for the selected date
-        ActivityHistoryDetails(activityDay = uiState.currentActivityDay)
+        // Main content
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(0.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
+            horizontalAlignment = Alignment.Start
+        ) {
+            // Banner with activity information
+            ActivityHeader(onDetailClick = {
+                if (uiState.currentActivityDay?.workouts?.isNotEmpty() == true) {
+                    onWorkoutDetailClick()
+                }
+            })
 
-        Spacer(modifier = Modifier.weight(1f))
+            // Calendar to select dates
+            ActivityHistoryCalendar(
+                selectedDate = uiState.selectedDate,
+                onDateSelected = { date ->
+                    viewModel.loadActivitiesForDate(date)
+                }
+            )
 
-        // Button to add a new workout
-        AddWorkoutButton(onClick = onAddWorkoutClick)
+            // Workout details for the selected date
+            ActivityHistoryDetails(activityDay = uiState.currentActivityDay)
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Button to add a new workout
+            AddWorkoutButton(onClick = onAddWorkoutClick)
+        }
 
         // Loading indicator
         if (uiState.isLoading) {

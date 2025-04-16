@@ -101,4 +101,61 @@
     <string name="EnterSearchQuery">Введите запрос</string>
     <string name="no_users_found">Пользователи не найдены</string>
     <string name="server_unavailable">Сервер недоступен</string>
+
+    <!-- Activity -->
+    <string name="health_category_activity_button_add_workout">Добавить тренировку</string>
+    <string name="health_category_activity_button_visualize">Визуализировать активность</string>
+    <string name="health_category_activity_widget_failure">Ошибка загрузки данных активности: %s</string>
+    <string name="health_category_activity_widget_reload">Повторить</string>
+    <string name="health_category_activity_error_loading">Ошибка загрузки данных активности</string>
+    <string name="health_category_activity_error_adding">Ошибка добавления тренировки</string>
+    <string name="health_category_activity_dialog_add_title">Добавить тренировку</string>
+    <string name="health_category_activity_dialog_name">Название тренировки</string>
+    <string name="health_category_activity_dialog_duration">Длительность (мин)</string>
+    <string name="health_category_activity_dialog_calories">Калории</string>
+    <string name="health_category_activity_dialog_type">Тип тренировки</string>
+    <string name="health_category_activity_detail_title">Детали тренировки</string>
+    <string name="health_category_activity_detail_summary">Сводка</string>
+    <string name="health_category_activity_detail_duration">Длительность</string>
+    <string name="health_category_activity_detail_calories">Калории</string>
+    <string name="health_category_activity_detail_heart_rate">Пульс</string>
+    <string name="health_category_activity_detail_zones">Зоны активности</string>
+    <string name="health_category_activity_visualization">Визуализация активности</string>
+    <string name="health_category_activity_visualization_calories">Калории</string>
+    <string name="health_category_activity_visualization_not_enough_data">Недостаточно данных для визуализации</string>
+
+    <!-- Nutrition -->
+    <string name="health_category_nutrition_button_add_meal">Добавить прием пищи</string>
+    <string name="health_category_nutrition_button_visualize">Визуализировать питание</string>
+    <string name="health_category_nutrition_widget_failure">Ошибка загрузки данных питания: %s</string>
+    <string name="health_category_nutrition_widget_reload">Повторить</string>
+    <string name="health_category_nutrition_error_loading">Ошибка загрузки данных питания</string>
+    <string name="health_category_nutrition_error_adding">Ошибка добавления приема пищи</string>
+    <string name="health_category_nutrition_dialog_add_title">Добавить прием пищи</string>
+    <string name="health_category_nutrition_dialog_name">Название</string>
+    <string name="health_category_nutrition_dialog_calories">Калории</string>
+    <string name="health_category_nutrition_dialog_protein">Белки (г)</string>
+    <string name="health_category_nutrition_dialog_fat">Жиры (г)</string>
+    <string name="health_category_nutrition_dialog_carbs">Углеводы (г)</string>
+    <string name="health_category_nutrition_dialog_portion">Размер порции</string>
+    <string name="health_category_nutrition_detail_title">Меню на сегодня</string>
+    <string name="health_category_nutrition_detail_summary">Дневная сводка</string>
+    <string name="health_category_nutrition_detail_breakfast">Завтрак</string>
+    <string name="health_category_nutrition_detail_lunch">Обед</string>
+    <string name="health_category_nutrition_detail_dinner">Ужин</string>
+    <string name="health_category_nutrition_detail_snack">Перекус</string>
+    <string name="health_category_nutrition_detail_nutrition">Питание</string>
+    <string name="health_category_nutrition_detail_portion">Размер порции</string>
+    <string name="health_category_nutrition_detail_view_recipe">Посмотреть рецепт</string>
+    <string name="health_category_nutrition_visualization">Визуализация питания</string>
+    <string name="health_category_nutrition_visualization_calories">Калории</string>
+    <string name="health_category_nutrition_visualization_protein">Белки</string>
+    <string name="health_category_nutrition_visualization_fat">Жиры</string>
+    <string name="health_category_nutrition_visualization_carbs">Углеводы</string>
+    <string name="health_category_nutrition_visualization_not_enough_data">Недостаточно данных для визуализации</string>
+
+    <!-- Common -->
+    <string name="cancel">Отмена</string>
+    <string name="add">Добавить</string>
+    <string name="close">Закрыть</string>
 </resources>
