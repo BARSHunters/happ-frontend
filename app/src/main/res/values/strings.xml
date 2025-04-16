@@ -1,5 +1,113 @@
 <resources>
     <string name="app_name" translatable="false">happ-frontend</string>
+
+    <!-- Register/Login screens -->
+    <string name="auth.title.register">Register</string>
+    <string name="auth.title.login">Login</string>
+    <string name="auth.title.forgot_password">Forgot password?</string>
+    <string name="auth.field.username">Username</string>
+    <string name="auth.field.password">Password</string>
+    <string name="auth.field.password_confirm">Confirm password</string>
+    <string name="auth.field.name">Name</string>
+    <string name="auth.field.birth_date">Birth date</string>
+    <string name="auth.field.gender">Gender</string>
+    <string name="auth.field.height">Current height (cm)</string>
+    <string name="auth.field.weight">Current weight (kg)</string>
+    <string name="auth.field.weight_desire">Current weight desire</string>
+    <string name="auth.hint.forgot_password">Forgot password?</string>
+    <string name="auth.hint.forgot_password.condolence">We offer our condolences.</string>
+    <string name="auth.hint.forgot_password.register">Register a new account</string>
+    <string name="auth.hint.dont_have_account">"Don't have an account? "</string>
+    <string name="auth.hint.dont_have_account.register">Sign up</string>
+    <string name="auth.hint.already_have_account">Already have an account? </string>
+    <string name="auth.hint.already_have_account.login">Login</string>
+    <string name="auth.button.login">Login</string>
+    <string name="auth.button.register">Register</string>
+    <string name="auth.button.register_continue">Continue</string>
+    <string name="auth.button.logout">Logout</string>
+    <string name="auth.valid_error.username.length">Username must be at least %1$d characters long</string>
+    <string name="auth.valid_error.username.regex">Username can only contain letters, numbers, underscores, and must start with a letter</string>
+    <string name="auth.valid_error.password.length">Password must be at least %1$d characters long</string>
+    <string name="auth.valid_error.password.match">Passwords must match</string>
+    <string name="auth.valid_error.name.notempty">Name should not be empty</string>
+    <string name="auth.valid_error.name.regex">Name can only contain letters, spaces, apostrophes, and hyphens</string>
+    <string name="auth.valid_error.number.min">Number must be at least %1$s</string>
+    <string name="auth.valid_error.number.max">Number must be at most %1$s</string>
+    <string name="auth.valid_error.number.notempty">Number must not be empty</string>
+    <string name="auth.valid_error.number.format">Invalid number format</string>
+    <!-- etc. -->
+
+    <!-- Home screen, weight history, etc: health categories -->
+    <string name="health_category.title">Health Categories</string>
+    <string name="health_category.weight.title">Body Measurements &amp; Weight</string>
+    <string name="health_category.weight.page_title">Weight History</string>
+    <string name="health_category.weight.description">Track your progress\nand stay motivated!</string>
+    <string name="health_category.weight.prediction">Weight predictions</string>
+    <string name="health_category.weight.prediction.not_enough_data">Not enough data to predict weight</string>
+    <string name="health_category.weight.button.add_entry">Add Weight Entry</string>
+    <string name="health_category.weight.button.visualize">Visualize Weight Change</string>
+    <string name="health_category.weight.dialog.title">New weight entry</string>
+    <string name="health_category.weight.dialog.field.date">Entry date</string>
+    <string name="health.category.weight.dialog.field.time">Entry time</string>
+    <string name="health.category.weight.dialog.field.weight">Current weight (kg)</string>
+    <string name="health.category.weight.widget.failure">Failed to load weight history. Reason: %1$s</string>
+    <string name="health.category.weight.widget.reload">Reload</string>
+    <string name="health_category.activity.title">Activity &amp; Workouts</string>
+    <string name="health_category.activity.page_title">Activity</string>
+    <string name="health_category.activity.description">Move more,\nfeel better!</string>
+    <string name="health_category.nutrition.title">Nutrition &amp; Hydration</string>
+    <string name="health_category.nutrition.page_title">Nutrition</string>
+    <string name="health_category.nutrition.description">Stay hydrated,\neat well,\nfeel amazing!</string>
+    <string name="health_category.common.event_list.today">Today</string>
+    <string name="health_category.common.event_list.no_data">No data to display</string>
+    <string name="health_category.button.see_more">See More</string>
+    <!-- etc. -->
+
+    <!-- Personal biometric data -->
+    <string name="biom.gender">Gender</string>
+    <string name="biom.gender.male">Male</string>
+    <string name="biom.gender.female">Female</string>
+    <string name="biom.gender.helicopter">Attack helicopter</string>
+    <string name="biom.weight_desire">Weight desire</string>
+    <string name="biom.weight_desire.loss">Lose weight</string>
+    <string name="biom.weight_desire.remain">Keep weight</string>
+    <string name="biom.weight_desire.gain">Gain weight</string>
+    <!-- etc. -->
+
+    <!-- Unit data -->
+    <string name="unit.length.km">km</string>
+    <string name="unit.length.m">m</string>
+    <string name="unit.length.cm">cm</string>
+    <string name="unit.mass.kg">kg</string>
+    <string name="unit.mass.g">g</string>
+    <!-- etc. -->
+
+    <!--Dialogs -->
+    <string name="dialog.misc.buttons.ok">OK</string>
+    <string name="dialog.misc.buttons.cancel">Cancel</string>
+    <string name="dialog.misc.buttons.retry">Retry</string>
+    <string name="dialog.datepicker.header">Select date</string>
+    <!-- etc. -->
+
+    <!-- User profile -->
+    <string name="user.profile.hi">Hi, </string>
+    <!-- etc. -->
+
+    <!-- Server communication errors -->
+    <string name="error.misc.errorPrefix">Error: %1$s</string>
+    <string name="error.misc.unknown">Unknown error</string>
+    <string name="error.misc.network">Network error</string>
+    <string name="error.misc.network.withMessage">Network error: %1$s</string>
+    <string name="error.auth.noJwt">JWT is not set, have to log in again</string>
+    <string name="error.auth.unauthorized">Authorization error</string>
+    <string name="error.home.loadingError">There was an error loading the home screen.</string>
+    <string name="error.home.loadingError.withMessage">Error loading home screen: %1$s</string>
+    <string name="error.weight.userData.loadFail">Failed to load user data</string>
+    <string name="error.weight.userData.updateFail">Failed to update user data</string>
+    <string name="error.weight.weightHistory.loadFail">Failed to load weight history</string>
+    <!-- etc. -->
+
+    <!-- Everything to do with notifications -->
     <string name="notifications">Notifications</string>
     <string name="activityNotification">Activity</string>
     <string name="friendNotification">New friend Request</string>
@@ -14,5 +122,9 @@
     <string name="watch_friend_requests">Profile</string>
     <string name="achievements">Achievements</string>
     <string name="delete_all_notifications">Delete all notifications</string>
-
+    <!-- etc. -->
+    <string name="UserSearchTop">Search for users</string>
+    <string name="EnterSearchQuery">Enter a query</string>
+    <string name="no_users_found">No users found</string>
+    <string name="server_unavailable">Server is unavailable</string>
 </resources>
