@@ -67,7 +67,7 @@ fun ActivityHistoryDetails(activityDay: ActivityDay?) {
                 ) {
                     Column {
                         Text(
-                            text = "${workout.time} - ${workout.duration} min of ${workout.name}",
+                            text = "${workout.time} - ${workout.name}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Text(

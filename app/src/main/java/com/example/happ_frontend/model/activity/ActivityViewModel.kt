@@ -1,16 +1,23 @@
 package com.example.happ_frontend.model.activity
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.happ_frontend.model.activity.communication.ActivityNetworkModule
+import com.example.happ_frontend.model.activity.request.ActivityRequest
+import com.example.happ_frontend.model.activity.response.Activity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalTime
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class ActivityViewModel : ViewModel() {
+    private val activityApiService = ActivityNetworkModule.activityApiService
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    private val TAG = "ActivityViewModel"
 
     internal val _uiState = MutableStateFlow(ActivityUiState())
     val uiState: StateFlow<ActivityUiState> = _uiState.asStateFlow()
@@ -21,154 +28,101 @@ class ActivityViewModel : ViewModel() {
 
     fun loadActivitiesForDate(date: LocalDate) {
         viewModelScope.launch {
+            Log.d(TAG, "Загрузка тренировок для даты: $date")
             _uiState.value = _uiState.value.copy(isLoading = true)
-
-            // TODO: Call API to get activities for the selected date
-            // Example API call - implement actual API client later
-            // val response = api.getActivities(date.format(DateTimeFormatter.ISO_DATE))
-
-            // Mock data based on the date
-            val workouts = if (date == LocalDate.now()) {
-                // Today's workouts
-                listOf(
-                    Workout(
-                        time = "10:00 am",
-                        name = "Breathing Exercise",
-                        duration = 15,
-                        calories = 10,
-                        heartRateAvg = 75,
-                        heartRateMax = 85,
-                        activityZones = listOf(8, 4, 2, 1, 0),
-                        trainingLoad = 25,
-                        recoveryTime = 1,
-                        intensity = 50
-                    ),
-                    Workout(
-                        time = "08:00 am",
-                        name = "Pilates",
-                        duration = 60,
-                        calories = 180,
-                        heartRateAvg = 110,
-                        heartRateMax = 145,
-                        activityZones = listOf(5, 20, 25, 8, 2),
-                        trainingLoad = 65,
-                        recoveryTime = 8,
-                        intensity = 50
+            try {
+                val response = activityApiService.getActivities()
+                if (response.isSuccessful) {
+                    val activities = response.body()?.activities ?: emptyList()
+                    Log.d(TAG, "Получено тренировок: ${activities.size}")
+                    activities.forEach { activity ->
+                        Log.d(TAG, "Тренировка: ${activity.name}, дата: ${activity.datetime}")
+                    }
+                    
+                    val filteredActivities = activities.filter { activity ->
+                        try {
+                            val activityDateTime = LocalDateTime.parse(activity.datetime, dateTimeFormatter)
+                            val activityDate = activityDateTime.toLocalDate()
+                            Log.d(TAG, "Сравнение дат: $activityDate == $date")
+                            activityDate == date
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Ошибка парсинга даты: ${activity.datetime}", e)
+                            false
+                        }
+                    }
+                    Log.d(TAG, "Отфильтровано тренировок: ${filteredActivities.size}")
+                    
+                    val workouts = filteredActivities.map { activity ->
+                        Workout(
+                            time = activity.datetime,
+                            name = activity.name,
+                            calories = activity.calories
+                        )
+                    }
+                    val activityDay = ActivityDay(date = date, workouts = workouts)
+                    _uiState.value = _uiState.value.copy(
+                        selectedDate = date,
+                        currentActivityDay = activityDay,
+                        isLoading = false,
+                        error = null
                     )
-                )
-            } else if (date.isBefore(LocalDate.now())) {
-                // Past workouts
-                listOf(
-                    Workout(
-                        time = "07:30 am",
-                        name = "Morning Run",
-                        duration = 30,
-                        calories = 320,
-                        heartRateAvg = 145,
-                        heartRateMax = 175,
-                        activityZones = listOf(2, 5, 15, 6, 2),
-                        trainingLoad = 78,
-                        recoveryTime = 12,
-                        intensity = 50
-                    ),
-                    Workout(
-                        time = "06:00 pm",
-                        name = "Yoga Session",
-                        duration = 45,
-                        calories = 130,
-                        heartRateAvg = 90,
-                        heartRateMax = 110,
-                        activityZones = listOf(10, 20, 10, 5, 0),
-                        trainingLoad = 35,
-                        recoveryTime = 4,
-                        intensity = 50
+                    Log.d(TAG, "UI обновлен. Тренировок в UI: ${activityDay.workouts.size}")
+                } else {
+                    Log.e(TAG, "Ошибка загрузки данных: ${response.code()}")
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Ошибка загрузки данных: ${response.code()}"
                     )
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Ошибка сети: ${e.message}")
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Ошибка сети: ${e.message}"
                 )
-            } else {
-                // Future - empty list since workouts haven't been recorded yet
-                emptyList()
             }
-
-            val activityDay = ActivityDay(date = date, workouts = workouts)
-
-            // Update UI state with the fetched or mock data
-            _uiState.value = _uiState.value.copy(
-                selectedDate = date,
-                currentActivityDay = activityDay,
-                isLoading = false
-            )
         }
     }
 
-    fun addNewWorkout() {
+    fun addNewWorkout(workout: Workout) {
         viewModelScope.launch {
+            Log.d(TAG, "Добавление новой тренировки: ${workout.name}, время: ${workout.time}")
             _uiState.value = _uiState.value.copy(isLoading = true)
-
-            // Switch to today's date
-            val today = LocalDate.now()
-
-            // TODO: Call API to record a new workout
-            // Example API call - implement actual API client later
-            // val response = api.newActivity(today.format(DateTimeFormatter.ISO_DATE))
-
-            // Mock data for a newly created workout
-            val newWorkout = Workout(
-                time = "10:00 am",
-                name = "Тренировка",
-                duration = 30,
-                calories = 180,
-                heartRateAvg = 150,
-                heartRateMax = 180,
-                activityZones = listOf(2, 5, 8, 7, 3),
-                trainingLoad = 45,
-                recoveryTime = 2,
-                intensity = (30..100).random() // Случайная интенсивность
-            )
-
-            // Get current workouts or create empty list
-            val currentWorkouts = _uiState.value.currentActivityDay?.workouts ?: emptyList()
-            // Add new workout to the beginning of the list
-            val updatedWorkouts = listOf(newWorkout) + currentWorkouts
-            val activityDay = ActivityDay(date = today, workouts = updatedWorkouts)
-
-            // After API call, update UI state with the new workout added
-            _uiState.value = _uiState.value.copy(
-                selectedDate = today,
-                currentActivityDay = activityDay,
-                isLoading = false
-            )
+            try {
+                val request = ActivityRequest(
+                    name = workout.name,
+                    datetime = workout.time,
+                    calories = workout.calories
+                )
+                
+                val response = activityApiService.createActivity(request)
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Тренировка успешно создана")
+                    val workoutDate = LocalDateTime.parse(workout.time, dateTimeFormatter).toLocalDate()
+                    loadActivitiesForDate(workoutDate)
+                } else {
+                    Log.e(TAG, "Ошибка создания тренировки: ${response.code()}")
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Ошибка создания тренировки: ${response.code()}"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Ошибка сети: ${e.message}")
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Ошибка сети: ${e.message}"
+                )
+            }
         }
     }
 
     fun getActivitySummary(workouts: List<Workout>): ActivitySummary {
         var totalCalories = 0
-        var totalDuration = 0
-        var maxHeartRate = 0
-        var avgHeartRate = 0
-        var totalTrainingLoad = 0
-        var maxRecoveryTime = 0
-
         workouts.forEach { workout ->
             totalCalories += workout.calories
-            totalDuration += workout.duration
-            if (workout.heartRateMax > maxHeartRate) maxHeartRate = workout.heartRateMax
-            avgHeartRate += workout.heartRateAvg
-            totalTrainingLoad += workout.trainingLoad
-            if (workout.recoveryTime > maxRecoveryTime) maxRecoveryTime = workout.recoveryTime
         }
-
-        if (workouts.isNotEmpty()) {
-            avgHeartRate /= workouts.size
-        }
-
-        return ActivitySummary(
-            calories = totalCalories,
-            duration = totalDuration,
-            heartRateMax = maxHeartRate,
-            heartRateAvg = avgHeartRate,
-            trainingLoad = totalTrainingLoad,
-            recoveryTime = maxRecoveryTime
-        )
+        return ActivitySummary(calories = totalCalories)
     }
 }
 
@@ -176,7 +130,8 @@ data class ActivityUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val currentActivityDay: ActivityDay? = null,
     val activityHistory: List<ActivityDay> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val error: String? = null
 )
 
 data class ActivityDay(
@@ -187,23 +142,11 @@ data class ActivityDay(
 data class Workout(
     val time: String,
     val name: String,
-    val duration: Int, // in minutes
-    val calories: Int,
-    val heartRateAvg: Int,
-    val heartRateMax: Int,
-    val activityZones: List<Int>, // Time in each of the 5 zones (in minutes)
-    val trainingLoad: Int,
-    val recoveryTime: Int, // in hours
-    val intensity: Int = 50 // Intensity percentage from 0 to 100
+    val calories: Int
 )
 
 data class ActivitySummary(
-    val calories: Int,
-    val duration: Int,
-    val heartRateMax: Int,
-    val heartRateAvg: Int,
-    val trainingLoad: Int,
-    val recoveryTime: Int
+    val calories: Int
 )
 
 /**
@@ -240,7 +183,7 @@ fun ActivityViewModel.setNewWorkoutData(
     val calculatedIntensity = (30 + (weightedIntensity * 70)).toInt().coerceIn(30, 100)
     
     // Генерация текущего времени (можно улучшить, если нужен более точный формат)
-    val currentTime = LocalTime.now().withSecond(0).withNano(0)
+    val currentTime = LocalDateTime.now().withSecond(0).withNano(0)
     val formattedTime = DateTimeFormatter
         .ofPattern("hh:mm a")
         .format(currentTime)
@@ -250,14 +193,7 @@ fun ActivityViewModel.setNewWorkoutData(
     val newWorkout = Workout(
         name = name,
         time = formattedTime,
-        duration = duration,
-        calories = calculateEstimatedCalories(duration, actualEffort),
-        activityZones = activityZones,
-        heartRateAvg = calculateEstimatedHeartRate(actualEffort),
-        heartRateMax = calculateEstimatedMaxHeartRate(actualEffort),
-        trainingLoad = (duration * 1.5).toInt(),
-        recoveryTime = (duration / 15),
-        intensity = calculatedIntensity
+        calories = calculateEstimatedCalories(duration, actualEffort)
     )
 
     // Now add the workout to the UI state

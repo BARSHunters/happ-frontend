@@ -1,5 +1,6 @@
 package com.example.happ_frontend.ui.screens.activity
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,7 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.happ_frontend.R
 import com.example.happ_frontend.model.activity.ActivityViewModel
+import com.example.happ_frontend.model.activity.Workout
 import com.example.happ_frontend.ui.screens.weight.PageHeaderWithBackButton
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ActivityScreen(
@@ -27,6 +31,14 @@ fun ActivityScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var screenState by remember { mutableStateOf<ActivityScreenState>(ActivityScreenState.Main) }
+    val TAG = "ActivityScreen"
+
+    // Показываем ошибку, если она есть
+    LaunchedEffect(uiState.error) {
+        if (uiState.error != null) {
+            Log.e(TAG, "Ошибка: ${uiState.error}")
+        }
+    }
 
     // Only show the current screen based on state
     when (val currentState = screenState) {
@@ -49,8 +61,17 @@ fun ActivityScreen(
             AddWorkoutScreen(
                 viewModel = viewModel,
                 onBackClick = { screenState = ActivityScreenState.Main },
-                onSaveClick = {
-                    viewModel.addNewWorkout()
+                onSaveClick = { name, date, duration, effort ->
+                    val workoutDateTime = date.atStartOfDay()
+                        .plusHours(12) // Устанавливаем время на 12:00
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                    Log.d(TAG, "Создание тренировки: name=$name, date=$date, datetime=$workoutDateTime")
+                    val workout = Workout(
+                        time = workoutDateTime,
+                        name = name,
+                        calories = calculateCalories(duration, effort)
+                    )
+                    viewModel.addNewWorkout(workout)
                     screenState = ActivityScreenState.Main
                 }
             )
@@ -66,6 +87,7 @@ fun MainActivityScreen(
     onWorkoutDetailClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val TAG = "ActivityScreen"
 
     Column(
         modifier = Modifier
@@ -104,6 +126,7 @@ fun MainActivityScreen(
             ActivityHistoryCalendar(
                 selectedDate = uiState.selectedDate,
                 onDateSelected = { date ->
+                    Log.d(TAG, "Выбрана дата: $date")
                     viewModel.loadActivitiesForDate(date)
                 }
             )
@@ -128,6 +151,20 @@ fun MainActivityScreen(
                 )
             }
         }
+
+        // Error message
+        if (uiState.error != null) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = uiState.error!!,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
     }
 }
 
@@ -135,4 +172,17 @@ sealed class ActivityScreenState {
     object Main : ActivityScreenState()
     object Detail : ActivityScreenState()
     object AddWorkout : ActivityScreenState()
+}
+
+private fun calculateCalories(duration: Int, effort: String): Int {
+    val baseCaloriesPerMinute = 7
+    val effortMultiplier = when (effort) {
+        "Easy" -> 0.8
+        "Moderate" -> 1.0
+        "Hard" -> 1.2
+        "Very Hard" -> 1.4
+        "Maximum" -> 1.6
+        else -> 1.0
+    }
+    return (baseCaloriesPerMinute * duration * effortMultiplier).toInt()
 }

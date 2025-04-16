@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter
 fun AddWorkoutScreen(
     viewModel: ActivityViewModel,
     onBackClick: () -> Unit,
-    onSaveClick: () -> Unit
+    onSaveClick: (String, LocalDate, Int, String) -> Unit
 ) {
     var workoutName by remember { mutableStateOf("Тренировка") }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -147,13 +147,7 @@ fun AddWorkoutScreen(
                 // Add Workout Button
                 Button(
                     onClick = {
-                        viewModel.setNewWorkoutData(
-                            name = workoutName,
-                            date = selectedDate,
-                            duration = workoutDuration,
-                            effort = workoutEffort
-                        )
-                        onSaveClick()
+                        onSaveClick(workoutName, selectedDate, workoutDuration, workoutEffort)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

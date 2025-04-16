@@ -57,7 +57,7 @@ fun ActivityDetailScreen(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFFF6F3FD) // Light purple background to match the weight design
+                    containerColor = Color(0xFFF6F3FD)
                 )
             ) {
                 Column(
@@ -76,101 +76,8 @@ fun ActivityDetailScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         SummaryItem(
-                            label = stringResource(R.string.health_category_activity_detail_duration),
-                            value = "${activitySummary.duration} min"
-                        )
-                        SummaryItem(
                             label = stringResource(R.string.health_category_activity_detail_calories),
                             value = "${activitySummary.calories} cal"
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        SummaryItem(
-                            label = "Avg HR",
-                            value = "${activitySummary.heartRateAvg} bpm"
-                        )
-                        SummaryItem(
-                            label = "Max HR",
-                            value = "${activitySummary.heartRateMax} bpm"
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        SummaryItem(
-                            label = "Training Load",
-                            value = "${activitySummary.trainingLoad}"
-                        )
-                        SummaryItem(
-                            label = "Recovery",
-                            value = "${activitySummary.recoveryTime} hrs"
-                        )
-                    }
-                }
-            }
-
-            // Activity Zones Chart
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.health_category_activity_detail_zones),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    if (workouts.isNotEmpty()) {
-                        val workout = workouts[0] // Using the first workout for the chart
-                        ActivityZonesChart(activityZones = convertToZonesPairs(workout.activityZones))
-                    }
-                }
-            }
-
-            // Heart Rate Chart
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.health_category_activity_detail_heart_rate),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    // Placeholder for heart rate chart
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFFF6F3FD)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "Heart Rate Chart\nAvg: ${activitySummary.heartRateAvg} bpm\nMax: ${activitySummary.heartRateMax} bpm",
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
@@ -204,18 +111,6 @@ fun ActivityDetailScreen(
     }
 }
 
-// Функция для конвертации списка Int в список пар String, Float
-fun convertToZonesPairs(activityZones: List<Int>): List<Pair<String, Float>> {
-    val zoneNames = listOf("Easy", "Fat Burn", "Cardio", "Peak", "Anaerobic")
-    val totalTime = activityZones.sum().toFloat().coerceAtLeast(1f)
-    
-    return activityZones.mapIndexed { index, time ->
-        val zoneName = if (index < zoneNames.size) zoneNames[index] else "Zone ${index + 1}"
-        val percentage = time / totalTime
-        zoneName to percentage
-    }
-}
-
 @Composable
 fun SummaryItem(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -230,59 +125,5 @@ fun SummaryItem(label: String, value: String) {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
-    }
-}
-
-@Composable
-fun ActivityZonesChart(activityZones: List<Pair<String, Float>>) {
-    // Simple implementation - in a real app this would be a proper chart
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        activityZones.forEach { (zoneName, percentage) ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = zoneName,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.width(80.dp)
-                )
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(16.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFFEEEEEE))
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(percentage)
-                            .background(getZoneColor(zoneName))
-                    )
-                }
-                Text(
-                    text = "${(percentage * 100).toInt()}%",
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.width(40.dp),
-                    textAlign = TextAlign.End
-                )
-            }
-        }
-    }
-}
-
-fun getZoneColor(zoneName: String): Color {
-    return when(zoneName) {
-        "Easy" -> Color(0xFF8BC34A)
-        "Fat Burn" -> Color(0xFF4CAF50)
-        "Cardio" -> Color(0xFFFF9800)
-        "Peak" -> Color(0xFFE91E63)
-        else -> Color(0xFF9C27B0)
     }
 }
