@@ -45,8 +45,8 @@ fun PageHeaderWithBackButton(
         Text(
             textAlign = TextAlign.Center,
             text = title,
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Black
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold
         )
 
         Spacer(

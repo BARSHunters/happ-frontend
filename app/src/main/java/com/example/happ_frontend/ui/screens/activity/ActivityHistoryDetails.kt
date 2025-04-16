@@ -55,7 +55,7 @@ fun ActivityHistoryDetails(activityDay: ActivityDay?) {
                 text = "${activityDay.date.format(DateTimeFormatter.ofPattern("d MMM"))} - ${
                     activityDay.date.dayOfWeek.name.lowercase().capitalize()
                 }${if (activityDay.date.isEqual(java.time.LocalDate.now())) " - Today" else ""}",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
 

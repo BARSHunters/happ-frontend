@@ -36,7 +36,7 @@ fun MealHistoryDetails(
 
             Text(
                 text = "${mealDay.date.format(formatter)}${if (isToday) " - Today" else ""}",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
 
