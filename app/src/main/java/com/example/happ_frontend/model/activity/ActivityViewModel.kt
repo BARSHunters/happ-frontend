@@ -5,16 +5,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.happ_frontend.model.activity.communication.ActivityNetworkModule
 import com.example.happ_frontend.model.activity.request.ActivityRequest
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class ActivityViewModel : ViewModel() {
     private val activityApiService = ActivityNetworkModule.activityApiService
+    private val authPrefs: AuthSharedPreferencesEditor = AuthSharedPreferencesProvider.editor
+        ?: throw IllegalStateException("AuthSharedPreferencesEditor not initialized yet")
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
     private val TAG = "ActivityViewModel"
 
@@ -30,7 +35,8 @@ class ActivityViewModel : ViewModel() {
             Log.d(TAG, "Загрузка тренировок для даты: $date")
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val response = activityApiService.getActivities()
+                val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
+                val response = activityApiService.getActivities(token)
                 if (response.isSuccessful) {
                     val activities = response.body()?.activities ?: emptyList()
                     Log.d(TAG, "Получено тренировок: ${activities.size}")
@@ -89,6 +95,7 @@ class ActivityViewModel : ViewModel() {
             Log.d(TAG, "Добавление новой тренировки: ${workout.name}, время: ${workout.time}")
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
+                val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
                 val request = ActivityRequest(
                     name = workout.name,
                     datetime = workout.time,
@@ -96,7 +103,7 @@ class ActivityViewModel : ViewModel() {
                     intensityZones = workout.intensityZones
                 )
                 
-                val response = activityApiService.createActivity(request)
+                val response = activityApiService.createActivity(token, request)
                 if (response.isSuccessful) {
                     Log.d(TAG, "Тренировка успешно создана")
                     val workoutDate = LocalDateTime.parse(workout.time, dateTimeFormatter).toLocalDate()
@@ -129,33 +136,32 @@ class ActivityViewModel : ViewModel() {
     fun setNewWorkoutData(
         name: String,
         date: LocalDate,
+        time: LocalTime,
         duration: Int,
         effort: String
     ) {
         viewModelScope.launch {
-            Log.d(TAG, "Добавление новой тренировки: name=$name, date=$date, duration=$duration")
+            Log.d(TAG, "Добавление новой тренировки: name=$name, date=$date, time=$time, duration=$duration")
             _uiState.value = _uiState.value.copy(isLoading = true)
             
             try {
+                val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
                 // Генерируем распределение времени по зонам интенсивности
                 val intensityZones = generateIntensityZones(duration, effort)
                 
-                // Генерация текущего времени
-                val currentTime = LocalDateTime.now().withSecond(0).withNano(0)
-                val formattedTime = DateTimeFormatter
-                    .ofPattern("yyyy-MM-dd HH:mm")
-                    .format(currentTime)
-
-                // Создаем запрос на сервер
+                // Комбинируем дату и время
+                val dateTime = LocalDateTime.of(date, time)
+                val formattedDateTime = dateTime.format(dateTimeFormatter)
+                
+                // Создаем запрос
                 val request = ActivityRequest(
                     name = name,
-                    datetime = formattedTime,
+                    datetime = formattedDateTime,
                     calories = calculateCaloriesFromZones(intensityZones),
                     intensityZones = intensityZones
                 )
                 
-                // Отправляем запрос на сервер
-                val response = activityApiService.createActivity(request)
+                val response = activityApiService.createActivity(token, request)
                 if (response.isSuccessful) {
                     Log.d(TAG, "Тренировка успешно создана")
                     loadActivitiesForDate(date)

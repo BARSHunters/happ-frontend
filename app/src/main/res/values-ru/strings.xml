@@ -112,6 +112,8 @@
     <string name="health_category_activity_dialog_add_title">Добавить тренировку</string>
     <string name="health_category_activity_dialog_name">Название тренировки</string>
     <string name="health_category_activity_dialog_duration">Длительность (мин)</string>
+    <string name="health_category_activity_dialog_duration_with_value">Длительность: %d минут</string>
+    <string name="health_category_activity_dialog_duration_min">%d мин</string>
     <string name="health_category_activity_dialog_calories">Калории</string>
     <string name="health_category_activity_dialog_type">Тип тренировки</string>
     <string name="health_category_activity_detail_title">Детали тренировки</string>

@@ -61,8 +61,8 @@ fun ActivityScreen(
             AddWorkoutScreen(
                 viewModel = viewModel,
                 onBackClick = { screenState = ActivityScreenState.Main },
-                onSaveClick = { name, date, duration, effort ->
-                    viewModel.setNewWorkoutData(name, date, duration, effort)
+                onSaveClick = { name, date, time, duration, effort ->
+                    viewModel.setNewWorkoutData(name, date, time, duration, effort)
                     screenState = ActivityScreenState.Main
                 }
             )
