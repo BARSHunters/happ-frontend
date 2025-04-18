@@ -145,6 +145,8 @@
     <string name="health_category_activity_dialog_add_title">Add Workout</string>
     <string name="health_category_activity_dialog_name">Workout name</string>
     <string name="health_category_activity_dialog_duration">Duration (min)</string>
+    <string name="health_category_activity_dialog_duration_with_value">Duration: %d minutes</string>
+    <string name="health_category_activity_dialog_duration_min">%d min</string>
     <string name="health_category_activity_dialog_calories">Calories</string>
     <string name="health_category_activity_dialog_type">Workout type</string>
     <string name="health_category_activity_detail_title">Workout Details</string>
