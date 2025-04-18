@@ -15,64 +15,86 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
+import java.util.Locale
 
 class ActivityViewModel : ViewModel() {
     private val activityApiService = ActivityNetworkModule.activityApiService
     private val authPrefs: AuthSharedPreferencesEditor = AuthSharedPreferencesProvider.editor
         ?: throw IllegalStateException("AuthSharedPreferencesEditor not initialized yet")
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val TAG = "ActivityViewModel"
 
     internal val _uiState = MutableStateFlow(ActivityUiState())
     val uiState: StateFlow<ActivityUiState> = _uiState.asStateFlow()
 
+    private var currentWeekStart: LocalDate = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
+    private var currentWeekEnd: LocalDate = currentWeekStart.plusDays(6)
+
     init {
-        loadActivitiesForDate(LocalDate.now())
+        loadActivitiesForWeek(currentWeekStart, currentWeekEnd)
     }
 
-    fun loadActivitiesForDate(date: LocalDate) {
+    fun loadActivitiesForWeek(startDate: LocalDate, endDate: LocalDate) {
+        // Если запрашиваемая неделя уже загружена, не делаем новый запрос
+        if (startDate == currentWeekStart && endDate == currentWeekEnd && _uiState.value.weekActivities.isNotEmpty()) {
+            return
+        }
+
+        currentWeekStart = startDate
+        currentWeekEnd = endDate
+
         viewModelScope.launch {
-            Log.d(TAG, "Загрузка тренировок для даты: $date")
+            Log.d(TAG, "Загрузка тренировок за неделю: $startDate - $endDate")
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
                 val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
-                val response = activityApiService.getActivities(token)
+                val response = activityApiService.getActivitiesByWeek(
+                    token,
+                    startDate.format(dateFormatter),
+                    endDate.format(dateFormatter)
+                )
+                
                 if (response.isSuccessful) {
                     val activities = response.body()?.activities ?: emptyList()
                     Log.d(TAG, "Получено тренировок: ${activities.size}")
-                    activities.forEach { activity ->
-                        Log.d(TAG, "Тренировка: ${activity.name}, дата: ${activity.datetime}")
+                    
+                    val weekActivities = mutableMapOf<LocalDate, MutableList<Workout>>()
+                    
+                    // Инициализируем пустые списки для всех дней недели
+                    var currentDate = startDate
+                    while (currentDate <= endDate) {
+                        weekActivities[currentDate] = mutableListOf()
+                        currentDate = currentDate.plusDays(1)
                     }
                     
-                    val filteredActivities = activities.filter { activity ->
+                    activities.forEach { activity ->
                         try {
                             val activityDateTime = LocalDateTime.parse(activity.datetime, dateTimeFormatter)
                             val activityDate = activityDateTime.toLocalDate()
-                            Log.d(TAG, "Сравнение дат: $activityDate == $date")
-                            activityDate == date
+                            
+                            if (activityDate in startDate..endDate) {
+                                val workout = Workout(
+                                    time = activity.datetime,
+                                    name = activity.name,
+                                    calories = activity.calories,
+                                    intensityZones = activity.intensityZones
+                                )
+                                weekActivities[activityDate]?.add(workout)
+                            }
                         } catch (e: Exception) {
                             Log.e(TAG, "Ошибка парсинга даты: ${activity.datetime}", e)
-                            false
                         }
                     }
-                    Log.d(TAG, "Отфильтровано тренировок: ${filteredActivities.size}")
                     
-                    val workouts = filteredActivities.map { activity ->
-                        Workout(
-                            time = activity.datetime,
-                            name = activity.name,
-                            calories = activity.calories,
-                            intensityZones = activity.intensityZones
-                        )
-                    }
-                    val activityDay = ActivityDay(date = date, workouts = workouts)
                     _uiState.value = _uiState.value.copy(
-                        selectedDate = date,
-                        currentActivityDay = activityDay,
+                        weekActivities = weekActivities,
+                        currentWeekStart = startDate,
+                        currentWeekEnd = endDate,
                         isLoading = false,
                         error = null
                     )
-                    Log.d(TAG, "UI обновлен. Тренировок в UI: ${activityDay.workouts.size}")
                 } else {
                     Log.e(TAG, "Ошибка загрузки данных: ${response.code()}")
                     _uiState.value = _uiState.value.copy(
@@ -87,6 +109,23 @@ class ActivityViewModel : ViewModel() {
                     error = "Ошибка сети: ${e.message}"
                 )
             }
+        }
+    }
+
+    fun loadActivitiesForDate(date: LocalDate) {
+        // Проверяем, находится ли дата в текущей загруженной неделе
+        if (date in currentWeekStart..currentWeekEnd) {
+            val workouts = _uiState.value.weekActivities[date] ?: emptyList()
+            val activityDay = ActivityDay(date = date, workouts = workouts)
+            _uiState.value = _uiState.value.copy(
+                selectedDate = date,
+                currentActivityDay = activityDay
+            )
+        } else {
+            // Если дата вне текущей недели, загружаем новую неделю
+            val weekStart = date.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
+            val weekEnd = weekStart.plusDays(6)
+            loadActivitiesForWeek(weekStart, weekEnd)
         }
     }
 
@@ -182,14 +221,6 @@ class ActivityViewModel : ViewModel() {
         }
     }
 }
-
-data class ActivityUiState(
-    val selectedDate: LocalDate = LocalDate.now(),
-    val currentActivityDay: ActivityDay? = null,
-    val activityHistory: List<ActivityDay> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null
-)
 
 data class ActivityDay(
     val date: LocalDate,

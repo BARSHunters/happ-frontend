@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Body
 import retrofit2.http.Header
+import retrofit2.http.Query
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -18,6 +19,13 @@ interface ActivityApiService {
 
     @GET("getActivities")
     suspend fun getActivities(@Header("Authorization") token: String): Response<ActivityResponse>
+
+    @GET("getActivitiesByWeek")
+    suspend fun getActivitiesByWeek(
+        @Header("Authorization") token: String,
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
+    ): Response<ActivityResponse>
 
     @POST("newActivity")
     suspend fun createActivity(
