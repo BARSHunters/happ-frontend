@@ -3,7 +3,8 @@ package com.example.happ_frontend.model.activity.request
 data class ActivityRequest(
     val name: String,
     val datetime: String, // формат: "yyyy-MM-dd HH:mm"
-    val calories: Int
+    val calories: Int,
+    val intensityZones: List<Int> // время в минутах для каждой зоны: [очень легкая, легкая, умеренная, высокая, максимальная]
 )
 
 data class ExerciseRequest(

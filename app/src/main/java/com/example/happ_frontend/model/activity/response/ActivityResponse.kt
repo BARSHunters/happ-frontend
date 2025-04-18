@@ -8,7 +8,8 @@ data class Activity(
     val id: String,
     val name: String,
     val datetime: String, // формат: "yyyy-MM-dd HH:mm"
-    val calories: Int
+    val calories: Int,
+    val intensityZones: List<Int> // время в минутах для каждой зоны: [очень легкая, легкая, умеренная, высокая, максимальная]
 )
 
 data class Exercise(
