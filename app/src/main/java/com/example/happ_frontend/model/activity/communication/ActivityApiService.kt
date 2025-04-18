@@ -6,10 +6,13 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Body
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 interface ActivityApiService {
     companion object {
         const val BASE_URL = "http://10.0.2.2:3000/"
+
     }
 
     @GET("getActivities")

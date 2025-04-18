@@ -53,6 +53,72 @@ fun WorkoutDetailItem(workout: Workout) {
                     color = Color(0xFF9D89C5)
                 )
             }
+            
+            // Зоны интенсивности
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+                Text(
+                    text = "Зоны интенсивности:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    IntensityZoneItem(
+                        label = "Очень легкая",
+                        minutes = workout.intensityZones[0],
+                        color = Color(0xFFA8D5BA)
+                    )
+                    IntensityZoneItem(
+                        label = "Легкая",
+                        minutes = workout.intensityZones[1],
+                        color = Color(0xFF7BC8A4)
+                    )
+                    IntensityZoneItem(
+                        label = "Умеренная",
+                        minutes = workout.intensityZones[2],
+                        color = Color(0xFF4DBB8E)
+                    )
+                    IntensityZoneItem(
+                        label = "Высокая",
+                        minutes = workout.intensityZones[3],
+                        color = Color(0xFF1FAD78)
+                    )
+                    IntensityZoneItem(
+                        label = "Максимальная",
+                        minutes = workout.intensityZones[4],
+                        color = Color(0xFF009F62)
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+fun IntensityZoneItem(label: String, minutes: Int, color: Color) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(horizontal = 2.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(color)
+        )
+        Text(
+            text = "$minutes",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 } 

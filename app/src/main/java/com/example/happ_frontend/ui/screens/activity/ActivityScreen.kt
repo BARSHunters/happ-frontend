@@ -62,16 +62,7 @@ fun ActivityScreen(
                 viewModel = viewModel,
                 onBackClick = { screenState = ActivityScreenState.Main },
                 onSaveClick = { name, date, duration, effort ->
-                    val workoutDateTime = date.atStartOfDay()
-                        .plusHours(12) // Устанавливаем время на 12:00
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                    Log.d(TAG, "Создание тренировки: name=$name, date=$date, datetime=$workoutDateTime")
-                    val workout = Workout(
-                        time = workoutDateTime,
-                        name = name,
-                        calories = calculateCalories(duration, effort)
-                    )
-                    viewModel.addNewWorkout(workout)
+                    viewModel.setNewWorkoutData(name, date, duration, effort)
                     screenState = ActivityScreenState.Main
                 }
             )

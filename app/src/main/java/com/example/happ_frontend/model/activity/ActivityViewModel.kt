@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.happ_frontend.model.activity.communication.ActivityNetworkModule
 import com.example.happ_frontend.model.activity.request.ActivityRequest
-import com.example.happ_frontend.model.activity.response.Activity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,7 +55,8 @@ class ActivityViewModel : ViewModel() {
                         Workout(
                             time = activity.datetime,
                             name = activity.name,
-                            calories = activity.calories
+                            calories = activity.calories,
+                            intensityZones = activity.intensityZones
                         )
                     }
                     val activityDay = ActivityDay(date = date, workouts = workouts)
@@ -92,7 +92,8 @@ class ActivityViewModel : ViewModel() {
                 val request = ActivityRequest(
                     name = workout.name,
                     datetime = workout.time,
-                    calories = workout.calories
+                    calories = workout.calories,
+                    intensityZones = workout.intensityZones
                 )
                 
                 val response = activityApiService.createActivity(request)
@@ -124,6 +125,56 @@ class ActivityViewModel : ViewModel() {
         }
         return ActivitySummary(calories = totalCalories)
     }
+
+    fun setNewWorkoutData(
+        name: String,
+        date: LocalDate,
+        duration: Int,
+        effort: String
+    ) {
+        viewModelScope.launch {
+            Log.d(TAG, "Добавление новой тренировки: name=$name, date=$date, duration=$duration")
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            try {
+                // Генерируем распределение времени по зонам интенсивности
+                val intensityZones = generateIntensityZones(duration, effort)
+                
+                // Генерация текущего времени
+                val currentTime = LocalDateTime.now().withSecond(0).withNano(0)
+                val formattedTime = DateTimeFormatter
+                    .ofPattern("yyyy-MM-dd HH:mm")
+                    .format(currentTime)
+
+                // Создаем запрос на сервер
+                val request = ActivityRequest(
+                    name = name,
+                    datetime = formattedTime,
+                    calories = calculateCaloriesFromZones(intensityZones),
+                    intensityZones = intensityZones
+                )
+                
+                // Отправляем запрос на сервер
+                val response = activityApiService.createActivity(request)
+                if (response.isSuccessful) {
+                    Log.d(TAG, "Тренировка успешно создана")
+                    loadActivitiesForDate(date)
+                } else {
+                    Log.e(TAG, "Ошибка создания тренировки: ${response.code()}")
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Ошибка создания тренировки: ${response.code()}"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Ошибка сети: ${e.message}")
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Ошибка сети: ${e.message}"
+                )
+            }
+        }
+    }
 }
 
 data class ActivityUiState(
@@ -142,7 +193,8 @@ data class ActivityDay(
 data class Workout(
     val time: String,
     val name: String,
-    val calories: Int
+    val calories: Int,
+    val intensityZones: List<Int>
 )
 
 data class ActivitySummary(
@@ -150,68 +202,57 @@ data class ActivitySummary(
 )
 
 /**
- * Updates the data for a new workout being created
+ * Рассчитывает калории на основе времени в каждой зоне интенсивности
+ * @param intensityZones список времени в минутах для каждой зоны
+ * @return общее количество сожженных калорий
  */
-fun ActivityViewModel.setNewWorkoutData(
-    name: String,
-    date: LocalDate,
-    duration: Int,
-    effort: String
-) {
-    // Выбираем случайный уровень нагрузки для разнообразия данных
-    val effortLevels = listOf("Easy", "Moderate", "Hard", "Very Hard", "Maximum")
-    val randomEffort = effortLevels.random()
-    
-    // Используем переданный параметр effort только для совместимости
-    // Фактически мы будем использовать случайно сгенерированный уровень
-    val actualEffort = randomEffort
-    
-    // Генерация данных по зонам активности на основе уровня нагрузки
-    val activityZones = generateMockActivityZones(actualEffort)
-    
-    // Расчет интенсивности на основе распределения времени по зонам
-    // Чем больше времени проведено в высоких зонах, тем выше интенсивность
-    val zoneWeights = listOf(0.2f, 0.4f, 0.6f, 0.8f, 1.0f)  // Веса для каждой зоны
-    val totalZoneTime = activityZones.sum().toFloat().coerceAtLeast(1f)
-    
-    val weightedIntensity = activityZones.mapIndexed { index, minutes ->
-        val zoneWeight = if (index < zoneWeights.size) zoneWeights[index] else 0.5f
-        minutes * zoneWeight
-    }.sum() / totalZoneTime
-    
-    // Масштабируем интенсивность от 30 до 100
-    val calculatedIntensity = (30 + (weightedIntensity * 70)).toInt().coerceIn(30, 100)
-    
-    // Генерация текущего времени (можно улучшить, если нужен более точный формат)
-    val currentTime = LocalDateTime.now().withSecond(0).withNano(0)
-    val formattedTime = DateTimeFormatter
-        .ofPattern("hh:mm a")
-        .format(currentTime)
-        .lowercase()
-
-    // Create a mock workout based on the provided data
-    val newWorkout = Workout(
-        name = name,
-        time = formattedTime,
-        calories = calculateEstimatedCalories(duration, actualEffort)
+private fun calculateCaloriesFromZones(intensityZones: List<Int>): Int {
+    // Базовые коэффициенты расхода калорий для каждой зоны (ккал/мин)
+    val zoneCalorieRates = listOf(
+        3.0,  // Очень легкая зона
+        5.0,  // Легкая зона
+        7.0,  // Умеренная зона
+        9.0,  // Высокая зона
+        12.0  // Максимальная зона
     )
+    
+    return intensityZones.mapIndexed { index, minutes ->
+        (minutes * zoneCalorieRates[index]).toInt()
+    }.sum()
+}
 
-    // Now add the workout to the UI state
-    viewModelScope.launch {
-        // Get current workouts or create empty list
-        val currentWorkouts = _uiState.value.currentActivityDay?.workouts ?: emptyList()
-        
-        // Add new workout to the beginning of the list
-        val updatedWorkouts = listOf(newWorkout) + currentWorkouts
-        val activityDay = ActivityDay(date = date, workouts = updatedWorkouts)
-
-        // Update UI state with the new workout added
-        _uiState.value = _uiState.value.copy(
-            selectedDate = date,
-            currentActivityDay = activityDay,
-            isLoading = false
-        )
+/**
+ * Генерирует распределение времени по зонам интенсивности
+ * @param duration общая длительность тренировки в минутах
+ * @param effort уровень усилий (Easy, Moderate, Hard, Very Hard, Maximum)
+ * @return список из 5 чисел, представляющих время в каждой зоне
+ */
+private fun generateIntensityZones(duration: Int, effort: String): List<Int> {
+    val zones = mutableListOf<Int>()
+    var remainingTime = duration
+    
+    // Базовые веса для каждой зоны в зависимости от уровня усилий
+    val zoneWeights = when (effort) {
+        "Easy" -> listOf(0.4, 0.3, 0.2, 0.1, 0.0)
+        "Moderate" -> listOf(0.2, 0.3, 0.3, 0.15, 0.05)
+        "Hard" -> listOf(0.1, 0.2, 0.3, 0.25, 0.15)
+        "Very Hard" -> listOf(0.05, 0.15, 0.25, 0.3, 0.25)
+        "Maximum" -> listOf(0.0, 0.1, 0.2, 0.3, 0.4)
+        else -> listOf(0.2, 0.2, 0.2, 0.2, 0.2)
     }
+    
+    // Генерируем время для каждой зоны
+    for (i in 0..3) { // Для первых 4 зон
+        val weight = zoneWeights[i]
+        val zoneTime = (duration * weight).toInt()
+        zones.add(zoneTime)
+        remainingTime -= zoneTime
+    }
+    
+    // Оставшееся время идет в последнюю зону
+    zones.add(remainingTime)
+    
+    return zones
 }
 
 // Helper functions for mock data generation
