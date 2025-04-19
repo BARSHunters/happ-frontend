@@ -207,7 +207,32 @@ class ActivityViewModel : ViewModel() {
                 val response = activityApiService.createActivity(token, request)
                 if (response.isSuccessful) {
                     Log.d(TAG, "Тренировка успешно создана")
-                    loadActivitiesForDate(date)
+                    
+                    // Создаем новую тренировку
+                    val newWorkout = Workout(
+                        time = formattedDateTime,
+                        name = name,
+                        calories = calculateCaloriesFromZones(intensityZones),
+                        intensityZones = intensityZones
+                    )
+                    
+                    // Получаем текущие тренировки для выбранной даты
+                    val currentWorkouts = _uiState.value.weekActivities[date]?.toMutableList() ?: mutableListOf()
+                    
+                    // Добавляем новую тренировку
+                    currentWorkouts.add(newWorkout)
+                    
+                    // Обновляем данные в состоянии
+                    val updatedWeekActivities = _uiState.value.weekActivities.toMutableMap()
+                    updatedWeekActivities[date] = currentWorkouts
+                    
+                    // Обновляем состояние
+                    _uiState.value = _uiState.value.copy(
+                        weekActivities = updatedWeekActivities,
+                        selectedDate = date,
+                        currentActivityDay = ActivityDay(date = date, workouts = currentWorkouts),
+                        isLoading = false
+                    )
                 } else {
                     Log.e(TAG, "Ошибка создания тренировки: ${response.code()}")
                     _uiState.value = _uiState.value.copy(
