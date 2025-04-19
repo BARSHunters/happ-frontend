@@ -226,7 +226,7 @@ class WeightHistoryViewModel(
                 userInfoResponse.body()?.let { userDataResponseBody ->
                     val userDataRequest = UserDataDto
                         .fromResponseDto(userDataResponseBody)
-                        .copy(weight = weight)
+                        .copy(weightKg = weight)
                     val updateUserInfoResponse = weightHistoryApi.updateInfo(userDataRequest)
                     if (!updateUserInfoResponse.isSuccessful) {
                         errorMessageRes = R.string.error_weight_userData_updateFail
