@@ -1,5 +1,6 @@
 package com.example.happ_frontend.ui.screens.nutrition
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -27,25 +28,58 @@ fun NutritionScreen(
     onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var showDetailScreen by remember { mutableStateOf(false) }
+    var screenState by remember { mutableStateOf<NutritionScreenState>(NutritionScreenState.Main) }
+    val TAG = "NutritionScreen"
 
-    if (showDetailScreen) {
-        NutritionDetailScreen(
-            onBackClick = { showDetailScreen = false },
-            meals = uiState.currentMealDay?.meals ?: emptyList(),
-            nutritionSummary = viewModel.getTotalNutrition(uiState.currentMealDay?.meals ?: emptyList())
-        )
-    } else {
+    // Показываем ошибку, если она есть
+    LaunchedEffect(uiState.error) {
+        if (uiState.error != null) {
+            Log.e(TAG, "Ошибка: ${uiState.error}")
+        }
+    }
+
+    // Only show the current screen based on state
+    when (val currentState = screenState) {
+        is NutritionScreenState.Main -> {
+            MainNutritionScreen(
+                viewModel = viewModel,
+                onBackClick = onBackClick,
+                onDetailClick = { screenState = NutritionScreenState.Detail },
+                onCreateMenuClick = {
+                    viewModel.createNewMenuForToday()
+                    screenState = NutritionScreenState.Detail
+                }
+            )
+        }
+        is NutritionScreenState.Detail -> {
+            NutritionDetailScreen(
+                onBackClick = { screenState = NutritionScreenState.Main },
+                meals = uiState.currentMealDay?.meals ?: emptyList(),
+                nutritionSummary = viewModel.getTotalNutrition(uiState.currentMealDay?.meals ?: emptyList())
+            )
+        }
+    }
+}
+
+@Composable
+fun MainNutritionScreen(
+    viewModel: NutritionViewModel,
+    onBackClick: () -> Unit,
+    onDetailClick: () -> Unit,
+    onCreateMenuClick: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val TAG = "NutritionScreen"
+
+    LaunchedEffect(Unit) {
+        viewModel.loadInitialData()
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues = PaddingValues(
-                    start = 32.dp,
-                    end = 32.dp,
-                    top = 32.dp
-                )),
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
-            horizontalAlignment = Alignment.Start
+                .padding(16.dp)
         ) {
             // Header with back button and title
             PageHeaderWithBackButton(
@@ -63,17 +97,21 @@ fun NutritionScreen(
                 horizontalAlignment = Alignment.Start
             ) {
                 // Banner with nutrition information
-                NutritionHeader(onDetailClick = {
-                    if (uiState.currentMealDay?.meals?.isNotEmpty() == true) {
-                        showDetailScreen = true
-                    }
-                })
+                NutritionHeader(
+                    onDetailClick = {
+                        if (uiState.currentMealDay?.meals?.isNotEmpty() == true) {
+                            onDetailClick()
+                        }
+                    },
+                    meals = uiState.currentMealDay?.meals?.map { it.name } ?: emptyList()
+                )
 
                 // Calendar to select dates
                 MealHistoryCalendar(
                     selectedDate = uiState.selectedDate,
                     onDateSelected = { date ->
-                        viewModel.loadNutritionMenuForDate(date)
+                        Log.d(TAG, "Выбрана дата: $date")
+                        viewModel.loadNutritionForDate(date)
                     }
                 )
 
@@ -83,23 +121,51 @@ fun NutritionScreen(
                 Spacer(modifier = Modifier.weight(1f))
 
                 // Button to create a new menu
-                CreateMenuButton(onClick = {
-                    viewModel.createNewMenuForToday()
-                    showDetailScreen = true // Show detail screen after creating a new menu
-                })
-            }
-
-            // Loading indicator
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                Button(
+                    onClick = {
+                        viewModel.createNewMenuForToday()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    enabled = !uiState.isLoading
                 ) {
-                    CircularProgressIndicator(
-                        color = Color(0xFFA590B6) // Purple color to match the design
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text("Создать новое меню")
+                    }
+                }
+
+                // Показываем ошибку, если она есть
+                uiState.error?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
                 }
             }
         }
+
+        // Loading indicator
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    color = Color(0xFFA590B6) // Purple color to match the design
+                )
+            }
+        }
     }
+}
+
+sealed class NutritionScreenState {
+    object Main : NutritionScreenState()
+    object Detail : NutritionScreenState()
 }

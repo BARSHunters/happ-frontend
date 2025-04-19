@@ -1,4 +1,4 @@
-package com.example.happ_frontend.ui.domain
+package com.example.happ_frontend.ui.domain.nutrition
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

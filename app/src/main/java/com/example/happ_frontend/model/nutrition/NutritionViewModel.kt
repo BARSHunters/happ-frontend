@@ -2,215 +2,290 @@ package com.example.happ_frontend.model.nutrition
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
+import com.example.happ_frontend.model.nutrition.communication.NutritionApiService
+import com.example.happ_frontend.model.nutrition.communication.NutritionNetworkModule
+import com.example.happ_frontend.model.nutrition.request.NutritionRequest
+import com.example.happ_frontend.model.nutrition.response.Meal as ApiMeal
+import com.example.happ_frontend.model.nutrition.response.MealType as ApiMealType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
+import java.time.temporal.TemporalAdjusters
+import java.time.DayOfWeek
+import java.util.*
 
 class NutritionViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(NutritionUiState())
     val uiState: StateFlow<NutritionUiState> = _uiState.asStateFlow()
 
+    private val apiService = NutritionNetworkModule.apiService
+    private val authPrefs: AuthSharedPreferencesEditor = AuthSharedPreferencesProvider.editor
+        ?: throw IllegalStateException("AuthSharedPreferencesEditor not initialized yet")
+
+    // Используем тот же подход, что и в календаре
+    private var currentWeekStart: LocalDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+    private var currentWeekEnd: LocalDate = currentWeekStart.plusDays(6)
+
     init {
-        loadNutritionMenuForDate(LocalDate.now())
+        loadNutritionForWeek(currentWeekStart, currentWeekEnd)
     }
 
-    fun loadNutritionMenuForDate(date: LocalDate) {
+    fun loadInitialData() {
+        val today = LocalDate.now()
+        loadNutritionForDate(today)
+    }
+
+    fun loadNutritionForWeek(startDate: LocalDate, endDate: LocalDate) {
+        // Если запрашиваемая неделя уже загружена, не делаем новый запрос
+        if (startDate == currentWeekStart && endDate == currentWeekEnd && _uiState.value.weekMeals.isNotEmpty()) {
+            return
+        }
+
+        currentWeekStart = startDate
+        currentWeekEnd = endDate
+
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-
-            // TODO: Call API to get nutrition menu for the selected date
-            // Example API call - implement actual API client later
-            // val response = api.getNutritionMenu(date.format(DateTimeFormatter.ISO_DATE))
-
-            // Mock data based on the date
-            val meals = if (date == LocalDate.now()) {
-                // Today's menu
-                listOf(
-                    Meal(
-                        time = "08:00 am",
-                        name = "Avocado Toast with Eggs",
-                        calories = 450,
-                        protein = 22,
-                        fat = 25,
-                        carbs = 35,
-                        portionSize = "250g",
-                        imageUrl = "https://example.com/avocado_toast.jpg", // Mock image URL
-                        recipeUrl = "https://example.com/recipes/avocado_toast",
-                        mealType = MealType.BREAKFAST
-                    ),
-                    Meal(
-                        time = "12:30 pm",
-                        name = "Grilled Chicken Shawarma with Vegetables",
-                        calories = 536,
-                        protein = 38,
-                        fat = 22,
-                        carbs = 40,
-                        portionSize = "350g",
-                        imageUrl = "https://example.com/shawarma.jpg",
-                        recipeUrl = "https://example.com/recipes/chicken_shawarma",
-                        mealType = MealType.LUNCH
-                    ),
-                    Meal(
-                        time = "07:00 pm",
-                        name = "Salmon with Roasted Vegetables",
-                        calories = 520,
-                        protein = 34,
-                        fat = 28,
-                        carbs = 26,
-                        portionSize = "300g",
-                        imageUrl = "https://example.com/salmon.jpg",
-                        recipeUrl = "https://example.com/recipes/salmon_roasted_vegetables",
-                        mealType = MealType.DINNER
-                    ),
-                    Meal(
-                        time = "04:00 pm",
-                        name = "Greek Yogurt with Berries",
-                        calories = 200,
-                        protein = 15,
-                        fat = 8,
-                        carbs = 20,
-                        portionSize = "150g",
-                        mealType = MealType.SNACK
-                    )
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
+                
+                val response = apiService.getNutritionsByWeek(
+                    token = "Bearer $token",
+                    startDate = startDate.format(DateTimeFormatter.ISO_DATE),
+                    endDate = endDate.format(DateTimeFormatter.ISO_DATE)
                 )
-            } else if (date.isBefore(LocalDate.now())) {
-                // Past menu
-                listOf(
-                    Meal(
-                        time = "07:30 am",
-                        name = "Oatmeal with Fruit and Nuts",
-                        calories = 320,
-                        protein = 12,
-                        fat = 10,
-                        carbs = 48,
-                        portionSize = "280g",
-                        imageUrl = "https://example.com/oatmeal.jpg",
-                        recipeUrl = "https://example.com/recipes/oatmeal_fruit_nuts",
-                        mealType = MealType.BREAKFAST
-                    ),
-                    Meal(
-                        time = "01:00 pm",
-                        name = "Quinoa Bowl with Grilled Vegetables",
-                        calories = 450,
-                        protein = 20,
-                        fat = 15,
-                        carbs = 60,
-                        portionSize = "320g",
-                        imageUrl = "https://example.com/quinoa_bowl.jpg",
-                        recipeUrl = "https://example.com/recipes/quinoa_bowl",
-                        mealType = MealType.LUNCH
-                    ),
-                    Meal(
-                        time = "06:30 pm",
-                        name = "Baked Cod with Sweet Potato",
-                        calories = 380,
-                        protein = 30,
-                        fat = 12,
-                        carbs = 30,
-                        portionSize = "300g",
-                        imageUrl = "https://example.com/baked_cod.jpg",
-                        recipeUrl = "https://example.com/recipes/baked_cod",
-                        mealType = MealType.DINNER
-                    ),
-                    Meal(
-                        time = "03:30 pm",
-                        name = "Mixed Fruit Salad",
-                        calories = 120,
-                        protein = 2,
-                        fat = 0,
-                        carbs = 30,
-                        portionSize = "150g",
-                        mealType = MealType.SNACK
+                
+                if (!response.isSuccessful) {
+                    throw Exception("Ошибка при загрузке данных: ${response.code()}")
+                }
+                
+                val apiMeals = response.body()?.meals ?: emptyList()
+                val weekMeals = mutableMapOf<LocalDate, List<Meal>>()
+                
+                // Инициализируем пустые списки для всех дней недели
+                var currentDate = startDate
+                while (currentDate <= endDate) {
+                    weekMeals[currentDate] = emptyList()
+                    currentDate = currentDate.plusDays(1)
+                }
+                
+                // Заполняем данные для каждого дня
+                apiMeals.forEach { apiMeal ->
+                    val meal = Meal(
+                        time = apiMeal.time,
+                        name = apiMeal.name,
+                        calories = apiMeal.calories,
+                        protein = apiMeal.proteins,
+                        fat = apiMeal.fats,
+                        carbs = apiMeal.carbs,
+                        portionSize = "${apiMeal.portionSize}г",
+                        recipeUrl = apiMeal.recipeUrl,
+                        mealType = when (apiMeal.type) {
+                            ApiMealType.BREAKFAST -> MealType.BREAKFAST
+                            ApiMealType.LUNCH -> MealType.LUNCH
+                            ApiMealType.DINNER -> MealType.DINNER
+                            ApiMealType.SNACK -> MealType.SNACK
+                        }
                     )
-                )
-            } else {
-                // Future - empty list since menu hasn't been created yet
-                emptyList()
+                    val date = LocalDate.parse(apiMeal.date, DateTimeFormatter.ISO_DATE)
+                    val meals = weekMeals[date] ?: emptyList()
+                    weekMeals[date] = meals + meal
+                }
+                
+                _uiState.update { 
+                    it.copy(
+                        weekMeals = weekMeals,
+                        currentWeekStart = startDate,
+                        currentWeekEnd = endDate,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+                
+            } catch (e: Exception) {
+                _uiState.update { it.copy(
+                    isLoading = false,
+                    error = e.message ?: "Неизвестная ошибка"
+                ) }
             }
+        }
+    }
 
-            val mealDay = MealDay(date = date, meals = meals)
-
-            // Update UI state with the fetched or mock data
-            _uiState.value = _uiState.value.copy(
-                selectedDate = date,
-                currentMealDay = mealDay,
-                isLoading = false
+    fun loadNutritionForDate(date: LocalDate) {
+        // Проверяем, находится ли дата в текущей загруженной неделе
+        if (date in currentWeekStart..currentWeekEnd) {
+            val meals = _uiState.value.weekMeals[date] ?: emptyList()
+            val mealDay = MealDay(
+                date = date,
+                meals = meals
             )
+            _uiState.update { 
+                it.copy(
+                    selectedDate = date,
+                    currentMealDay = mealDay,
+                    error = null
+                )
+            }
+        } else {
+            // Если дата вне текущей недели, загружаем новую неделю
+            val weekStart = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+            val weekEnd = weekStart.plusDays(6)
+            
+            viewModelScope.launch {
+                _uiState.update { it.copy(isLoading = true, error = null) }
+                
+                try {
+                    val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
+                    
+                    val response = apiService.getNutritionsByWeek(
+                        token = "Bearer $token",
+                        startDate = weekStart.format(DateTimeFormatter.ISO_DATE),
+                        endDate = weekEnd.format(DateTimeFormatter.ISO_DATE)
+                    )
+                    
+                    if (response.isSuccessful) {
+                        val apiMeals = response.body()?.meals ?: emptyList()
+                        val weekMeals = mutableMapOf<LocalDate, List<Meal>>()
+                        
+                        // Инициализируем пустые списки для всех дней недели
+                        var currentDate = weekStart
+                        while (currentDate <= weekEnd) {
+                            weekMeals[currentDate] = emptyList()
+                            currentDate = currentDate.plusDays(1)
+                        }
+                        
+                        // Заполняем данные для каждого дня
+                        apiMeals.forEach { apiMeal ->
+                            val meal = Meal(
+                                time = apiMeal.time,
+                                name = apiMeal.name,
+                                calories = apiMeal.calories,
+                                protein = apiMeal.proteins,
+                                fat = apiMeal.fats,
+                                carbs = apiMeal.carbs,
+                                portionSize = "${apiMeal.portionSize}г",
+                                recipeUrl = apiMeal.recipeUrl,
+                                mealType = when (apiMeal.type) {
+                                    ApiMealType.BREAKFAST -> MealType.BREAKFAST
+                                    ApiMealType.LUNCH -> MealType.LUNCH
+                                    ApiMealType.DINNER -> MealType.DINNER
+                                    ApiMealType.SNACK -> MealType.SNACK
+                                }
+                            )
+                            val mealDate = LocalDate.parse(apiMeal.date, DateTimeFormatter.ISO_DATE)
+                            val meals = weekMeals[mealDate] ?: emptyList()
+                            weekMeals[mealDate] = meals + meal
+                        }
+                        
+                        // Обновляем состояние с новыми данными
+                        _uiState.update { 
+                            it.copy(
+                                weekMeals = weekMeals,
+                                currentWeekStart = weekStart,
+                                currentWeekEnd = weekEnd,
+                                selectedDate = date,
+                                currentMealDay = MealDay(
+                                    date = date,
+                                    meals = weekMeals[date] ?: emptyList()
+                                ),
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    } else {
+                        _uiState.update { it.copy(
+                            isLoading = false,
+                            error = "Ошибка загрузки данных: ${response.code()}"
+                        ) }
+                    }
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(
+                        isLoading = false,
+                        error = "Ошибка сети: ${e.message}"
+                    ) }
+                }
+            }
         }
     }
 
     fun createNewMenuForToday() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.update { it.copy(isLoading = true, error = null) }
 
-            // Switch to today's date
-            val today = LocalDate.now()
-
-            // TODO: Call API to create a new menu
-            // Example API call - implement actual API client later
-            // val response = api.createNutritionMenu(today.format(DateTimeFormatter.ISO_DATE))
-
-            // Mock data for a newly created menu
-            val meals = listOf(
-                Meal(
-                    time = "08:00 am",
-                    name = "Spinach and Mushroom Omelet",
-                    calories = 380,
-                    protein = 25,
-                    fat = 22,
-                    carbs = 15,
-                    portionSize = "220g",
-                    imageUrl = "https://example.com/omelet.jpg",
-                    recipeUrl = "https://example.com/recipes/spinach_mushroom_omelet",
-                    mealType = MealType.BREAKFAST
-                ),
-                Meal(
-                    time = "12:30 pm",
-                    name = "Sushi Bento Box",
-                    calories = 520,
-                    protein = 28,
-                    fat = 14,
-                    carbs = 65,
-                    portionSize = "350g",
-                    imageUrl = "https://example.com/sushi.jpg",
-                    recipeUrl = "https://example.com/recipes/sushi_bento",
-                    mealType = MealType.LUNCH
-                ),
-                Meal(
-                    time = "07:00 pm",
-                    name = "Vegetable Stir Fry with Tofu",
-                    calories = 420,
-                    protein = 22,
-                    fat = 18,
-                    carbs = 40,
-                    portionSize = "320g",
-                    imageUrl = "https://example.com/stir_fry.jpg",
-                    recipeUrl = "https://example.com/recipes/tofu_stir_fry",
-                    mealType = MealType.DINNER
-                ),
-                Meal(
-                    time = "04:00 pm",
-                    name = "Hummus with Carrot Sticks",
-                    calories = 180,
-                    protein = 8,
-                    fat = 10,
-                    carbs = 16,
-                    portionSize = "120g",
-                    mealType = MealType.SNACK
+            try {
+                val selectedDate = _uiState.value.selectedDate
+                val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
+                
+                val response = apiService.generateNutrition(
+                    token = "Bearer $token",
+                    request = NutritionRequest(date = selectedDate)
                 )
-            )
 
-            val mealDay = MealDay(date = today, meals = meals)
-
-            // After API call, update UI state to today with the new menu
-            _uiState.value = _uiState.value.copy(
-                selectedDate = today,
-                currentMealDay = mealDay,
-                isLoading = false
-            )
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val apiMeals = responseBody?.meals ?: emptyList()
+                        val meals = apiMeals.map { apiMeal ->
+                            Meal(
+                                time = apiMeal.time,
+                                name = apiMeal.name,
+                                calories = apiMeal.calories,
+                                protein = apiMeal.proteins,
+                                fat = apiMeal.fats,
+                                carbs = apiMeal.carbs,
+                                portionSize = "${apiMeal.portionSize}г",
+                                recipeUrl = apiMeal.recipeUrl,
+                                mealType = when (apiMeal.type) {
+                                    ApiMealType.BREAKFAST -> MealType.BREAKFAST
+                                    ApiMealType.LUNCH -> MealType.LUNCH
+                                    ApiMealType.DINNER -> MealType.DINNER
+                                    ApiMealType.SNACK -> MealType.SNACK
+                                    else -> MealType.SNACK
+                                }
+                            )
+                        }
+                        
+                        // Обновляем данные для выбранной даты
+                        val currentWeekMeals = _uiState.value.weekMeals.toMutableMap()
+                        currentWeekMeals[selectedDate] = meals
+                        
+                        _uiState.update { 
+                            it.copy(
+                                weekMeals = currentWeekMeals,
+                                currentMealDay = MealDay(
+                                    date = selectedDate,
+                                    meals = meals
+                                ),
+                                isLoading = false
+                            )
+                        }
+                    } else {
+                        _uiState.update { it.copy(
+                            isLoading = false,
+                            error = "Ошибка: пустой ответ от сервера"
+                        ) }
+                    }
+                } else {
+                    _uiState.update { it.copy(
+                        isLoading = false,
+                        error = "Ошибка генерации меню: ${response.code()}"
+                    ) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(
+                    isLoading = false,
+                    error = "Ошибка сети: ${e.message}"
+                ) }
+            }
         }
     }
 
@@ -240,7 +315,11 @@ data class NutritionUiState(
     val selectedDate: LocalDate = LocalDate.now(),
     val currentMealDay: MealDay? = null,
     val menuHistory: List<MealDay> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val weekMeals: Map<LocalDate, List<Meal>> = emptyMap(),
+    val currentWeekStart: LocalDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
+    val currentWeekEnd: LocalDate = currentWeekStart.plusDays(6),
+    val error: String? = null
 )
 
 data class MealDay(
@@ -262,7 +341,7 @@ data class Meal(
     val protein: Int? = null,
     val fat: Int? = null,
     val carbs: Int? = null,
-    val portionSize: String? = "300g",
+    val portionSize: String,
     val imageUrl: String? = null,
     val recipeUrl: String? = null,
     val mealType: MealType = MealType.SNACK

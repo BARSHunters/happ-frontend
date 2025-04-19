@@ -1,7 +1,8 @@
 package com.example.happ_frontend.model.activity
 
 import java.time.LocalDate
-import java.time.temporal.WeekFields
+import java.time.DayOfWeek
+import java.time.temporal.TemporalAdjusters
 import java.util.*
 
 data class ActivityUiState(
@@ -11,6 +12,6 @@ data class ActivityUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val weekActivities: Map<LocalDate, List<Workout>> = emptyMap(),
-    val currentWeekStart: LocalDate = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1),
+    val currentWeekStart: LocalDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
     val currentWeekEnd: LocalDate = currentWeekStart.plusDays(6)
 ) 
