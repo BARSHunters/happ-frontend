@@ -1,4 +1,4 @@
-package com.example.happ_frontend.ui.domain
+package com.example.happ_frontend.ui.domain.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,7 +16,7 @@ class ActivityActivity : ComponentActivity() {
         setContent {
             HappfrontendTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(), // Исправлено: убрано Companion
+                    modifier = Modifier.Companion.fillMaxSize(), // Исправлено: убрано Companion
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ActivityScreen(

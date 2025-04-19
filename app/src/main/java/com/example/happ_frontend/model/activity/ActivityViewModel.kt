@@ -11,10 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 
@@ -29,7 +31,7 @@ class ActivityViewModel : ViewModel() {
     internal val _uiState = MutableStateFlow(ActivityUiState())
     val uiState: StateFlow<ActivityUiState> = _uiState.asStateFlow()
 
-    private var currentWeekStart: LocalDate = LocalDate.now().with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
+    private var currentWeekStart: LocalDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
     private var currentWeekEnd: LocalDate = currentWeekStart.plusDays(6)
 
     init {
@@ -49,7 +51,7 @@ class ActivityViewModel : ViewModel() {
             Log.d(TAG, "Загрузка тренировок за неделю: $startDate - $endDate")
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
+                val token = "Bearer ${authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")}"
                 val response = activityApiService.getActivitiesByWeek(
                     token,
                     startDate.format(dateFormatter),
@@ -123,8 +125,10 @@ class ActivityViewModel : ViewModel() {
             )
         } else {
             // Если дата вне текущей недели, загружаем новую неделю
-            val weekStart = date.with(WeekFields.of(Locale.getDefault()).dayOfWeek(), 1)
+            val weekStart = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
             val weekEnd = weekStart.plusDays(6)
+            // Обновляем выбранную дату перед загрузкой новой недели
+            _uiState.value = _uiState.value.copy(selectedDate = date)
             loadActivitiesForWeek(weekStart, weekEnd)
         }
     }
@@ -134,7 +138,7 @@ class ActivityViewModel : ViewModel() {
             Log.d(TAG, "Добавление новой тренировки: ${workout.name}, время: ${workout.time}")
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
+                val token = "Bearer ${authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")}"
                 val request = ActivityRequest(
                     name = workout.name,
                     datetime = workout.time,
@@ -184,7 +188,7 @@ class ActivityViewModel : ViewModel() {
             _uiState.value = _uiState.value.copy(isLoading = true)
             
             try {
-                val token = authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")
+                val token = "Bearer ${authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")}"
                 // Генерируем распределение времени по зонам интенсивности
                 val intensityZones = generateIntensityZones(duration, effort)
                 
@@ -291,74 +295,3 @@ private fun generateIntensityZones(duration: Int, effort: String): List<Int> {
     
     return zones
 }
-
-// Helper functions for mock data generation
-
-/**
- * Estimates calories burned based on duration and effort
- */
-private fun calculateEstimatedCalories(duration: Int, effort: String): Int {
-    val baseCaloriesPerMinute = 7
-    
-    val effortMultiplier = when (effort) {
-        "Easy" -> 0.8
-        "Moderate" -> 1.0
-        "Hard" -> 1.2
-        "Very Hard" -> 1.4
-        "Maximum" -> 1.6
-        else -> 1.0
-    }
-
-    return (baseCaloriesPerMinute * duration * effortMultiplier).toInt()
-}
-
-/**
- * Generates mock activity zones based on effort level
- */
-private fun generateMockActivityZones(effort: String): List<Int> {
-    return when (effort) {
-        "Easy" -> listOf(15, 10, 5, 2, 0)
-        "Moderate" -> listOf(10, 15, 12, 5, 1)
-        "Hard" -> listOf(5, 12, 15, 10, 5)
-        "Very Hard" -> listOf(3, 7, 12, 17, 10)
-        "Maximum" -> listOf(2, 5, 10, 15, 20)
-        else -> listOf(10, 10, 10, 10, 10)
-    }
-}
-
-/**
- * Estimates average heart rate based on effort
- */
-private fun calculateEstimatedHeartRate(effort: String): Int {
-    val baseHeartRate = 125
-    
-    val effortAddition = when (effort) {
-        "Easy" -> -20
-        "Moderate" -> 0
-        "Hard" -> 15
-        "Very Hard" -> 25
-        "Maximum" -> 35
-        else -> 0
-    }
-
-    return baseHeartRate + effortAddition
-}
-
-/**
- * Estimates max heart rate based on effort
- */
-private fun calculateEstimatedMaxHeartRate(effort: String): Int {
-    val avgHeartRate = calculateEstimatedHeartRate(effort)
-
-    val maxIncrease = when (effort) {
-        "Easy" -> 15
-        "Moderate" -> 20
-        "Hard" -> 25
-        "Very Hard" -> 30
-        "Maximum" -> 40
-        else -> 20
-    }
-
-    return avgHeartRate + maxIncrease
-}
-

@@ -48,6 +48,43 @@ fun MealHistoryCalendar(
             selectedDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         }
 
+        // Month and year display
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowLeft,
+                contentDescription = "Previous Month",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        // Go to previous month
+                        val prevMonth = selectedDate.minusMonths(1)
+                        onDateSelected(prevMonth)
+                    }
+            )
+
+            Text(
+                text = selectedDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowRight,
+                contentDescription = "Next Month",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        // Go to next month
+                        val nextMonth = selectedDate.plusMonths(1)
+                        onDateSelected(nextMonth)
+                    }
+            )
+        }
+
         // Generate weekdays (Monday to Sunday)
         val weekdays = remember(mondayOfWeek) {
             (0..6).map { mondayOfWeek.plusDays(it.toLong()) }

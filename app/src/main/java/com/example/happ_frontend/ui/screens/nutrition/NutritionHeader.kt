@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,41 +24,58 @@ import androidx.compose.ui.unit.dp
 import com.example.happ_frontend.R
 
 @Composable
-fun NutritionHeader(onDetailClick: () -> Unit = {}) {
-    Box(
+fun NutritionHeader(
+    onDetailClick: () -> Unit,
+    meals: List<String>
+) {
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFF6F3FD)) // Light purple background to match the weight design
-            .clickable { onDetailClick() }
-            .padding(24.dp)
+            .clickable(onClick = onDetailClick),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFF6F3FD)
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        )
     ) {
-        Column(modifier = Modifier.align(Alignment.CenterStart)) {
-            Text(
-                text = stringResource(R.string.health_category_nutrition_title),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF4A4A4A),
-                textAlign = TextAlign.Start
-            )
-
-            Text(
-                text = stringResource(R.string.health_category_nutrition_description),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF4A4A4A),
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-
         Row(
             modifier = Modifier
-                .align(Alignment.CenterEnd),
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.health_category_nutrition_detail_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                
+                if (meals.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.health_category_common_event_list_no_data),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray
+                    )
+                } else {
+                    meals.forEach { meal ->
+                        Text(
+                            text = "• $meal",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            }
+            
             Icon(
-                imageVector = Icons.Filled.ArrowForward,
+                imageVector = Icons.Default.ArrowForward,
                 contentDescription = null,
-                tint = Color(0xFF5A43A5), // Purple arrows from screenshot
+                tint = Color(0xFFA590B6),
                 modifier = Modifier.size(24.dp)
             )
         }
