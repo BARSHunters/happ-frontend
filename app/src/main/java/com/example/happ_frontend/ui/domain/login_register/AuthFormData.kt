@@ -29,7 +29,7 @@ data class AuthFormData(
     val confirmPassword: String = "",
     val passwordCensored: Boolean = true,
     val name: String = "",
-    val birthDate: LocalDate = LocalDate.now(),
+    val birthDate: LocalDate = LocalDate.now().minusYears(18),
     val gender: Gender = Gender.MALE,
     val heightCm: Int = DEFAULT_HEIGHT_CM,
     val weightKg: Float = DEFAULT_WEIGHT_KG,
