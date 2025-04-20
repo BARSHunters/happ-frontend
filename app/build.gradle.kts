@@ -66,6 +66,8 @@ dependencies {
     implementation(libs.logging.interceptor) // okhttp3 logging interceptor
     implementation(libs.gson)
     implementation(libs.vico.compose) // com.patrykandpatrick.vico:compose
+    implementation(libs.androidx.material3)
+    implementation(libs.lifecycle.viewmodel.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

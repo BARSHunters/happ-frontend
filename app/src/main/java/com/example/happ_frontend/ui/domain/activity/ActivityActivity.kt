@@ -1,0 +1,31 @@
+package com.example.happ_frontend.ui.domain.activity
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import com.example.happ_frontend.ui.screens.activity.ActivityScreen
+import com.example.happ_frontend.ui.theme.HappfrontendTheme
+
+class ActivityActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            HappfrontendTheme {
+                Surface(
+                    modifier = Modifier.Companion.fillMaxSize(), // Исправлено: убрано Companion
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    ActivityScreen(
+                        onBackClick = {
+                            finish()
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
