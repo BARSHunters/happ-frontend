@@ -15,6 +15,7 @@ import com.example.happ_frontend.ui.screens.login_register.RegisterScreen
 import com.example.happ_frontend.ui.screens.notifications.NotificationScreen
 import com.example.happ_frontend.ui.screens.nutrition.NutritionScreen
 import com.example.happ_frontend.ui.screens.search.SearchScreen
+import com.example.happ_frontend.ui.screens.user_info.UserInfoScreen
 import com.example.happ_frontend.ui.screens.weight.WeightHistoryScreen
 import com.example.happ_frontend.ui.screens.nutrition.NutritionScreen
 import com.example.happ_frontend.ui.screens.activity.ActivityScreen
@@ -76,7 +77,9 @@ fun HappFrontendNavigationHost(
                     onNavigateToSearch = {
                         navigationController.navigate(SearchDest.route)
                     },
-                    onNavigateToUserProfile = { /* TODO */ }
+                    onNavigateToUserProfile = {
+                        navigationController.navigate(UserInfoDest.route)
+                    }
                 )
             }
             composable(route = WeightHistoryDest.route) {
@@ -105,7 +108,21 @@ fun HappFrontendNavigationHost(
                     }
                 )
             }
-            composable(route = NutritionDest.route) {
+
+           composable(route = UserInfoDest.route) {
+                UserInfoScreen(
+                    onSettings = {
+
+                    },
+                    onExit = {
+
+                    },
+                    onGoBack = {
+                    navigationController.popBackStack()}
+                  )
+           }
+
+           composable(route = NutritionDest.route) {
                 NutritionScreen(
                     onBackClick = {
                         navigationController.popBackStack()
