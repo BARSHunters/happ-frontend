@@ -11,11 +11,3 @@ data class Activity(
     val calories: Int,
     val intensityZones: List<Int> // время в минутах для каждой зоны: [очень легкая, легкая, умеренная, высокая, максимальная]
 )
-
-data class Exercise(
-    val id: String,
-    val name: String,
-    val sets: Int,
-    val reps: Int,
-    val weight: Double?
-) 
