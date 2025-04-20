@@ -5,7 +5,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.happ_frontend.ui.navigation.HappFrontendNavigationHost
 
 @Composable
-fun HappFrontendApp(){
+fun HappFrontendApp() {
     val navigationController = rememberNavController()
     HappFrontendNavigationHost(navigationController = navigationController)
 }
