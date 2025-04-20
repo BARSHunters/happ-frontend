@@ -63,7 +63,9 @@ fun HappFrontendNavigationHost(
                     onNavigateToSearch = {
                         navigationController.navigate(SearchDest.route)
                     },
-                    onNavigateToUserProfile = { /* TODO */ }
+                    onNavigateToUserProfile = {
+                        navigationController.navigate(UserInfoDest.route)
+                    }
                 )
             }
             composable(route = WeightHistoryDest.route) {
@@ -92,7 +94,7 @@ fun HappFrontendNavigationHost(
                     }
                 )
             }
-            composable(route = UserInfo.route) {
+            composable(route = UserInfoDest.route) {
                 UserInfoScreen(
                     onSettings = {
 
@@ -101,7 +103,7 @@ fun HappFrontendNavigationHost(
 
                     },
                     onGoBack = {
-
+                        navigationController.popBackStack()
                     }
                 )
             }

@@ -36,10 +36,11 @@ class UserInfoViewModel : ViewModel() {
                 }
 
                 if (response.isSuccessful && response.body() != null) {
+                    val userInfo = response.body()
                     _uiState.update {
                         it.copy(
                             status = UserInfoStatus.SHOW_DATA,
-                            name = response.body()!!.name,
+                            name = userInfo!!.name,
                             username = response.body()!!.username,
                             birthDate = response.body()!!.birthDate.toString(),
                             gender = response.body()!!.gender.name,

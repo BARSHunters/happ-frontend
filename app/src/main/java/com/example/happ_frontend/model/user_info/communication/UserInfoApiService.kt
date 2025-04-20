@@ -16,7 +16,7 @@ interface UserInfoApiService {
     @GET("getUserInfo")
     suspend fun getUserInfo(): Response<UserDataDTO>
 
-    @GET("getFriendsList")
+    @GET("getFriends")
     suspend fun getFriends(): Response<FriendsListResponse>
 
     @POST("updateInfo")

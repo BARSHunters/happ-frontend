@@ -23,6 +23,6 @@ object SearchDest : Destination{
     override val route: String = "searchDest"
 }
 
-object UserInfo : Destination{
-    override val route: String = "userInfo"
+object UserInfoDest : Destination{
+    override val route: String = "userInfoDest"
 }

@@ -61,7 +61,7 @@ fun UserInfoScreen(
     userInfoViewModel: UserInfoViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit = {},
-    onSettings: () -> Unit = {},
+    onSettings: () -> Unit = {}, //TODO: УДАЛИТ КНОПКУ
     onExit: () -> Unit = {}
 ) {
     val state by userInfoViewModel.uiState.collectAsState()
@@ -129,11 +129,13 @@ fun UserInfoScreen(
             Slider(
                 value = state.currentWeight,
                 onValueChange = { userInfoViewModel.updateCurrentWeight(it) },
-                valueRange = 0f..200f,
+                valueRange = 50f..200f,
+            )
+            Text(
+                "%${state.currentWeight}"
             )
         }
 
-        Text("Goal Weight")
         GoalWeightDropdown(
             selectedDesire = (state.goalWeight),
             expanded = false,
@@ -143,9 +145,9 @@ fun UserInfoScreen(
 
         Text("Height")
         Slider(
-            value = 80f,
+            value = state.height,
             onValueChange = { userInfoViewModel.updateHeight(it) },
-            valueRange = 0f..250f,
+            valueRange = 50f..250f,
         )
 
 
@@ -155,14 +157,14 @@ fun UserInfoScreen(
                 .clickable { },
             colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE0F0))
         ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(Icons.Default.Favorite, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Personal Achievements")
-            }
+//            Row(
+//                modifier = Modifier.padding(16.dp),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Icon(Icons.Default.Favorite, contentDescription = null)
+//                Spacer(modifier = Modifier.width(8.dp))
+//                Text("Personal Achievements")
+//            }
         }
 
         Row(
@@ -171,9 +173,6 @@ fun UserInfoScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Friends", fontWeight = FontWeight.Bold)
-            TextButton(onClick = { /* See all */ }) {
-                Text("See all")
-            }
         }
 
         Row(
@@ -181,18 +180,18 @@ fun UserInfoScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             state.friends.forEach { friend ->
-                FriendCard(friend, R.drawable.pfp_cat4)
+                FriendCard(friend, R.drawable.pfp_cat4) //TODO Картинку правильно ставить
             }
         }
 
-        OutlinedButton(
-            onClick = { },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Image(painter = painterResource(R.drawable.pfp_mark_transparent), contentDescription = "")
-            Spacer(Modifier.width(8.dp))
-            Text("Friend Requests")
-        }
+//        OutlinedButton(
+//            onClick = { },
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            Image(painter = painterResource(R.drawable.pfp_mark_transparent), contentDescription = "")
+//            Spacer(Modifier.width(8.dp))
+//            Text("Friend Requests")
+//        }
     }
 }
 
@@ -202,7 +201,7 @@ fun GenderOption(text: String, selected: Boolean, onClick: () -> Unit) {
     val border = if (selected) Color.Transparent else Color.Gray
 
     OutlinedButton(
-        onClick = onClick,
+        onClick = onClick, //TODO напистаь функциональность
         colors = ButtonDefaults.outlinedButtonColors(containerColor = background),
         border = BorderStroke(1.dp, border),
         shape = RoundedCornerShape(20.dp)
