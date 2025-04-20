@@ -94,7 +94,15 @@ fun HappFrontendNavigationHost(
             }
             composable(route = UserInfo.route) {
                 UserInfoScreen(
+                    onSettings = {
 
+                    },
+                    onExit = {
+
+                    },
+                    onGoBack = {
+
+                    }
                 )
             }
          }

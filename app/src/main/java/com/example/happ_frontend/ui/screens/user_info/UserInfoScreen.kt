@@ -59,7 +59,10 @@ import com.example.happ_frontend.model.user_info.request.WeightDesire
 @Composable
 fun UserInfoScreen(
     userInfoViewModel: UserInfoViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onGoBack: () -> Unit = {},
+    onSettings: () -> Unit = {},
+    onExit: () -> Unit = {}
 ) {
     val state by userInfoViewModel.uiState.collectAsState()
 
@@ -75,15 +78,15 @@ fun UserInfoScreen(
                 Text("My Profile", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             },
             navigationIcon = {
-                IconButton(onClick = { /* Back */ }) {
+                IconButton(onClick = onGoBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
             actions = {
-                IconButton(onClick = { /* Settings */ }) {
+                IconButton(onClick = onSettings) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")
                 }
-                IconButton(onClick = { /* Edit */ }) {
+                IconButton(onClick = onExit) {
                     Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Exit")
                 }
             }
