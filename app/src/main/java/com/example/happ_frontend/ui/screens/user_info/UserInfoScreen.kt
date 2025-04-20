@@ -34,6 +34,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,18 +47,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.happ_frontend.R
+import com.example.happ_frontend.ui.AppViewModelProvider
+import com.example.happ_frontend.ui.domain.user_info.UserInfoViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserInfoScreen(
-//    profileViewModel: ProfileViewModel = viewModel(),
+    userInfoViewModel: UserInfoViewModel = viewModel(factory = AppViewModelProvider.Factory),
     modifier: Modifier = Modifier
 ) {
-//    val name = profileViewModel.name
-//    val gender = profileViewModel.gender
-//    val currentWeight = profileViewModel.currentWeight
-//    val goalWeight = profileViewModel.goalWeight
-//    val height = profileViewModel.height
+    val state by userInfoViewModel.uiState.collectAsState()
 
     Column(
         modifier = modifier
@@ -65,7 +66,6 @@ fun UserInfoScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Header
         TopAppBar(
             title = {
                 Text("My Profile", textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
@@ -94,16 +94,15 @@ fun UserInfoScreen(
                     .clip(CircleShape)
             )
             Column {
-                Text(text = "John Doe", fontWeight = FontWeight.Bold)
-                Text(text = "20.03.2000")
+                Text(text = state.name, fontWeight = FontWeight.Bold)
                 Text(text = "Target: Gain Weight")
             }
         }
         Column {
             Text("Full Name")
             TextField(
-                value = "John Doe",
-                onValueChange = {  },
+                value = state.name,
+                onValueChange = { userInfoViewModel.updateName(it) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -121,8 +120,8 @@ fun UserInfoScreen(
         Column {
             Text("Current Weight")
             Slider(
-                value = 80f,
-                onValueChange = { },
+                value = state.currentWeight,
+                onValueChange = { userInfoViewModel.updateCurrentWeight(it) },
                 valueRange = 0f..200f,
             )
         }
@@ -130,15 +129,15 @@ fun UserInfoScreen(
         Text("Goal Weight")
         Slider(
            value =  1f,
-           onValueChange = { },
+           onValueChange = { userInfoViewModel.updateGoalWeight(it) },
             valueRange = 0f..200f,
         )
 
         Text("Height")
         Slider(
             value = 80f,
-            onValueChange = {  },
-            valueRange = 0f..200f,
+            onValueChange = { userInfoViewModel.updateHeight(it) },
+            valueRange = 0f..250f,
         )
 
 
@@ -170,11 +169,12 @@ fun UserInfoScreen(
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            FriendCard("Cat 1", R.drawable.pfp_cat4)
-            FriendCard("Cat 2", R.drawable.pfp_cat0)
-            FriendCard("Cat 3", R.drawable.pfp_cat3)
+            state.friends.forEach { friend ->
+                FriendCard(friend.name, R.drawable.pfp_cat4)
+            }
         }
 
         OutlinedButton(

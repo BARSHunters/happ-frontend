@@ -1,18 +1,26 @@
-package com.example.happ_frontend.ui.domain.user_info;
+package com.example.happ_frontend.model.user_info;
 
-data class UserInfoData (
+import java.time.LocalDate
+
+data class UserInfoData(
+        val username: String = "",
         val name: String = "",
-        val gender: String = "",
-        val height: Float = 170f,
-        val currentWeight: Float = 70f,
-        val goalWeight: Float = 65f,
-        val avatarUrl: String? = null, // Пока можно null
-        val friends: List<Friend> = emptyList(),
-        val friendRequests: List<Friend> = emptyList(),
-        val achievements: List<String> = emptyList() // Можно заменить на модель Achievements
+        val birthDate: LocalDate? = null,
+        val gender: Gender = Gender.MALE,
+        val heightCm: Int = 170,
+        val weightKg: Float = 70f,
+        val weightDesire: WeightDesire = WeightDesire.REMAIN,
+        val friends: List<String> = emptyList(),
+        val friendsCount: Int = 0
 )
 
-data class Friend(
-        val name: String,
-        val avatarUrl: String? = null
-)
+enum class Gender {
+        MALE,
+        FEMALE
+}
+
+enum class WeightDesire {
+        LOSS,
+        REMAIN,
+        GAIN
+}

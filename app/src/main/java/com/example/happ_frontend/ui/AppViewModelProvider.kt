@@ -11,6 +11,7 @@ import com.example.happ_frontend.model.login_register.communication.AuthNetworkM
 import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
 import com.example.happ_frontend.model.weight.communication.WeightHistoryNetworkModule
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
+import com.example.happ_frontend.ui.domain.user_info.UserInfoViewModel
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
 
 
@@ -31,6 +32,12 @@ object AppViewModelProvider{
                 prefs = AuthSharedPreferencesEditor(
                     context = happFrontendApplication().applicationContext
                 )
+            )
+        }
+        initializer {
+            UserInfoViewModel(
+                userInfoRepository = happFrontendApplication().container.userInfoRepository,
+
             )
         }
     }
