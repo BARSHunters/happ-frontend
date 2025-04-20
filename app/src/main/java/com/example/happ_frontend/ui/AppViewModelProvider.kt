@@ -8,10 +8,10 @@ import com.example.happ_frontend.HappFrontendApplication
 import com.example.happ_frontend.ui.domain.notifications.NotificationViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.happ_frontend.model.login_register.communication.AuthNetworkModule
-import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
+import com.example.happ_frontend.model.login_register.communication.UserDataNetworkModule
 import com.example.happ_frontend.model.weight.communication.WeightHistoryNetworkModule
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
-import com.example.happ_frontend.ui.domain.user_info.UserInfoViewModel
+import com.example.happ_frontend.ui.domain.search.SearchViewModel
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
 
 
@@ -21,23 +21,18 @@ object AppViewModelProvider{
             NotificationViewModel(happFrontendApplication().container.notificationsRepository)
         }
         initializer {
+            SearchViewModel()
+        }
+        initializer {
             WeightHistoryViewModel(
                 weightHistoryRepository = happFrontendApplication().container.weightHistoryRepository,
-                weightHistoryApi = WeightHistoryNetworkModule.weightHistoryApiService
+                weightHistoryApi = WeightHistoryNetworkModule.weightHistoryApiService,
             )
         }
         initializer {
             AuthViewModel(
-                authApi = AuthNetworkModule.authApiService, // Direct access
-                prefs = AuthSharedPreferencesEditor(
-                    context = happFrontendApplication().applicationContext
-                )
-            )
-        }
-        initializer {
-            UserInfoViewModel(
-                userInfoRepository = happFrontendApplication().container.userInfoRepository,
-
+                userDataApi = UserDataNetworkModule.userDataApiService,
+                authApi = AuthNetworkModule.authApiService
             )
         }
     }

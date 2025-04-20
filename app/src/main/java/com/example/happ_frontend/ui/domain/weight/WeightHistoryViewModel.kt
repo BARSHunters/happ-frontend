@@ -1,24 +1,24 @@
 package com.example.happ_frontend.ui.domain.weight
 
-import android.net.http.NetworkException
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.happ_frontend.R
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
 import com.example.happ_frontend.model.login_register.request.UserDataDto
 import com.example.happ_frontend.model.weight.WeightCalendarEvent
 import com.example.happ_frontend.model.weight.communication.WeightHistoryApiService
 import com.example.happ_frontend.model.weight.communication.WeightHistoryNetworkModule
 import com.example.happ_frontend.model.weight.data.WeightHistoryRepository
 import com.example.happ_frontend.model.weight.kg
-import com.example.happ_frontend.ui.domain.login_register.AuthState
 import com.example.happ_frontend.ui.domain.login_register.AuthValidationResult
 import com.example.happ_frontend.ui.domain.login_register.AuthValidator
-import com.example.happ_frontend.ui.domain.login_register.now
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,7 +35,9 @@ import kotlin.reflect.KProperty
  */
 class WeightHistoryViewModel(
     private val weightHistoryRepository: WeightHistoryRepository,
-    private val weightHistoryApi: WeightHistoryApiService = WeightHistoryNetworkModule.weightHistoryApiService
+    private val weightHistoryApi: WeightHistoryApiService = WeightHistoryNetworkModule.weightHistoryApiService,
+    private val authPrefs: AuthSharedPreferencesEditor = AuthSharedPreferencesProvider.editor
+        ?: throw IllegalStateException("AuthSharedPreferencesEditor not initialized yet"),
 ): ViewModel() {
     private val _weightEvents = mutableStateListOf<WeightCalendarEvent>()
     val weightEvents get() = _weightEvents.toList()
@@ -50,7 +52,11 @@ class WeightHistoryViewModel(
     sealed interface WeightHistoryState {
         data object Loading: WeightHistoryState
         data object Success: WeightHistoryState
-        data class Failure(val message: String): WeightHistoryState
+        data class Failure(
+            @StringRes val messageRes: Int,
+            val formatArgs: List<Any> = emptyList(),
+            val isUnauthorizedError: Boolean = false
+        ): WeightHistoryState
     }
 
     var formShown by mutableStateOf(false)
@@ -134,6 +140,18 @@ class WeightHistoryViewModel(
     }
 
     fun fetchWeightHistoryFromServer() {
+        Log.d("WeightHistoryViewModel#addWeightHistoryEvent", "jwt: ${authPrefs.jwt}")
+        if (authPrefs.jwt == null) {
+            _weightHistoryState.value = WeightHistoryState.Failure(
+                R.string.error_auth_noJwt,
+                isUnauthorizedError = true
+            )
+            authPrefs.clearUserData()
+            return
+        }
+
+        var isUnauthorizedError = false
+
         viewModelScope.launch {
             _weightHistoryState.value = WeightHistoryState.Loading
             try {
@@ -155,45 +173,82 @@ class WeightHistoryViewModel(
                         }
                     }
                 } else {
+                    if (response.code() == 401) {
+                        isUnauthorizedError = true
+                    }
+
                     _weightHistoryState.value = WeightHistoryState.Failure(
-                        "Failed to load weight history data."
+                        R.string.error_weight_weightHistory_loadFail,
+                        isUnauthorizedError = isUnauthorizedError
                     )
                     _weightEvents.clear()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _weightHistoryState.value = WeightHistoryState.Failure(
-                    e.message ?: "Unknown error"
-                )
+                _weightHistoryState.value = e.message?.let { msg ->
+                    WeightHistoryState.Failure(R.string.error_misc_errorPrefix, formatArgs = listOf(msg))
+                } ?: WeightHistoryState.Failure(R.string.error_misc_unknown)
                 _weightEvents.clear()
+            } finally {
+                if (isUnauthorizedError) {
+                    authPrefs.clearUserData()
+                }
             }
         }
     }
 
     fun addWeightHistoryEvent(weight: Float) {
+        Log.d("WeightHistoryViewModel#addWeightHistoryEvent", "jwt: ${authPrefs.jwt}")
+        if (authPrefs.jwt == null) {
+            _weightHistoryState.value = WeightHistoryState.Failure(
+                R.string.error_auth_noJwt,
+                isUnauthorizedError = true
+            )
+            authPrefs.clearUserData()
+            return
+        }
+
+        @StringRes
+        var errorMessageRes: Int? = null
+        var isUnauthorizedError = false
+
         viewModelScope.launch {
             try {
                 _weightHistoryState.value = WeightHistoryState.Loading
                 val userInfoResponse = weightHistoryApi.getUserInfo()
                 if (!userInfoResponse.isSuccessful) {
-                    throw IllegalArgumentException("Failed to load user data.")
+                    errorMessageRes = R.string.error_weight_userData_loadFail
+                    if (userInfoResponse.code() == 401) {
+                        isUnauthorizedError = true
+                    }
+                    throw IllegalArgumentException()
                 }
                 userInfoResponse.body()?.let { userDataResponseBody ->
                     val userDataRequest = UserDataDto
                         .fromResponseDto(userDataResponseBody)
-                        .copy(weight = weight)
+                        .copy(weightKg = weight)
                     val updateUserInfoResponse = weightHistoryApi.updateInfo(userDataRequest)
                     if (!updateUserInfoResponse.isSuccessful) {
-                        throw IllegalArgumentException("Failed to update user data.")
+                        errorMessageRes = R.string.error_weight_userData_updateFail
+                        throw IllegalArgumentException()
                     }
                     fetchWeightHistoryFromServer()
-                } ?: throw IllegalArgumentException("The user data fetched was null.")
+                }
+                if (userInfoResponse.body() == null) {
+                    errorMessageRes = R.string.error_weight_userData_loadFail
+                    throw IllegalArgumentException()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 _weightHistoryState.value = WeightHistoryState.Failure(
-                    e.message ?: "Unknown error"
+                    errorMessageRes ?: R.string.error_misc_unknown,
+                    isUnauthorizedError = isUnauthorizedError
                 )
                 _weightEvents.clear()
+            } finally {
+                if (isUnauthorizedError) {
+                    authPrefs.clearUserData()
+                }
             }
         }
     }

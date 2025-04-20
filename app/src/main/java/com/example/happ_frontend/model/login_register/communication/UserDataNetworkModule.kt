@@ -1,11 +1,9 @@
-package com.example.happ_frontend.model.weight.communication
+package com.example.happ_frontend.model.login_register.communication
 
-import android.util.Log
 import com.example.happ_frontend.model.common.ApiConfig
-import com.example.happ_frontend.model.login_register.communication.UserDataApiService
 import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
-import com.example.happ_frontend.model.login_register.serialization.LocalDateAdapter
 import com.example.happ_frontend.model.login_register.serialization.LocalDateTimeAdapter
+import com.example.happ_frontend.model.login_register.serialization.LocalDateAdapter
 import com.example.happ_frontend.model.login_register.serialization.LocalTimeAdapter
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -17,7 +15,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
-object WeightHistoryNetworkModule {
+object UserDataNetworkModule {
     private const val DEFAULT_API_TIMEOUT_SECONDS = ApiConfig.DEFAULT_API_TIMEOUT_SECONDS
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -30,10 +28,6 @@ object WeightHistoryNetworkModule {
             val jwt = AuthSharedPreferencesProvider.editor?.jwt
             val request = chain.request().newBuilder()
                 .let {
-                    Log.d(
-                        "WeightHistoryNetworkModule (request builder)",
-                        "jwt: ${jwt}"
-                    )
                     if (jwt != null)
                         it.addHeader("Authorization", "Bearer $jwt")
                     else it
@@ -52,13 +46,12 @@ object WeightHistoryNetworkModule {
         .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
         .create()
 
+
     private val retrofit = Retrofit.Builder()
         .baseUrl(UserDataApiService.BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-    val weightHistoryApiService: WeightHistoryApiService by lazy {
-        retrofit.create(WeightHistoryApiService::class.java)
-    }
+    val userDataApiService: UserDataApiService by lazy { retrofit.create(UserDataApiService::class.java) }
 }

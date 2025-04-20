@@ -1,6 +1,5 @@
 package com.example.happ_frontend.ui.screens.weight
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,25 +27,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.domain.login_register.format
-import com.example.happ_frontend.ui.domain.login_register.now
-import com.example.happ_frontend.model.weight.WeightCalendarEvent
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
-import com.example.happ_frontend.model.weight.kg
 import com.example.happ_frontend.ui.AppViewModelProvider
-import com.example.happ_frontend.ui.domain.login_register.AuthState
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryFormData
-import com.example.happ_frontend.ui.domain.weight.minus
-import com.example.happ_frontend.ui.domain.weight.plus
 import com.example.happ_frontend.ui.screens.home.HealthCategoryWidget
 import kotlinx.datetime.daysUntil
-import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toKotlinLocalDate
-import kotlinx.datetime.toKotlinLocalDateTime
 import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.math.abs
 
 /**
@@ -62,6 +51,7 @@ import kotlin.math.abs
 @Composable
 fun WeightHistoryScreen(
     onGoBack: () -> Unit = {},
+    onUnauthorized: () -> Unit = {},
     viewModel: WeightHistoryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -79,7 +69,8 @@ fun WeightHistoryScreen(
         if (state is WeightHistoryViewModel.WeightHistoryState.Failure) {
             Toast.makeText(
                 context,
-                "Error: ${state.message}", Toast.LENGTH_LONG
+                context.getString(state.messageRes, *state.formatArgs.toTypedArray()),
+                Toast.LENGTH_LONG
             ).show()
         }
     }
@@ -177,10 +168,13 @@ fun WeightHistoryScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        if (state.isUnauthorizedError) {
+                            onUnauthorized()
+                        }
                         Text(
                             stringResource(
                                 R.string.health_category_weight_widget_failure,
-                                state.message
+                                stringResource(state.messageRes, *state.formatArgs.toTypedArray())
                             )
                         )
                         Button(onClick = { viewModel.fetchWeightHistoryFromServer() }) {
@@ -250,9 +244,16 @@ fun WeightHistoryScreen(
                 }
                 .sortedBy { it.dateTime }
                 .partition { !it.prediction }
-                .let {
-                    it.first.sortedBy { it.dateTime } to
-                            it.second.sortedBy { it.dateTime }.toMutableList()
+                .let { (realEvents, predictedEvents) ->
+                    realEvents.sortedBy { it.dateTime } to
+                    predictedEvents
+                        .filter { predictedEvent ->
+                            realEvents.lastOrNull()?.let { lastRealEvent ->
+                                lastRealEvent.dateTime < predictedEvent.dateTime
+                            } ?: true
+                        }
+                        .sortedBy { it.dateTime }
+                        .toMutableList()
                 }
             predictedWeightEvents.add(0, realWeightEvents.last())
             WeightPredictionChartWidget(
