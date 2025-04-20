@@ -13,6 +13,7 @@ import com.example.happ_frontend.ui.screens.login_register.LoginScreen
 import com.example.happ_frontend.ui.screens.login_register.RegisterScreen
 import com.example.happ_frontend.ui.screens.notifications.NotificationScreen
 import com.example.happ_frontend.ui.screens.search.SearchScreen
+import com.example.happ_frontend.ui.screens.user_info.UserInfoScreen
 import com.example.happ_frontend.ui.screens.weight.WeightHistoryScreen
 
 @Composable
@@ -89,6 +90,11 @@ fun HappFrontendNavigationHost(
                     onUnAuth = {
                         Log.d("Unauthorized (from Search Screen)", "JWT expired")
                     }
+                )
+            }
+            composable(route = UserInfo.route) {
+                UserInfoScreen(
+
                 )
             }
          }

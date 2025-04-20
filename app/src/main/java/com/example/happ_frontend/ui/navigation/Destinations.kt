@@ -22,3 +22,7 @@ object WeightHistoryDest : Destination {
 object SearchDest : Destination{
     override val route: String = "searchDest"
 }
+
+object UserInfo : Destination{
+    override val route: String = "userInfo"
+}
