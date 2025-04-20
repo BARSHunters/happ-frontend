@@ -2,6 +2,7 @@ package com.example.happ_frontend.model.user_info.request
 
 import java.time.LocalDate
 
+
 data class UserDataDTO(
     val username: String,
     val name: String,
