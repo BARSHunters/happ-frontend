@@ -37,7 +37,7 @@ object AuthNetworkModule {
 
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(UserDataApiService.BASE_URL)
+        .baseUrl(AuthApiService.BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()

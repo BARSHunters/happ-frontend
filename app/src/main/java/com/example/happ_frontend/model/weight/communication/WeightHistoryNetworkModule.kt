@@ -53,7 +53,7 @@ object WeightHistoryNetworkModule {
         .create()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(UserDataApiService.BASE_URL)
+        .baseUrl(WeightHistoryApiService.BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
