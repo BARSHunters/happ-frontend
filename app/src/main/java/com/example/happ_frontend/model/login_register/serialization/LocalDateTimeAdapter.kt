@@ -10,6 +10,7 @@ import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 class LocalDateTimeAdapter : JsonSerializer<LocalDateTime?>,
     JsonDeserializer<LocalDateTime> {
@@ -27,10 +28,16 @@ class LocalDateTimeAdapter : JsonSerializer<LocalDateTime?>,
         typeOfT: Type,
         context: JsonDeserializationContext
     ): LocalDateTime {
-        return LocalDateTime.parse(json.asString, formatter)
+        return try {
+            LocalDateTime.parse(json.asString, formatter)
+        } catch (e: DateTimeParseException) {
+            LocalDateTime.parse(json.asString, fallbackFormatter)
+        }
     }
 
     companion object {
         private val formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+        private val fallbackFormatter: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     }
 }

@@ -8,7 +8,7 @@ import com.example.happ_frontend.HappFrontendApplication
 import com.example.happ_frontend.ui.domain.notifications.NotificationViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.happ_frontend.model.login_register.communication.AuthNetworkModule
-import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
+import com.example.happ_frontend.model.login_register.communication.UserDataNetworkModule
 import com.example.happ_frontend.model.weight.communication.WeightHistoryNetworkModule
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
 import com.example.happ_frontend.ui.domain.search.SearchViewModel
@@ -31,7 +31,8 @@ object AppViewModelProvider{
         }
         initializer {
             AuthViewModel(
-                authApi = AuthNetworkModule.authApiService,
+                userDataApi = UserDataNetworkModule.userDataApiService,
+                authApi = AuthNetworkModule.authApiService
             )
         }
     }

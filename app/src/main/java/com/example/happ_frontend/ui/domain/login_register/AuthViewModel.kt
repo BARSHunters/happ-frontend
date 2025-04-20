@@ -9,6 +9,8 @@ import com.example.happ_frontend.model.login_register.Gender
 import com.example.happ_frontend.model.login_register.WeightDesire
 import com.example.happ_frontend.model.login_register.communication.AuthApiService
 import com.example.happ_frontend.model.login_register.communication.AuthNetworkModule
+import com.example.happ_frontend.model.login_register.communication.UserDataApiService
+import com.example.happ_frontend.model.login_register.communication.UserDataNetworkModule
 import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
 import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
 import com.example.happ_frontend.model.login_register.request.LoginDto
@@ -26,6 +28,7 @@ import java.time.LocalDate
  * @author Vad1mChK
  */
 class AuthViewModel (
+    private val userDataApi: UserDataApiService = UserDataNetworkModule.userDataApiService,
     private val authApi: AuthApiService = AuthNetworkModule.authApiService,
     private val prefs: AuthSharedPreferencesEditor = AuthSharedPreferencesProvider.editor
         ?: throw IllegalStateException("AuthSharedPreferencesEditor not initialized yet")
@@ -252,7 +255,7 @@ class AuthViewModel (
         viewModelScope.launch {
             _profileState.value = ProfileState.Loading
             try {
-                val response = authApi.getUserInfo()
+                val response = userDataApi.getUserInfo()
                 if (response.isSuccessful) {
                     _profileState.value = ProfileState.Success(response.body()?.username ?: "")
                     response.body()?.let {

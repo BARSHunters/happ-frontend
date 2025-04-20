@@ -244,9 +244,16 @@ fun WeightHistoryScreen(
                 }
                 .sortedBy { it.dateTime }
                 .partition { !it.prediction }
-                .let {
-                    it.first.sortedBy { it.dateTime } to
-                            it.second.sortedBy { it.dateTime }.toMutableList()
+                .let { (realEvents, predictedEvents) ->
+                    realEvents.sortedBy { it.dateTime } to
+                    predictedEvents
+                        .filter { predictedEvent ->
+                            realEvents.lastOrNull()?.let { lastRealEvent ->
+                                lastRealEvent.dateTime < predictedEvent.dateTime
+                            } ?: true
+                        }
+                        .sortedBy { it.dateTime }
+                        .toMutableList()
                 }
             predictedWeightEvents.add(0, realWeightEvents.last())
             WeightPredictionChartWidget(
