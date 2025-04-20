@@ -1,7 +1,5 @@
 package com.example.happ_frontend.model.user_info.request
 
-import com.example.happ_frontend.model.user_info.Gender
-import com.example.happ_frontend.model.user_info.WeightDesire
 import java.time.LocalDate
 
 data class UserDataDTO(
@@ -18,3 +16,14 @@ data class FriendsListResponse(
     val friends: List<String>,
     val friendsCount: Int
 )
+
+enum class Gender {
+    MALE,
+    FEMALE
+}
+
+enum class WeightDesire {
+    LOSS,
+    REMAIN,
+    GAIN
+}

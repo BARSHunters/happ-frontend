@@ -3,15 +3,12 @@ package com.example.happ_frontend
 import android.content.Context
 import com.example.happ_frontend.model.notifications.data.MyNotificationsRepository
 import com.example.happ_frontend.model.notifications.data.NotificationsRepository
-import com.example.happ_frontend.model.user_info.data.MyUserInfoRepository
-import com.example.happ_frontend.model.user_info.data.UserInfoRepository
 import com.example.happ_frontend.model.weight.data.MyWeightHistoryRepository
 import com.example.happ_frontend.model.weight.data.WeightHistoryRepository
 
 interface AppContainer {
     val notificationsRepository: NotificationsRepository
     val weightHistoryRepository: WeightHistoryRepository
-    val userInfoRepository: UserInfoRepository
 }
 
 class AppDataContainer(private val context: Context) : AppContainer{
@@ -20,8 +17,5 @@ class AppDataContainer(private val context: Context) : AppContainer{
     }
     override val weightHistoryRepository: WeightHistoryRepository by lazy {
         MyWeightHistoryRepository(HappFrontendDatabase.getDatabase(context).weightHistoryDAO())
-    }
-    override val userInfoRepository: UserInfoRepository by lazy {
-        MyUserInfoRepository(HappFrontendDatabase.getDatabase(context).userInfoDAO())
     }
 }

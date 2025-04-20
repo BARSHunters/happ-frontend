@@ -1,5 +1,6 @@
 package com.example.happ_frontend.model.user_info.communication
 
+import com.example.happ_frontend.model.common.ApiConfig
 import com.example.happ_frontend.model.user_info.request.FriendsListResponse
 import com.example.happ_frontend.model.user_info.request.UserDataDTO
 import retrofit2.Response
@@ -9,7 +10,7 @@ import retrofit2.http.POST
 
 interface UserInfoApiService {
     companion object {
-        const val BASE_URL = "http://10.0.2.2:3000/" // Заменишь при деплое
+        const val BASE_URL = ApiConfig.DEFAULT_BASE_URL
     }
 
     @GET("getUserInfo")

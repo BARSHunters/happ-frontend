@@ -2,58 +2,116 @@ package com.example.happ_frontend.ui.domain.user_info
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.happ_frontend.model.user_info.UserInfoData
-import com.example.happ_frontend.model.user_info.data.UserInfoConverter
-import com.example.happ_frontend.model.user_info.data.UserInfoRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import com.example.happ_frontend.model.user_info.communication.UserInfoNetworkModule
+import com.example.happ_frontend.model.user_info.request.FriendsListResponse
+import com.example.happ_frontend.model.user_info.request.UserDataDTO
+import com.example.happ_frontend.model.user_info.request.WeightDesire
+import com.example.happ_frontend.ui.navigation.NavigateToLoginUIEvent
+import com.example.happ_frontend.ui.navigation.UIEvent
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class UserInfoViewModel(
-    private val userInfoRepository: UserInfoRepository
-) : ViewModel() {
+class UserInfoViewModel : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UserInfoData())
-    val uiState: StateFlow<UserInfoData> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(UserInfoUIState())
+    val uiState: StateFlow<UserInfoUIState> = _uiState.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<UIEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
+
 
     init {
-        fetchUserData()
+        loadUserInfo()
+        loadFriends()
     }
 
-    fun fetchUserData() {
+    fun loadUserInfo() {
         viewModelScope.launch {
-            val entity = userInfoRepository.getUserInfo()
-            val data = UserInfoConverter.fromEntity(entity)
-            _uiState.value = data
+            _uiState.update { it.copy(status = UserInfoStatus.LOADING) }
+            try {
+                val response = UserInfoNetworkModule.userInfoApiService.getUserInfo()
+                if (response.code() == 401) {
+                    _eventFlow.emit(NavigateToLoginUIEvent)
+                    return@launch
+                }
+
+                if (response.isSuccessful && response.body() != null) {
+                    _uiState.update {
+                        it.copy(
+                            status = UserInfoStatus.SHOW_DATA,
+                            name = response.body()!!.name,
+                            username = response.body()!!.username,
+                            birthDate = response.body()!!.birthDate.toString(),
+                            gender = response.body()!!.gender.name,
+                            currentWeight = response.body()!!.weightKg,
+                            goalWeight = response.body()!!.weightDesire,
+                            height = response.body()!!.heightCm.toFloat()
+                        )
+                    }
+                } else {
+                    _uiState.update { it.copy(status = UserInfoStatus.ERROR) }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(status = UserInfoStatus.ERROR) }
+            }
         }
     }
 
-    fun updateName(newName: String) {
-        _uiState.update { it.copy(name = newName) }
+    fun loadFriends() {
+        viewModelScope.launch {
+            try {
+                val response = UserInfoNetworkModule.userInfoApiService.getFriends()
+                if (response.code() == 401) {
+                    _eventFlow.emit(NavigateToLoginUIEvent)
+                    return@launch
+                }
+
+                if (response.isSuccessful && response.body() != null) {
+                    _uiState.update {
+                        it.copy(
+                            friends = response.body()!!.friends,
+                            friendsCount = response.body()!!.friendsCount
+                        )
+                    }
+                }
+            } catch (_: Exception) {
+            }
+        }
     }
 
-    fun updateWeight(weight: Float) {
-        _uiState.update { it.copy(weight = weight) }
+    fun updateName(name: String) {
+        _uiState.update { it.copy(name = name) }
     }
 
-    fun updateGoalWeight(goal: Float) {
-        _uiState.update { it.copy(goalWeight = goal) }
+    fun updateCurrentWeight(weight: Float) {
+        _uiState.update { it.copy(currentWeight = weight) }
+    }
+
+
+    fun updateGoalWeightDesire(desire: WeightDesire) {
+        _uiState.update { it.copy(goalWeight = desire) }
     }
 
     fun updateHeight(height: Float) {
         _uiState.update { it.copy(height = height) }
     }
-
-    fun saveUserData() {
-        viewModelScope.launch {
-            val entity = UserDataConverter.toEntity(_uiState.value)
-            userInfoRepository.saveUserInfo(entity)
-        }
-    }
-
-    fun logout() {
-        userInfoRepository.clearJwt()
-    }
 }
+
+enum class UserInfoStatus {
+    LOADING,
+    SHOW_DATA,
+    ERROR
+}
+
+data class UserInfoUIState(
+    val username: String = "",
+    val name: String = "",
+    val birthDate: String = "",
+    val gender: String = "",
+    val currentWeight: Float = 0f,
+    val goalWeight: WeightDesire = WeightDesire.GAIN,
+    val height: Float = 0f,
+    val friends: List<String> = emptyList(),
+    val friendsCount: Int = 0,
+    val status: UserInfoStatus = UserInfoStatus.LOADING
+)

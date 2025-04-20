@@ -23,6 +23,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +38,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +53,7 @@ import com.example.happ_frontend.R
 import com.example.happ_frontend.ui.AppViewModelProvider
 import com.example.happ_frontend.ui.domain.user_info.UserInfoViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.happ_frontend.model.user_info.request.WeightDesire
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,10 +131,11 @@ fun UserInfoScreen(
         }
 
         Text("Goal Weight")
-        Slider(
-           value =  1f,
-           onValueChange = { userInfoViewModel.updateGoalWeight(it) },
-            valueRange = 0f..200f,
+        GoalWeightDropdown(
+            selectedDesire = (state.goalWeight),
+            expanded = false,
+            onExpandChange = {},
+            onDesireSelected = { userInfoViewModel.updateGoalWeightDesire(it) }
         )
 
         Text("Height")
@@ -173,7 +178,7 @@ fun UserInfoScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             state.friends.forEach { friend ->
-                FriendCard(friend.name, R.drawable.pfp_cat4)
+                FriendCard(friend, R.drawable.pfp_cat4)
             }
         }
 
@@ -217,6 +222,34 @@ fun FriendCard(name: String, imageRes: Int) {
             )
         }
         Text(name)
+    }
+}
+@Composable
+fun GoalWeightDropdown(
+    selectedDesire: WeightDesire,
+    expanded: Boolean,
+    onDesireSelected: (WeightDesire) -> Unit,
+    onExpandChange: (Boolean) -> Unit
+) {
+    val options = WeightDesire.values()
+
+    Column {
+        Text("Goal Weight")
+        OutlinedButton(onClick = { onExpandChange(true) }) {
+            Text(selectedDesire.name)
+        }
+
+        DropdownMenu(expanded = expanded, onDismissRequest = { onExpandChange(false) }) {
+            options.forEach { desire ->
+                DropdownMenuItem(
+                    text = { Text(desire.name) },
+                    onClick = {
+                        onDesireSelected(desire)
+                        onExpandChange(false)
+                    }
+                )
+            }
+        }
     }
 }
 
