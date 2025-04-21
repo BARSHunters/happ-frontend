@@ -79,31 +79,99 @@ fun ActivityDetailScreen(
                             label = stringResource(R.string.health_category_activity_detail_calories),
                             value = "${activitySummary.calories} cal"
                         )
+                        SummaryItem(
+                            label = "MET",
+                            value = String.format("%.1f", activitySummary.met)
+                        )
                     }
                 }
             }
 
             // Workout Details
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Text(
-                        text = "Workout Details",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold
+            workouts.forEach { workout ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
                     )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = workout.name,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF7B639C)
+                        )
 
-                    // Display workout details
-                    workouts.forEach { workout ->
-                        WorkoutDetailItem(workout = workout)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                DetailItem(
+                                    label = "Time",
+                                    value = workout.time
+                                )
+                                DetailItem(
+                                    label = "Calories",
+                                    value = "${workout.calories} cal"
+                                )
+                                DetailItem(
+                                    label = "MET",
+                                    value = String.format("%.1f", workout.met)
+                                )
+                            }
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                DetailItem(
+                                    label = "Avg Heart Rate",
+                                    value = "${workout.avgHeartRate.toInt()} bpm"
+                                )
+                                DetailItem(
+                                    label = "Max Heart Rate",
+                                    value = "${workout.maxHeartRate} bpm"
+                                )
+                                DetailItem(
+                                    label = "Recovery Time",
+                                    value = "${workout.recoveryTime} min"
+                                )
+                            }
+                        }
+
+                        // Intensity Zones
+                        Text(
+                            text = "Intensity Zones",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF7B639C)
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            workout.intensityZones.forEachIndexed { index, value ->
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Zone ${index + 1}",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                    Text(
+                                        text = "$value%",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -112,18 +180,42 @@ fun ActivityDetailScreen(
 }
 
 @Composable
-fun SummaryItem(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            color = Color(0xFF7B639C)
-        )
+private fun SummaryItem(
+    label: String,
+    value: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            color = Color.Gray
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF7B639C)
+        )
+    }
+}
+
+@Composable
+private fun DetailItem(
+    label: String,
+    value: String
+) {
+    Column {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Gray
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium
         )
     }
 }

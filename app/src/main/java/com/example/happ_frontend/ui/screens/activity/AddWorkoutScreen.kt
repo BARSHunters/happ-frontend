@@ -28,13 +28,12 @@ import java.time.LocalTime
 fun AddWorkoutScreen(
     viewModel: ActivityViewModel,
     onBackClick: () -> Unit,
-    onSaveClick: (String, LocalDate, LocalTime, Int, String) -> Unit
+    onSaveClick: (String, LocalDate, LocalTime, Int) -> Unit
 ) {
     var workoutName by remember { mutableStateOf("") }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     var selectedTime by remember { mutableStateOf(LocalTime.now()) }
     var workoutDuration by remember { mutableStateOf(60) }
-    var workoutEffort by remember { mutableStateOf("Hard") }
 
     Dialog(
         onDismissRequest = onBackClick,
@@ -155,7 +154,7 @@ fun AddWorkoutScreen(
                 // Save Button
                 Button(
                     onClick = {
-                        onSaveClick(workoutName, selectedDate, selectedTime, workoutDuration, workoutEffort)
+                        onSaveClick(workoutName, selectedDate, selectedTime, workoutDuration)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
