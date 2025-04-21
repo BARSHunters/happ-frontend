@@ -10,18 +10,14 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 
-interface AuthApiService {
+interface UserDataApiService {
     companion object {
         const val BASE_URL = ApiConfig.DEFAULT_BASE_URL
     }
 
-    @POST("register")
-    suspend fun register(
-        @Body request: RegisterDto
-    ): Response<LoginResponse>
+    @GET("getUserInfo")
+    suspend fun getUserInfo(): Response<UserDataResponse>
 
-    @POST("login")
-    suspend fun login(
-        @Body request: LoginDto
-    ): Response<LoginResponse>
+    @POST("updateInfo")
+    suspend fun updateInfo(): Response<Unit>
 }

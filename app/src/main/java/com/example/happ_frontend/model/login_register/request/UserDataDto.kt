@@ -10,8 +10,8 @@ data class UserDataDto(
     val name: String,
     val birthDate: LocalDate,
     val gender: Gender,
-    val height: Int,
-    val weight: Float,
+    val heightCm: Int,
+    val weightKg: Float,
     val weightDesire: WeightDesire
 ) {
     companion object {
@@ -22,8 +22,8 @@ data class UserDataDto(
                 name = response.name,
                 birthDate = response.birthDate,
                 gender = response.gender,
-                height = response.height,
-                weight = response.weight,
+                heightCm = response.height,
+                weightKg = response.weight,
                 weightDesire = response.weightDesire
             )
         }
