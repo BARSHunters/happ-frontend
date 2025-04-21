@@ -8,8 +8,8 @@ data class UserDataDTO(
     val name: String,
     val birthDate: LocalDate,
     val gender: Gender,
-    val heightCm: Int,
-    val weightKg: Float,
+    val height: Int,
+    val weight: Float,
     val weightDesire: WeightDesire
 )
 
