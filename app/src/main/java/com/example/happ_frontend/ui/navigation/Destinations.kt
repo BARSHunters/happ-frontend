@@ -26,6 +26,11 @@ object UserInfoDest : Destination{
     override val route: String = "userInfoDest"
 }
 
+object UserInfoOtherPersonDest: Destination {
+    override val route: String = "userInfoOtherPersonDest"
+    val usernameArgument : String = "usernameArgument"
+}
+
 object NutritionDest : Destination {
     override val route: String = "nutritionDest"
 }

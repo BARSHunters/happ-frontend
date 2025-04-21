@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface UserInfoApiService {
     companion object {
@@ -16,6 +17,9 @@ interface UserInfoApiService {
 
     @GET("getUserInfo")
     suspend fun getUserInfo(): Response<UserDataDTO>
+
+    @GET("getUserInfo/{username}")
+    suspend fun getUserInfo(@Path("username") username: String): Response<UserDataDTO>
 
     @GET("getFriends")
     suspend fun getFriends(): Response<FriendsListResponse>
