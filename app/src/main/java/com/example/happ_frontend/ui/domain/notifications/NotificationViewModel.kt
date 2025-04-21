@@ -25,7 +25,6 @@ class NotificationViewModel(private val notificationsRepository: NotificationsRe
                 new
             }
         }
-
     }
 
     fun deleteAll() {

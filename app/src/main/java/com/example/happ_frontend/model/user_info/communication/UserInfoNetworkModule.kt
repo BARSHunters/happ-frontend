@@ -1,8 +1,5 @@
-package com.example.happ_frontend.model.weight.communication
+package com.example.happ_frontend.model.user_info.communication
 
-import android.util.Log
-import com.example.happ_frontend.model.common.ApiConfig
-import com.example.happ_frontend.model.login_register.communication.UserDataApiService
 import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
 import com.example.happ_frontend.model.login_register.serialization.LocalDateAdapter
 import com.example.happ_frontend.model.login_register.serialization.LocalDateTimeAdapter
@@ -17,8 +14,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
-object WeightHistoryNetworkModule {
-    private const val DEFAULT_API_TIMEOUT_SECONDS = ApiConfig.DEFAULT_API_TIMEOUT_SECONDS
+object UserInfoNetworkModule {
+    private const val TIMEOUT_SECONDS = 5L
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -28,22 +25,16 @@ object WeightHistoryNetworkModule {
         .addInterceptor(loggingInterceptor)
         .addInterceptor { chain ->
             val jwt = AuthSharedPreferencesProvider.editor?.jwt
-            val request = chain.request().newBuilder()
-                .let {
-                    Log.d(
-                        "WeightHistoryNetworkModule (request builder)",
-                        "jwt: ${jwt}"
-                    )
-                    if (jwt != null)
-                        it.addHeader("Authorization", "Bearer $jwt")
-                    else it
+            val request = chain.request().newBuilder().apply {
+                if (!jwt.isNullOrBlank()) {
+                    addHeader("Authorization", "Bearer $jwt")
                 }
-                .build()
+            }.build()
             chain.proceed(request)
         }
-        .connectTimeout(DEFAULT_API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-        .readTimeout(DEFAULT_API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-        .writeTimeout(DEFAULT_API_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .build()
 
     private val gson = GsonBuilder()
@@ -53,12 +44,12 @@ object WeightHistoryNetworkModule {
         .create()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(WeightHistoryApiService.BASE_URL)
+        .baseUrl(UserInfoApiService.BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
-    val weightHistoryApiService: WeightHistoryApiService by lazy {
-        retrofit.create(WeightHistoryApiService::class.java)
+    val userInfoApiService: UserInfoApiService by lazy {
+        retrofit.create(UserInfoApiService::class.java)
     }
 }

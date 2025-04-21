@@ -12,6 +12,8 @@ import com.example.happ_frontend.model.login_register.communication.UserDataNetw
 import com.example.happ_frontend.model.weight.communication.WeightHistoryNetworkModule
 import com.example.happ_frontend.ui.domain.login_register.AuthViewModel
 import com.example.happ_frontend.ui.domain.search.SearchViewModel
+import com.example.happ_frontend.ui.domain.user_info.UserInfoOtherPersonViewModel
+import com.example.happ_frontend.ui.domain.user_info.UserInfoViewModel
 import com.example.happ_frontend.ui.domain.weight.WeightHistoryViewModel
 
 
@@ -34,6 +36,12 @@ object AppViewModelProvider{
                 userDataApi = UserDataNetworkModule.userDataApiService,
                 authApi = AuthNetworkModule.authApiService
             )
+        }
+        initializer {
+            UserInfoViewModel()
+        }
+        initializer {
+            UserInfoOtherPersonViewModel()
         }
     }
 }

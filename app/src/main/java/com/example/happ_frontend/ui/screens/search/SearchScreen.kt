@@ -132,18 +132,15 @@ fun UserListItem(user: SearchUserDto, onUserClick: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onUserClick(user.username) },
         verticalAlignment = Alignment.CenterVertically,
-
     ) {
         Box(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
                 .background(Color.Gray)
-                .clickable(onClick = {
-                    onUserClick(user.username)
-                })
         ) {
             Image(
                 painter = painterResource(id = chooseImageForUsername(user.username)),

@@ -140,7 +140,7 @@ class WeightHistoryViewModel(
     }
 
     fun fetchWeightHistoryFromServer() {
-        Log.d("WeightHistoryViewModel#addWeightHistoryEvent", "jwt: ${authPrefs.jwt}")
+        Log.d("WeightHistoryViewModel#fetchWeightHistoryEvents", "jwt: ${authPrefs.jwt}")
         if (authPrefs.jwt == null) {
             _weightHistoryState.value = WeightHistoryState.Failure(
                 R.string.error_auth_noJwt,
@@ -167,10 +167,15 @@ class WeightHistoryViewModel(
                         weightHistoryMap.forEach { (dateTime, value) ->
                             _weightEvents.add(WeightCalendarEvent(
                                 dateTime = dateTime,
-                                prediction = dateTime > now,
+                                prediction = dateTime > now.plusMinutes(1), // margin of 1 minute to account for errors
                                 value = value.kg
                             ))
                         }
+                        Log.d(
+                            "WeightHistoryViewModel#fetchWeightHistoryFromServer",
+                            "Successfully added ${_weightEvents.size} weight history events " +
+                                    "(${_weightEvents.count { it.prediction }} predictions)"
+                        )
                     }
                 } else {
                     if (response.code() == 401) {
@@ -224,6 +229,7 @@ class WeightHistoryViewModel(
                     throw IllegalArgumentException()
                 }
                 userInfoResponse.body()?.let { userDataResponseBody ->
+                    _weightHistoryState.value = WeightHistoryState.Loading
                     val userDataRequest = UserDataDto
                         .fromResponseDto(userDataResponseBody)
                         .copy(weightKg = weight)
