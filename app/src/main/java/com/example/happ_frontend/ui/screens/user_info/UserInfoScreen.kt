@@ -122,7 +122,7 @@ fun UserInfoScreen(
             Slider(
                 value = state.currentWeight,
                 onValueChange = { userInfoViewModel.updateCurrentWeight( round(it * 10) / 10) },
-                valueRange = 50f..200f,
+                valueRange = 50f..300f,
                 onValueChangeFinished = { userInfoViewModel.save() }
             )
         }
@@ -136,7 +136,7 @@ fun UserInfoScreen(
         Slider(
             value = state.height,
             onValueChange = { userInfoViewModel.updateHeight(it.roundToInt().toFloat()); },
-            valueRange = 50f..250f,
+            valueRange = 50f..300f,
             onValueChangeFinished = { userInfoViewModel.save() }
         )
 

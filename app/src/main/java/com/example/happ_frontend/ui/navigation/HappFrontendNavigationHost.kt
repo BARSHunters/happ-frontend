@@ -1,5 +1,6 @@
 package com.example.happ_frontend.ui.navigation
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -8,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
 import com.example.happ_frontend.ui.screens.activity.ActivityScreen
 import com.example.happ_frontend.ui.screens.home.HomeScreen
 import com.example.happ_frontend.ui.screens.login_register.LoginScreen
@@ -112,7 +114,8 @@ fun HappFrontendNavigationHost(
            composable(route = UserInfoDest.route) {
                 UserInfoScreen(
                     onExit = {
-                        navigationController.navigateAndClear(LoginDest.route)
+                        AuthSharedPreferencesProvider.editor?.clearUserData()
+                        navigationController.popBackStack()
                     },
                     onGoBack = {
                     navigationController.popBackStack()}

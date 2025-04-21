@@ -44,6 +44,7 @@ class UserInfoViewModel : ViewModel() {
 
                 if (response.isSuccessful && response.body() != null) {
                     val userInfo = response.body()
+                    println(userInfo)
                     _uiState.update {
                         it.copy(
                             status = UserInfoStatus.SHOW_DATA,
@@ -51,9 +52,9 @@ class UserInfoViewModel : ViewModel() {
                             username = response.body()!!.username,
                             birthDate = response.body()!!.birthDate.toString(),
                             gender = response.body()!!.gender,
-                            currentWeight = response.body()!!.weightKg,
+                            currentWeight = response.body()!!.weight,
                             goalWeight = response.body()!!.weightDesire,
-                            height = response.body()!!.heightCm.toFloat()
+                            height = response.body()!!.height.toFloat()
                         )
                     }
                 } else {
@@ -120,8 +121,8 @@ class UserInfoViewModel : ViewModel() {
                 name = state.name,
                 birthDate = LocalDate.parse(state.birthDate),
                 gender = state.gender,
-                heightCm = state.height.toInt(),
-                weightKg = state.currentWeight,
+                height = state.height.toInt(),
+                weight = state.currentWeight,
                 weightDesire = state.goalWeight
             )
 
