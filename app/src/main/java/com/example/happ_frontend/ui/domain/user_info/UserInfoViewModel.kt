@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.happ_frontend.model.user_info.communication.UserInfoNetworkModule
 import com.example.happ_frontend.model.user_info.request.Gender
-import com.example.happ_frontend.model.user_info.request.UserDataDTO
 import com.example.happ_frontend.model.user_info.request.WeightDesire
+import com.example.happ_frontend.model.user_info.response.UserDataDtoResponse
 import com.example.happ_frontend.ui.navigation.NavigateToLoginUIEvent
 import com.example.happ_frontend.ui.navigation.UIEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -116,13 +116,13 @@ class UserInfoViewModel : ViewModel() {
         viewModelScope.launch {
             val state = _uiState.value
 
-            val userData = UserDataDTO(
+            val userData = UserDataDtoResponse(
                 username = state.username,
                 name = state.name,
                 birthDate = LocalDate.parse(state.birthDate),
                 gender = state.gender,
-                height = state.height.toInt(),
-                weight = state.currentWeight,
+                heightCm = state.height.toInt(),
+                weightKg = state.currentWeight,
                 weightDesire = state.goalWeight
             )
 
