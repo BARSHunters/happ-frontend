@@ -3,6 +3,8 @@ package com.example.happ_frontend.ui.domain.user_info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.happ_frontend.model.user_info.communication.UserInfoNetworkModule
+import com.example.happ_frontend.model.user_info.request.Gender
+import com.example.happ_frontend.model.user_info.request.WeightDesire
 import com.example.happ_frontend.ui.navigation.NavigateToLoginUIEvent
 import com.example.happ_frontend.ui.navigation.UIEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,13 +38,13 @@ class UserInfoOtherPersonViewModel : ViewModel() {
                     _uiState.update {
                         it.copy(
                             status = UserInfoStatus.SHOW_DATA,
-                            name = userInfo!!.name,
-                            username = response.body()!!.username,
-                            birthDate = response.body()!!.birthDate.toString(),
-                            gender = response.body()!!.gender,
-                            currentWeight = response.body()!!.weight,
-                            goalWeight = response.body()!!.weightDesire,
-                            height = response.body()!!.height.toFloat()
+                            name = userInfo?.name ?: "",
+                            username = response.body()?.username ?: "",
+                            birthDate = response.body()?.birthDate.toString(),
+                            gender = response.body()?.gender ?: Gender.MALE,
+                            currentWeight = response.body()?.weight ?: 70f,
+                            goalWeight = response.body()?.weightDesire ?: WeightDesire.REMAIN,
+                            height = response.body()?.height?.toFloat() ?: 170f
                         )
                     }
                 } else {
