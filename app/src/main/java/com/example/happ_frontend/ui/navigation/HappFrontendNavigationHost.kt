@@ -111,11 +111,8 @@ fun HappFrontendNavigationHost(
 
            composable(route = UserInfoDest.route) {
                 UserInfoScreen(
-                    onSettings = {
-
-                    },
                     onExit = {
-
+                        navigationController.navigateAndClear(LoginDest.route)
                     },
                     onGoBack = {
                     navigationController.popBackStack()}
