@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.happ_frontend.model.activity.communication.ActivityNetworkModule
 import com.example.happ_frontend.model.activity.request.ActivityRequest
+import com.example.happ_frontend.model.activity.response.ActivityDTO
+import com.example.happ_frontend.model.activity.response.HeartRate
+import com.example.happ_frontend.model.activity.response.TrainingData
 import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesEditor
 import com.example.happ_frontend.model.login_register.data.AuthSharedPreferencesProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,12 +22,13 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
+import kotlin.random.Random
 
 class ActivityViewModel : ViewModel() {
     private val activityApiService = ActivityNetworkModule.activityApiService
     private val authPrefs: AuthSharedPreferencesEditor = AuthSharedPreferencesProvider.editor
         ?: throw IllegalStateException("AuthSharedPreferencesEditor not initialized yet")
-    private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val TAG = "ActivityViewModel"
 
@@ -39,7 +43,6 @@ class ActivityViewModel : ViewModel() {
     }
 
     fun loadActivitiesForWeek(startDate: LocalDate, endDate: LocalDate) {
-        // Если запрашиваемая неделя уже загружена, не делаем новый запрос
         if (startDate == currentWeekStart && endDate == currentWeekEnd && _uiState.value.weekActivities.isNotEmpty()) {
             return
         }
@@ -52,19 +55,23 @@ class ActivityViewModel : ViewModel() {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
                 val token = "Bearer ${authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")}"
-                val response = activityApiService.getActivitiesByWeek(
+                
+                // Форматируем даты в формат yyyy-MM-dd для query-параметров
+                val startDateStr = startDate.format(dateFormatter)
+                val endDateStr = endDate.format(dateFormatter)
+                
+                val response = activityApiService.getActivities(
                     token,
-                    startDate.format(dateFormatter),
-                    endDate.format(dateFormatter)
+                    startDateStr,
+                    endDateStr
                 )
                 
                 if (response.isSuccessful) {
-                    val activities = response.body()?.activities ?: emptyList()
+                    val activities = response.body() ?: emptyList()
                     Log.d(TAG, "Получено тренировок: ${activities.size}")
                     
                     val weekActivities = mutableMapOf<LocalDate, MutableList<Workout>>()
                     
-                    // Инициализируем пустые списки для всех дней недели
                     var currentDate = startDate
                     while (currentDate <= endDate) {
                         weekActivities[currentDate] = mutableListOf()
@@ -73,20 +80,24 @@ class ActivityViewModel : ViewModel() {
                     
                     activities.forEach { activity ->
                         try {
-                            val activityDateTime = LocalDateTime.parse(activity.datetime, dateTimeFormatter)
+                            val activityDateTime = LocalDateTime.parse(activity.trainingDate, dateTimeFormatter)
                             val activityDate = activityDateTime.toLocalDate()
                             
                             if (activityDate in startDate..endDate) {
                                 val workout = Workout(
-                                    time = activity.datetime,
-                                    name = activity.name,
-                                    calories = activity.calories,
-                                    intensityZones = activity.intensityZones
+                                    time = activity.trainingDate,
+                                    name = activity.trainingName,
+                                    calories = activity.caloriesBurned.toInt(),
+                                    intensityZones = activity.intensityZones,
+                                    avgHeartRate = activity.avgHeartRate,
+                                    maxHeartRate = activity.maxHeartRate,
+                                    met = activity.met,
+                                    recoveryTime = activity.recoveryTime
                                 )
                                 weekActivities[activityDate]?.add(workout)
                             }
                         } catch (e: Exception) {
-                            Log.e(TAG, "Ошибка парсинга даты: ${activity.datetime}", e)
+                            Log.e(TAG, "Ошибка парсинга даты: ${activity.trainingDate}", e)
                         }
                     }
                     
@@ -98,17 +109,16 @@ class ActivityViewModel : ViewModel() {
                         error = null
                     )
                 } else {
-                    Log.e(TAG, "Ошибка загрузки данных: ${response.code()}")
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = "Ошибка загрузки данных: ${response.code()}"
+                        error = "Ошибка загрузки тренировок: ${response.code()}"
                     )
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Ошибка сети: ${e.message}")
+                Log.e(TAG, "Ошибка при загрузке тренировок", e)
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = "Ошибка сети: ${e.message}"
+                    error = "Ошибка при загрузке тренировок: ${e.message}"
                 )
             }
         }
@@ -133,47 +143,34 @@ class ActivityViewModel : ViewModel() {
         }
     }
 
-    fun addNewWorkout(workout: Workout) {
-        viewModelScope.launch {
-            Log.d(TAG, "Добавление новой тренировки: ${workout.name}, время: ${workout.time}")
-            _uiState.value = _uiState.value.copy(isLoading = true)
-            try {
-                val token = "Bearer ${authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")}"
-                val request = ActivityRequest(
-                    name = workout.name,
-                    datetime = workout.time,
-                    calories = workout.calories,
-                    intensityZones = workout.intensityZones
-                )
-                
-                val response = activityApiService.createActivity(token, request)
-                if (response.isSuccessful) {
-                    Log.d(TAG, "Тренировка успешно создана")
-                    val workoutDate = LocalDateTime.parse(workout.time, dateTimeFormatter).toLocalDate()
-                    loadActivitiesForDate(workoutDate)
-                } else {
-                    Log.e(TAG, "Ошибка создания тренировки: ${response.code()}")
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = "Ошибка создания тренировки: ${response.code()}"
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Ошибка сети: ${e.message}")
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = "Ошибка сети: ${e.message}"
-                )
-            }
-        }
-    }
-
     fun getActivitySummary(workouts: List<Workout>): ActivitySummary {
         var totalCalories = 0
+        var totalMet = 0.0
+        var totalAvgHeartRate = 0.0
+        var maxHeartRate = 0
+        var totalDuration = 0
+        
         workouts.forEach { workout ->
             totalCalories += workout.calories
+            totalMet += workout.met
+            totalAvgHeartRate += workout.avgHeartRate
+            if (workout.maxHeartRate > maxHeartRate) {
+                maxHeartRate = workout.maxHeartRate
+            }
+            // Примерно оцениваем длительность на основе калорий и MET
+            totalDuration += (workout.calories / (workout.met * 3.5)).toInt()
         }
-        return ActivitySummary(calories = totalCalories)
+        
+        val avgMet = if (workouts.isNotEmpty()) totalMet / workouts.size else 0.0
+        val avgHeartRate = if (workouts.isNotEmpty()) totalAvgHeartRate / workouts.size else 0.0
+        
+        return ActivitySummary(
+            calories = totalCalories,
+            met = avgMet,
+            avgHeartRate = avgHeartRate,
+            maxHeartRate = maxHeartRate,
+            totalDuration = totalDuration
+        )
     }
 
     fun setNewWorkoutData(
@@ -196,15 +193,33 @@ class ActivityViewModel : ViewModel() {
                 val dateTime = LocalDateTime.of(date, time)
                 val formattedDateTime = dateTime.format(dateTimeFormatter)
                 
+                // Генерируем данные о пульсе
+                val heartRates = generateHeartRates(dateTime, duration)
+                val avgHeartRate = heartRates.map { it.heartRate }.average()
+                val maxHeartRate = heartRates.maxOf { it.heartRate }
+                
+                // Рассчитываем MET на основе усилий
+                val met = when (effort) {
+                    "Easy" -> 3.0
+                    "Moderate" -> 5.0
+                    "Hard" -> 7.0
+                    "Very Hard" -> 9.0
+                    "Maximum" -> 12.0
+                    else -> 5.0
+                }
+                
+                // Рассчитываем время восстановления (примерно 1 минута на каждые 10 минут тренировки)
+                val recoveryTime = (duration / 10).coerceAtLeast(5)
+                
                 // Создаем запрос
-                val request = ActivityRequest(
+                val activityDTO = ActivityDTO(
+                    duration = String.format("%02d:%02d:00", duration / 60, duration % 60),
                     name = name,
-                    datetime = formattedDateTime,
-                    calories = calculateCaloriesFromZones(intensityZones),
-                    intensityZones = intensityZones
+                    datetime = dateTime.toString(),
+                    heartRates = heartRates
                 )
                 
-                val response = activityApiService.createActivity(token, request)
+                val response = activityApiService.addActivity(token, activityDTO)
                 if (response.isSuccessful) {
                     Log.d(TAG, "Тренировка успешно создана")
                     
@@ -213,7 +228,11 @@ class ActivityViewModel : ViewModel() {
                         time = formattedDateTime,
                         name = name,
                         calories = calculateCaloriesFromZones(intensityZones),
-                        intensityZones = intensityZones
+                        intensityZones = intensityZones,
+                        avgHeartRate = avgHeartRate,
+                        maxHeartRate = maxHeartRate,
+                        met = met,
+                        recoveryTime = recoveryTime
                     )
                     
                     // Получаем текущие тренировки для выбранной даты
@@ -249,22 +268,69 @@ class ActivityViewModel : ViewModel() {
             }
         }
     }
+
+    fun addActivity(name: String, date: LocalDate, time: LocalTime, durationMinutes: Int) {
+        viewModelScope.launch {
+            try {
+                val token = "Bearer ${authPrefs.jwt ?: throw IllegalStateException("Токен авторизации не найден")}"
+                
+                val startDateTime = LocalDateTime.of(date, time)
+                val heartRates = generateHeartRates(startDateTime, durationMinutes)
+                
+                val activityDTO = ActivityDTO(
+                    duration = String.format("%02d:%02d:00", durationMinutes / 60, durationMinutes % 60),
+                    name = name,
+                    datetime = startDateTime.format(dateTimeFormatter),
+                    heartRates = heartRates
+                )
+                
+                val response = activityApiService.addActivity(token, activityDTO)
+                
+                if (response.isSuccessful) {
+                    // Перезагружаем тренировки за день
+                    loadActivitiesForDay(date)
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        error = "Ошибка добавления тренировки: ${response.code()}"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Ошибка при добавлении тренировки", e)
+                _uiState.value = _uiState.value.copy(
+                    error = "Ошибка при добавлении тренировки: ${e.message}"
+                )
+            }
+        }
+    }
+
+    private fun generateHeartRates(startDateTime: LocalDateTime, durationMinutes: Int): List<HeartRate> {
+        val heartRates = mutableListOf<HeartRate>()
+        val baseHeartRate = 120 // Базовый пульс
+        val variation = 20 // Вариация пульса
+        
+        for (minute in 0 until durationMinutes) {
+            val timestamp = startDateTime.plusMinutes(minute.toLong())
+            val randomVariation = Random.nextInt(-variation, variation)
+            val heartRate = baseHeartRate + randomVariation
+            
+            heartRates.add(HeartRate(
+                timestamp = timestamp.toEpochSecond(java.time.ZoneOffset.UTC),
+                heartRate = heartRate
+            ))
+        }
+        
+        return heartRates
+    }
+
+    private fun loadActivitiesForDay(date: LocalDate) {
+        // Для загрузки тренировок за день используем тот же метод, но с одинаковыми датами начала и конца
+        loadActivitiesForWeek(date, date)
+    }
 }
 
 data class ActivityDay(
     val date: LocalDate,
     val workouts: List<Workout>
-)
-
-data class Workout(
-    val time: String,
-    val name: String,
-    val calories: Int,
-    val intensityZones: List<Int>
-)
-
-data class ActivitySummary(
-    val calories: Int
 )
 
 /**

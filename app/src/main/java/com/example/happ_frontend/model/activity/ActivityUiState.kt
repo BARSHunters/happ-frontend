@@ -14,4 +14,15 @@ data class ActivityUiState(
     val weekActivities: Map<LocalDate, List<Workout>> = emptyMap(),
     val currentWeekStart: LocalDate = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)),
     val currentWeekEnd: LocalDate = currentWeekStart.plusDays(6)
+)
+
+data class Workout(
+    val time: String,
+    val name: String,
+    val calories: Int,
+    val intensityZones: List<Int>,
+    val avgHeartRate: Double,
+    val maxHeartRate: Int,
+    val met: Double,
+    val recoveryTime: Int
 ) 
